@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Imagens</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+  <style>
+    /* O estilo da página continua o mesmo */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #111827;
+      color: #F9FAFB;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #1F2937;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .navbar ul li {
+      display: inline;
+      margin: 0 20px;
+    }
+
+    .navbar ul li a {
+      color: #F9FAFB;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .navbar ul li a:hover {
+      color: #6366F1;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #1F2937;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-top: 60px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      color: #9CA3AF;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #111827;
+      color: white;
+      resize: none;
+      height: 100px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-y: auto;
+    }
+
+    button {
+      padding: 0.4rem 0.6rem;
+      background: #6366F1;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4F46E5;
+    }
+
+    .response-block {
+      background: #1F2937;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: 1px solid #374151;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .copiar-button {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      background-color: #6366F1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .copiar-button:hover {
+      background-color: #4F46E5;
+    }
+
+    #notification {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #6B7280;
+      font-size: 0.875rem;
+    }
+
+    #numPrompt {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar fixa no topo -->
+<div class="navbar">
+  <ul>
+    <li><a href="index.html">Página Inicial</a></li>
+    <li><a href="roteiro.html">ROTEIRO</a></li>
+    <li><a href="prompts.html">PROMPTS</a></li>
+    <li><a href="estilos.html">ESTILOS</a></li>
+    <li><a href="legendas.html">LEGENDAS</a></li>
+	<li><a href="reescritor.html">REESCRITOR</a></li>
+  </ul>
+</div>
+
+  <div class="container">
+    <h1>Gerador de Imagens</h1>
+
+    <label for="roteiro">Roteiro para Imagens (cole um parágrafo por linha)</label>
+    <textarea id="roteiro" placeholder="Digite seu roteiro aqui..."></textarea>
+    
+    <button onclick="gerarImagens('realista')">Pintura Realista</button>
+	<button onclick="gerarImagens('medieval')">Medieval</button>
+    <button onclick="gerarImagens('oleo')">Óleo</button>
+	<button onclick="gerarImagens('nenhum')">Nenhum</button>
+
+    <div id="notification"></div>
+
+    <div id="imagensGeradas" style="display:none;">
+      <h2>Imagens Geradas</h2>
+      <div id="imagens"></div>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 - Gerador de Imagens</p>
+    </footer>
+  </div>
+
+  <script>
+    let promptIndex = 0;
+
+function gerarImagens(estilo) {
+  const roteiro = document.getElementById("roteiro").value.trim();
+  if (!roteiro) {
+    showMessage("Por favor, cole um roteiro para gerar as imagens.", "red");
+    return;
+  }
+
+  const paragrafos = roteiro.split("\n").filter(paragrafo => paragrafo.trim() !== "");
+  const imagensDiv = document.getElementById("imagens");
+  imagensDiv.innerHTML = ''; // Limpa as imagens anteriores
+
+  if (promptIndex < paragrafos.length) {
+    let textoGerado = "";
+    
+    // Personalizando o conteúdo baseado no estilo
+    if (estilo === 'realista') {
+      textoGerado = `Create a realistic painting-style illustration, reminiscent of Renaissance or classical painting, in ultra-high-quality 8k UHD, the highest quality, and highly detailed. Focus on detailed figures with soft yet defined lines, using rich textures and shadows. The scene should convey a sense of depth, with natural lighting illuminating the figures and the environment. The background should include architectural elements or natural scenery, rendered in soft tones with a focus on realism: ${paragrafos[promptIndex].trim()}`;
+    } else if (estilo === 'nenhum') {
+      textoGerado = `${paragrafos[promptIndex].trim()}.`;
+    } else if (estilo === 'oleo') {
+      textoGerado = `Hand-painted oil illustration: ${paragrafos[promptIndex].trim()}`;
+    } else if (estilo === 'medieval') {
+      textoGerado = `Medieval style hand-painted oil illustration: ${paragrafos[promptIndex].trim()}`;
+    }
+
+    const divImagem = document.createElement("div");
+    divImagem.classList.add("response-block");
+
+    const textoElement = document.createElement("span");
+    textoElement.textContent = textoGerado;
+
+    const copiarButton = document.createElement("button");
+    copiarButton.classList.add("copiar-button");
+    copiarButton.textContent = "Copiar";
+    copiarButton.onclick = () => {
+      copiarTexto(textoGerado);
+      if (promptIndex === 0) {
+        showMessage("Prompt 1 copiado", "green");
+      } else if (promptIndex === paragrafos.length - 1) {
+        showMessage("Texto copiado com sucesso!", "green");
+        document.getElementById("imagensGeradas").style.display = "none"; // Remove os prompts
+      } else {
+        showMessage(`Prompt ${promptIndex + 1} copiado`, "green");
+      }
+      promptIndex++; // Avança para o próximo prompt
+      if (promptIndex < paragrafos.length) {
+        gerarImagens(estilo); // Gera o próximo prompt
+      }
+    };
+
+    divImagem.appendChild(textoElement);
+    divImagem.appendChild(copiarButton);
+
+    // Adiciona a numeração abaixo da mensagem
+    const numPrompt = document.createElement("div");
+    numPrompt.id = "numPrompt";
+    numPrompt.textContent = `Prompt ${promptIndex + 1} / ${paragrafos.length}`;
+    divImagem.appendChild(numPrompt);
+
+    imagensDiv.appendChild(divImagem);
+  }
+
+  document.getElementById("imagensGeradas").style.display = "block";
+  showMessage("Imagens geradas com sucesso!", "green");
+}
+
+
+    function copiarTexto(texto) {
+      navigator.clipboard.writeText(texto).then(() => {
+        showMessage("Texto copiado com sucesso!", "green");
+      }).catch(() => {
+        showMessage("Erro ao copiar. Tente novamente.", "red");
+      });
+    }
+
+    function showMessage(msg, color = 'white') {
+      const notification = document.getElementById("notification");
+      notification.textContent = msg;
+      notification.style.color = color;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

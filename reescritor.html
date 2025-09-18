@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reescritor Pro</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+	
+	/* Navbar fixa no topo */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1F2937;
+  padding: 10px 0;
+  z-index: 1000;
+}
+
+.navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.navbar ul li {
+  display: inline;
+  margin: 0 20px;
+}
+
+.navbar ul li a {
+  color: #F9FAFB;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.navbar ul li a:hover {
+  color: #6366F1;
+}
+
+/* Espaçamento para o conteúdo abaixo da navbar */
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #1F2937;
+  padding: 2rem;
+  border-radius: 12px;
+  margin-top: 60px; /* Deixa espaço para a navbar fixa */
+}
+
+        :root {
+            --bg-color: #111827;
+            --surface-color: rgba(31, 41, 55, 0.7);
+            --border-color: rgba(75, 85, 99, 0.5);
+            --text-primary: #F9FAFB;
+            --text-secondary: #9CA3AF;
+            --accent-color: #6366F1;
+            --accent-hover: #4F46E5;
+            --translate-color: #22c55e;
+            --translate-hover: #16a34a;
+            --neon-blue: #00f2ff;
+            --error-color: #F87171;
+            --success-color: #34D399;
+            --warn-color: #FBBF24;
+            --blur-intensity: 5px;
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            background-image: radial-gradient(circle at 1px 1px, rgba(139, 92, 246, 0.3) 1px, transparent 0);
+            background-size: 40px 40px;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            transition: filter 0.3s ease-in-out;
+        }
+
+        .container.blurred {
+            filter: blur(var(--blur-intensity));
+            pointer-events: none;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        textarea {
+            flex-grow: 1;
+            width: 100%;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            resize: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+        
+        .char-count-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .char-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .percentage-change {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .text-red { color: var(--error-color); }
+        .text-green { color: var(--success-color); }
+
+        .config-form .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .config-form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        
+        input[type="password"], input[type="text"], select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #1F2937;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        .file-upload-label {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        
+        .file-upload-label:hover {
+            background-color: rgba(99, 102, 241, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        #fileUpload {
+            display: none;
+        }
+
+        .action-button {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .main-button {
+            background-color: var(--accent-color);
+        }
+        .main-button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .api-key-button {
+            background-color: var(--border-color);
+            margin-bottom: 1rem;
+        }
+        .api-key-button.set {
+            background-color: var(--success-color);
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+            background-color: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(var(--blur-intensity));
+            -webkit-backdrop-filter: blur(var(--blur-intensity));
+        }
+        
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: scale(0.95);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap; 
+        }
+        
+        .modal-button {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 120px;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: var(--text-primary);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+        .btn-translate {
+            background-color: var(--translate-color);
+            color: var(--text-primary);
+        }
+        .btn-translate:hover {
+            background-color: var(--translate-hover);
+        }
+        .btn-secondary {
+            background-color: #374151;
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background-color: #4B5563;
+        }
+        .btn-danger {
+            background-color: #991B1B;
+            color: var(--text-primary);
+        }
+        .btn-danger:hover {
+            background-color: #7F1D1D;
+        }
+
+        /* Modal Específico */
+        .modal-content p {
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .modal-content input[type="password"], .modal-content input[type="text"] {
+            margin-bottom: 1.5rem;
+        }
+        .translation-language-display {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+        }
+        #translation-target-language-styled {
+            color: var(--neon-blue);
+            font-weight: 600;
+            text-shadow: 0 0 4px rgba(0, 242, 255, 0.5);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #1F2937;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-color);
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+        .progress-percent {
+            text-align: center;
+            font-weight: 600;
+            margin-top: 0.75rem;
+            color: var(--accent-color);
+        }
+
+        #result-text-container, #translation-text-container {
+            height: 300px;
+            overflow-y: auto;
+            background-color: #1F2937;
+            padding: 1rem;
+            border-radius: 8px;
+            white-space: pre-wrap; 
+            word-wrap: break-word;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+        }
+        
+        #notification {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            transition: bottom 0.5s ease-in-out;
+            z-index: 2000;
+        }
+        #notification.show {
+            bottom: 20px;
+        }
+        #notification.success {
+            background-color: var(--success-color);
+        }
+        #notification.error {
+            background-color: var(--error-color);
+        }
+        #notification.warn {
+            background-color: var(--warn-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        footer .fa-computer {
+            margin-right: 0.5rem;
+        }
+        
+        @media (max-width: 640px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .input-area {
+                height: 400px;
+            }
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar fixa no topo -->
+<div class="navbar">
+  <ul>
+    <li><a href="index.html">Página Inicial</a></li>
+    <li><a href="roteiro.html">ROTEIRO</a></li>
+    <li><a href="prompts.html">PROMPTS</a></li>
+    <li><a href="estilos.html">ESTILOS</a></li>
+    <li><a href="legendas.html">LEGENDAS</a></li>
+	<li><a href="reescritor.html">REESCRITOR</a></li>
+  </ul>
+</div>
+
+    <div class="container" id="main-container">
+        <header>
+            <h1>Reescritor Pro</h1>
+            <p>Refine, corrija e traduza seus textos com o poder da IA.</p>
+        </header>
+
+        <div class="main-content">
+            <div class="card input-area">
+                <textarea id="inputText" placeholder="Cole seu texto aqui..."></textarea>
+                <div class="char-count-wrapper">
+                    <div id="inputCharCount" class="char-count">0 caracteres</div>
+                </div>
+                <label for="fileUpload" class="file-upload-label">
+                    <i class="fa-solid fa-upload"></i> Carregar Arquivo (.txt, .pdf)
+                </label>
+                <input type="file" id="fileUpload" multiple accept=".txt,.pdf">
+            </div>
+
+            <div class="card config-form">
+                <button class="action-button api-key-button" id="open-api-modal-btn">
+                    <i class="fa-solid fa-key"></i> Configurar Chave API
+                </button>
+                <div class="form-group">
+                    <label for="model"><i class="fa-solid fa-brain"></i> Modelo Gemini</label>
+                    <select id="model">
+                        <option value="gemini-1.5-flash-latest">Gemini 1.5 Flash (Rápido)</option>
+                        <option value="gemini-1.5-pro-latest">Gemini 1.5 Pro (Avançado)</option>
+                        <option value="gemini-exp-1206">Gemini 2.0 Pro Master</option>
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash-Lite</option>
+                        <option value="gemini-2.0-pro-exp-02-05">Gemini 2.0 Pro</option>
+                        <option value="gemini-2.0-flash-thinking-exp-01-21">Gemini 2.0 Flash Thinking</option>
+                        <option value="gemini-1.5-flash-8b">Gemini 1.5 Flash 8B</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="writing-mode"><i class="fa-solid fa-wand-magic-sparkles"></i> Estilo de Escrita</label>
+                    <select id="writing-mode">
+                        <option value="fiel">Paráfrase Fiel (Manter Estrutura)</option>
+                        <option value="padrao" selected>Padrão (Equilibrado)</option>
+                        <option value="corrigir_apenas">Apenas Corrigir (Gramática)</option>
+                        <option value="formal">Formal (Profissional)</option>
+                        <option value="conversa_amigavel">Conversa Amigável (Cotidiano)</option>
+                        <option value="informal_descontraido">Informal (Descontraído/Gírias)</option>
+                        <option value="criativo_poetico">Criativo (Poético)</option>
+                        <option value="criativo_narrativo">Criativo (Narrativo)</option>
+                        <option value="popular">Popular (Blog / Social Media)</option>
+                        <option value="pensador">Pensador (Reflexivo)</option>
+                        <option value="simples">Simplificar (Fácil de Ler)</option>
+                        <option value="expandir">Expandir Texto</option>
+                        <option value="resumir">Resumir Texto</option>
+                    </select>
+                </div>
+                <button class="action-button main-button" id="rewrite-button"><i class="fa-solid fa-pen-to-square"></i> Reescrever Texto</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="api-modal-overlay">
+        <div class="modal-content" id="api-modal-content">
+            <h2><i class="fa-solid fa-key"></i> Configurar Chave API do Google</h2>
+            <p>Sua chave é salva localmente no seu navegador e não é compartilhada.</p>
+            <input type="password" id="apiKeyInputModal" placeholder="Cole sua chave API aqui">
+            <div class="modal-actions">
+                <button class="modal-button btn-danger" id="clearApiBtn"><i class="fa-solid fa-trash"></i> Limpar</button>
+                <button class="modal-button btn-primary" id="saveApiBtn"><i class="fa-solid fa-save"></i> Salvar</button>
+                <button class="modal-button btn-secondary" id="closeApiBtn"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="processing-modal-overlay">
+        <div class="modal-content">
+            <h2 id="processing-title"><i class="fa-solid fa-gears fa-spin"></i> Processando...</h2>
+            <p id="processing-status" class="status-text">Aguarde enquanto a mágica acontece.</p>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p class="progress-percent" id="progressText">0%</p>
+        </div>
+    </div>
+    <div class="modal-overlay" id="rewrite-result-modal-overlay">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-circle-check"></i> Texto Reescrito com Sucesso!</h2>
+            <div id="result-text-container"></div>
+            <div class="char-count-wrapper">
+                <div id="resultCharCount" class="char-count">0 caracteres</div>
+                <span id="rewrite-percentage-change" class="percentage-change"></span>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button btn-translate" id="openTranslateModalBtn"><i class="fa-solid fa-language"></i> Traduzir Texto</button>
+                <button class="modal-button btn-secondary" id="copyRewriteBtn"><i class="fa-solid fa-copy"></i> Copiar</button>
+                <button class="modal-button btn-secondary" id="downloadRewriteBtn"><i class="fa-solid fa-download"></i> Baixar</button>
+                <button class="modal-button btn-secondary" id="closeRewriteResultBtn"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="translate-input-modal-overlay">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-language"></i> Traduzir Texto</h2>
+            <p>Digite o idioma de destino para a tradução.</p>
+            <input type="text" id="targetLangInput" placeholder="Ex: Inglês Americano, Espanhol, Francês...">
+            <div class="modal-actions">
+                <button class="modal-button btn-primary" id="startTranslationBtn"><i class="fa-solid fa-play"></i> Iniciar Tradução</button>
+                <button class="modal-button btn-secondary" id="closeTranslateInputBtn"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="translation-result-modal-overlay">
+        <div class="modal-content">
+            <h2><i class="fa-solid fa-globe"></i> Texto Traduzido com Sucesso!</h2>
+            <p class="translation-language-display">Traduzido para: <span id="translation-target-language-styled"></span></p>
+            <div id="translation-text-container"></div>
+            <div class="char-count-wrapper">
+                <div id="translationCharCount" class="char-count">0 caracteres</div>
+                <span id="translation-percentage-change" class="percentage-change"></span>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-button btn-primary" id="copyTranslationBtn"><i class="fa-solid fa-copy"></i> Copiar</button>
+                <button class="modal-button btn-secondary" id="downloadTranslationBtn"><i class="fa-solid fa-download"></i> Baixar</button>
+                <button class="modal-button btn-secondary" id="closeTranslationResultBtn"><i class="fa-solid fa-xmark"></i> Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="notification"></div>
+
+    <footer>
+        <p><i class="fa-solid fa-computer"></i> Todos os direitos reservados para Luiz Tierling © 2025</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
+    <script>
+        // ===================================================================================
+        // INÍCIO DO SCRIPT
+        // ===================================================================================
+        
+        const defaultChunkSize = 4000;
+        let fullRewrittenText = '';
+        let fullTranslatedText = '';
+        let initialTextLength = 0;
+
+        // --- Seletores de Elementos DOM ---
+        const mainContainer = document.getElementById('main-container');
+        const inputTextarea = document.getElementById('inputText');
+        const fileUploadInput = document.getElementById('fileUpload');
+        const rewriteButton = document.getElementById('rewrite-button');
+        const modelSelect = document.getElementById('model');
+        const styleSelect = document.getElementById('writing-mode');
+        const processingModalOverlay = document.getElementById('processing-modal-overlay');
+        const processingTitle = document.getElementById('processing-title');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const processingStatus = document.getElementById('processing-status');
+        const notificationPopup = document.getElementById('notification');
+        const openApiModalBtn = document.getElementById('open-api-modal-btn');
+        const apiModalOverlay = document.getElementById('api-modal-overlay');
+        const apiKeyInputModal = document.getElementById('apiKeyInputModal');
+        const saveApiBtn = document.getElementById('saveApiBtn');
+        const clearApiBtn = document.getElementById('clearApiBtn');
+        const closeApiBtn = document.getElementById('closeApiBtn');
+        const rewriteResultModalOverlay = document.getElementById('rewrite-result-modal-overlay');
+        const resultTextContainer = document.getElementById('result-text-container');
+        const resultCharCount = document.getElementById('resultCharCount');
+        const rewritePercentageChange = document.getElementById('rewrite-percentage-change');
+        const openTranslateModalBtn = document.getElementById('openTranslateModalBtn');
+        const copyRewriteBtn = document.getElementById('copyRewriteBtn');
+        const downloadRewriteBtn = document.getElementById('downloadRewriteBtn');
+        const closeRewriteResultBtn = document.getElementById('closeRewriteResultBtn');
+        const translateInputModalOverlay = document.getElementById('translate-input-modal-overlay');
+        const targetLangInput = document.getElementById('targetLangInput');
+        const startTranslationBtn = document.getElementById('startTranslationBtn');
+        const closeTranslateInputBtn = document.getElementById('closeTranslateInputBtn');
+        const translationResultModalOverlay = document.getElementById('translation-result-modal-overlay');
+        const translationTargetLanguageStyled = document.getElementById('translation-target-language-styled');
+        const translationTextContainer = document.getElementById('translation-text-container');
+        const translationCharCount = document.getElementById('translationCharCount');
+        const translationPercentageChange = document.getElementById('translation-percentage-change');
+        const copyTranslationBtn = document.getElementById('copyTranslationBtn');
+        const downloadTranslationBtn = document.getElementById('downloadTranslationBtn');
+        const closeTranslationResultBtn = document.getElementById('closeTranslationResultBtn');
+
+        // --- Funções de UI e Notificações ---
+        
+        function showNotification(message, type = 'success', duration = 3000) {
+            notificationPopup.textContent = message;
+            notificationPopup.className = type;
+            notificationPopup.classList.add('show');
+            setTimeout(() => {
+                notificationPopup.classList.remove('show');
+            }, duration);
+        }
+
+        function toggleModal(modalOverlay, show) {
+            if (show) {
+                mainContainer.classList.add('blurred');
+                modalOverlay.classList.add('show');
+            } else {
+                mainContainer.classList.remove('blurred');
+                modalOverlay.classList.remove('show');
+            }
+        }
+        
+        function updateCharCounter(text, counterElement) {
+            counterElement.textContent = `${text.length} caracteres`;
+        }
+        
+        function displayPercentageChange(originalLength, newLength, element) {
+            if (originalLength === 0 || newLength === 0) {
+                element.textContent = '';
+                return;
+            }
+            const change = ((newLength - originalLength) / originalLength) * 100;
+            if (Math.abs(change) < 0.1) {
+                element.textContent = '';
+                return;
+            }
+            const formattedChange = `${change > 0 ? '+' : ''}${change.toFixed(1)}%`;
+            element.textContent = `(${formattedChange})`;
+            element.classList.remove('text-green', 'text-red');
+            if (change > 0) {
+                element.classList.add('text-green');
+            } else {
+                element.classList.add('text-red');
+            }
+        }
+
+        function updateApiKeyStatus() {
+            if (localStorage.getItem('geminiApiKey')) {
+                openApiModalBtn.classList.add('set');
+                openApiModalBtn.innerHTML = '<i class="fa-solid fa-check-circle"></i> Chave API Configurada';
+            } else {
+                openApiModalBtn.classList.remove('set');
+                openApiModalBtn.innerHTML = '<i class="fa-solid fa-key"></i> Configurar Chave API';
+            }
+        }
+        
+        // --- Lógica Principal e Event Listeners ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateApiKeyStatus();
+            const savedModel = localStorage.getItem('selectedModel');
+            if (savedModel) modelSelect.value = savedModel;
+            const savedStyle = localStorage.getItem('selectedStyle');
+            if (savedStyle) styleSelect.value = savedStyle;
+        });
+        
+        inputTextarea.addEventListener('input', () => updateCharCounter(inputTextarea.value, document.getElementById('inputCharCount')));
+        modelSelect.addEventListener('change', () => localStorage.setItem('selectedModel', modelSelect.value));
+        styleSelect.addEventListener('change', () => localStorage.setItem('selectedStyle', styleSelect.value));
+
+        openApiModalBtn.addEventListener('click', () => {
+            apiKeyInputModal.value = localStorage.getItem('geminiApiKey') || '';
+            toggleModal(apiModalOverlay, true);
+        });
+        closeApiBtn.addEventListener('click', () => toggleModal(apiModalOverlay, false));
+        saveApiBtn.addEventListener('click', () => {
+            const key = apiKeyInputModal.value;
+            if (key.trim()) {
+                localStorage.setItem('geminiApiKey', key);
+                updateApiKeyStatus();
+                showNotification('Chave API salva com sucesso!', 'success');
+                toggleModal(apiModalOverlay, false);
+            } else {
+                showNotification('Por favor, insira uma chave válida.', 'error');
+            }
+        });
+        clearApiBtn.addEventListener('click', () => {
+            apiKeyInputModal.value = '';
+            localStorage.removeItem('geminiApiKey');
+            updateApiKeyStatus();
+            showNotification('Chave API removida.', 'warn');
+        });
+
+        fileUploadInput.addEventListener("change", async (event) => {
+            const files = event.target.files;
+            if (!files.length) return;
+            
+            rewriteButton.disabled = true;
+            rewriteButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Carregando...';
+            let fullText = "";
+
+            for (const file of files) {
+                if (file.type === "text/plain") {
+                    fullText += await file.text() + "\n";
+                } else if (file.name.endsWith(".pdf")) {
+                    try {
+                        const arrayBuffer = await file.arrayBuffer();
+                        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js`;
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const content = await page.getTextContent();
+                            fullText += content.items.map(item => item.str).join(" ") + "\n";
+                        }
+                    } catch (error) {
+                        showNotification('Erro ao ler o arquivo PDF.', 'error');
+                        console.error("Erro no PDF: ", error);
+                    }
+                }
+            }
+            inputTextarea.value += fullText;
+            updateCharCounter(inputTextarea.value, document.getElementById('inputCharCount'));
+            rewriteButton.disabled = false;
+            rewriteButton.innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Reescrever Texto';
+        });
+
+        function splitTextIntoChunks(text, maxChunkSize) {
+            const chunks = [];
+            if (text.length <= maxChunkSize) return [text];
+            
+            const sentences = text.match(/[^.!?]+[.!?\n\s]+/g) || [text];
+            let currentChunk = '';
+
+            for (const sentence of sentences) {
+                if ((currentChunk + sentence).length > maxChunkSize && currentChunk) {
+                    chunks.push(currentChunk.trim());
+                    currentChunk = '';
+                }
+                currentChunk += sentence;
+            }
+            if (currentChunk) chunks.push(currentChunk.trim());
+            return chunks;
+        }
+
+        function createRewritePrompt(textChunk, mode) {
+            let prompt;
+            const baseInstructions = `Aja como um editor de textos especialista. Sua tarefa é reescrever o texto a seguir de acordo com o estilo solicitado. **LÍNGUA DE SAÍDA OBRIGATÓRIA:** O texto final deve ser OBRIGATORIAMENTE em Português do Brasil, independentemente do idioma de entrada. Organize o texto em parágrafos lógicos com quebras de linha para garantir a legibilidade. Responda APENAS com o texto final, sem saudações ou explicações. A menos que seja instruído a resumir ou expandir, o texto final deve ter um comprimento muito próximo ao original.`;
+
+            switch (mode) {
+                case 'fiel':
+                    prompt = `Aja como um parafraseador profissional. Sua tarefa é reescrever o texto a seguir mantendo-se o mais fiel possível ao original em termos de estrutura, fluxo e comprimento.
+                    REGRAS OBRIGATÓRIAS:
+                    1.  **LÍNGUA DE SAÍDA:** O texto final deve ser OBRIGATORIAMENTE em Português do Brasil.
+                    2.  **Estrutura Idêntica:** Siga a estrutura do texto original parágrafo por parágrafo. Organize o resultado em parágrafos e quebras de linha.
+                    3.  **Comprimento Similar:** O texto final deve ter uma contagem de palavras/caracteres muito próxima à do texto de entrada.
+                    4.  **Paráfrase Profunda:** Para cada frase, reescreva-a usando diferentes construções gramaticais e um vocabulário rico e variado.
+                    5.  **Manter Exemplos:** Não introduza novas analogias. Trabalhe com os conceitos e metáforas já presentes no texto.
+                    6.  **Entrega Limpa:** Responda APENAS com o texto parafraseado.`;
+                    break;
+                case 'criativo_poetico':
+                     prompt = `Aja como um escritor criativo. Reescreva o texto a seguir com um estilo poético, artístico e expressivo. Use metáforas ricas e uma linguagem imagética para evocar emoções.
+                     REGRAS OBRIGATÓRIAS:
+                     1. **LÍNGUA DE SAÍDA:** O texto final deve ser OBRIGATORIAMENTE em Português do Brasil.
+                     2. **Comprimento Similar:** O texto final deve ter um comprimento (contagem de palavras/caracteres) muito próximo ao do texto de entrada. NÃO RESUMA O TEXTO.
+                     3. **Foco na Emoção:** Transforme as ideias lógicas em sentimentos e imagens, mantendo a estrutura de parágrafos.
+                     4. **Entrega Limpa:** Responda APENAS com o texto reescrito.`;
+                    break;
+                case 'criativo_narrativo':
+                     prompt = `Aja como um roteirista. Transforme o texto a seguir em uma narrativa ou roteiro cinematográfico. Descreva cenas, ações e sentimentos como se estivesse contando uma história.
+                     REGRAS OBRIGATÓRIAS:
+                     1. **LÍNGUA DE SAÍDA:** O texto final deve ser OBRIGATORIAMENTE em Português do Brasil.
+                     2. **Comprimento Similar:** O texto final deve ter um comprimento (contagem de palavras/caracteres) muito próximo ao do texto de entrada. NÃO RESUMA O TEXTO.
+                     3. **Foco na Ação:** Transforme os conceitos abstratos em cenas e ações visuais, mantendo a estrutura de parágrafos.
+                     4. **Entrega Limpa:** Responda APENAS com o texto reescrito.`;
+                    break;
+                case 'corrigir_apenas':
+                    prompt = `Sua única tarefa é corrigir erros gramaticais e de ortografia no texto a seguir e garantir que todo o texto esteja em Português do Brasil. Mantenha a estrutura e as palavras originais o máximo possível e preserve a formatação de parágrafos. Responda APENAS com o texto corrigido.`;
+                    break;
+                default:
+                    let instrucaoDoModo;
+                    switch (mode) {
+                        case 'formal': instrucaoDoModo = "Corrija e reescreva com um tom formal e profissional. Use vocabulário preciso."; break;
+                        case 'conversa_amigavel': instrucaoDoModo = "Corrija e reescreva com um tom de conversa amigável. Use uma linguagem clara e do dia a dia, que seja facilmente compreendida por um público amplo (jovens e idosos). Evite gírias pesadas e jargões técnicos. O tom deve ser acessível e natural."; break;
+                        case 'informal_descontraido': instrucaoDoModo = "Corrija e reescreva com um tom bem informal e descontraído. Sinta-se à vontade para usar gírias e expressões coloquiais para tornar o texto mais casual, como uma conversa entre amigos próximos."; break;
+                        case 'popular': instrucaoDoModo = "Corrija e reescreva para um público amplo, como um post de blog ou rede social. Use linguagem clara e cativante."; break;
+                        case 'pensador': instrucaoDoModo = "Corrija e reescreva com um tom mais profundo e reflexivo. Explore os conceitos de forma mais filosófica."; break;
+                        case 'simples': instrucaoDoModo = "Corrija e reescreva usando palavras e frases extremamente simples e diretas para máxima clareza."; break;
+                        case 'expandir': instrucaoDoModo = "Corrija e reescreva expandindo as ideias originais para torná-las mais claras, adicionando detalhes. O texto final deve ser mais longo."; break;
+                        case 'resumir': instrucaoDoModo = "Corrija e crie um resumo conciso do texto, mantendo os pontos mais importantes."; break;
+                        case 'padrao':
+                        default:
+                            instrucaoDoModo = "Corrija e reescreva o texto com foco em clareza e fluidez profissional. Faça um parafraseamento equilibrado, melhorando a qualidade geral da escrita sem alterar drasticamente o estilo ou a estrutura."; break;
+                    }
+                    prompt = `${baseInstructions}\nREGRA DE ESTILO: ${instrucaoDoModo}`;
+                    break;
+            }
+            return `${prompt}\n\n--- TEXTO ORIGINAL ---\n${textChunk}\n\n--- TEXTO REESCRITO EM PORTUGUÊS DO BRASIL ---`;
+        }
+
+        async function processApiRequest(chunk, promptBuilder, ...args) {
+            const apiKey = localStorage.getItem('geminiApiKey');
+            const model = modelSelect.value;
+            const prompt = promptBuilder(chunk, ...args);
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.75, maxOutputTokens: 8192 } 
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error?.message || `Erro ${response.status}`);
+            }
+            const data = await response.json();
+            if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                throw new Error("Resposta inválida da API.");
+            }
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function startRewriting() {
+            if (!localStorage.getItem('geminiApiKey')) {
+                showNotification('Por favor, configure sua chave API primeiro.', 'error');
+                openApiModalBtn.click();
+                return;
+            }
+            const originalText = inputTextarea.value;
+            initialTextLength = originalText.length;
+            if (!originalText.trim()) {
+                showNotification('Por favor, insira um texto para reescrever.', 'error');
+                return;
+            }
+
+            const writingMode = styleSelect.value;
+            const chunks = splitTextIntoChunks(originalText, defaultChunkSize);
+
+            processingTitle.innerHTML = '<i class="fa-solid fa-gears fa-spin"></i> Reescrevendo...';
+            processingStatus.textContent = 'Analisando e corrigindo o texto...';
+            toggleModal(processingModalOverlay, true);
+            fullRewrittenText = '';
+
+            for (let i = 0; i < chunks.length; i++) {
+                const progress = ((i + 1) / chunks.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+                
+                try {
+                    const rewrittenChunk = await processApiRequest(chunks[i], createRewritePrompt, writingMode);
+                    fullRewrittenText += rewrittenChunk + '\n\n';
+                } catch (error) {
+                    toggleModal(processingModalOverlay, false);
+                    showNotification(`Erro: ${error.message}`, 'error', 5000);
+                    return;
+                }
+            }
+
+            toggleModal(processingModalOverlay, false);
+            fullRewrittenText = fullRewrittenText.trim();
+            resultTextContainer.textContent = fullRewrittenText;
+            updateCharCounter(fullRewrittenText, resultCharCount);
+            displayPercentageChange(initialTextLength, fullRewrittenText.length, rewritePercentageChange);
+            toggleModal(rewriteResultModalOverlay, true);
+        }
+        rewriteButton.addEventListener('click', startRewriting);
+
+        closeRewriteResultBtn.addEventListener('click', () => toggleModal(rewriteResultModalOverlay, false));
+        copyRewriteBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(fullRewrittenText).then(() => showNotification('Texto copiado!', 'success'));
+        });
+        downloadRewriteBtn.addEventListener('click', () => {
+            const blob = new Blob([fullRewrittenText], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'texto_reescrito.txt';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        // --- FLUXO DE TRADUÇÃO ---
+        
+        openTranslateModalBtn.addEventListener('click', () => {
+            toggleModal(rewriteResultModalOverlay, false);
+            toggleModal(translateInputModalOverlay, true);
+        });
+        
+        closeTranslateInputBtn.addEventListener('click', () => toggleModal(translateInputModalOverlay, false));
+        
+        startTranslationBtn.addEventListener('click', () => {
+            const targetLang = targetLangInput.value;
+            if (!targetLang.trim()) {
+                showNotification('Por favor, digite um idioma de destino.', 'error');
+                return;
+            }
+            toggleModal(translateInputModalOverlay, false);
+            startTranslationProcess(targetLang);
+        });
+        
+        function createTranslationPrompt(textChunk, targetLang) {
+            return `Aja como um tradutor profissional e especialista cultural. Sua tarefa é traduzir o texto a seguir para o idioma "${targetLang}" com a máxima fidelidade e naturalidade.
+            REGRAS DE TRADUÇÃO OBRIGATÓRIAS:
+            1.  **Tom e Estilo:** Mantenha exatamente o mesmo tom e estilo do texto original.
+            2.  **Formatação:** Preserve toda a formatação, incluindo parágrafos e quebras de linha.
+            3.  **Contexto Cultural:** Adapte expressões idiomáticas e referências culturais para equivalentes apropriados no idioma de destino. Não faça uma tradução literal.
+            4.  **Termos Técnicos:** Mantenha termos técnicos ou específicos.
+            5.  **Nomes Próprios:** Não traduza nomes de pessoas ou marcas.
+            6.  **Sentimento e Emoção:** Se o texto for artístico, a prioridade máxima é transmitir as mesmas emoções.
+            7.  **Consistência:** Mantenha a consistência de termos e vocabulário ao longo do texto.
+            8.  **Naturalidade:** O texto final deve soar como se tivesse sido escrito por um falante nativo.
+            9.  **Entrega Limpa:** Entregue APENAS o texto traduzido, sem nenhuma nota ou explicação adicional.
+            --- TEXTO PARA TRADUZIR ---
+            ${textChunk}
+            --- TRADUÇÃO EM ${targetLang.toUpperCase()} ---`;
+        }
+
+        async function startTranslationProcess(targetLang) {
+            const rewrittenTextLength = fullRewrittenText.length;
+            const chunks = splitTextIntoChunks(fullRewrittenText, defaultChunkSize);
+            
+            processingTitle.innerHTML = '<i class="fa-solid fa-language fa-spin"></i> Traduzindo...';
+            processingStatus.textContent = `Preparando para traduzir para o ${targetLang}...`;
+            toggleModal(processingModalOverlay, true);
+            fullTranslatedText = '';
+
+            for (let i = 0; i < chunks.length; i++) {
+                const progress = ((i + 1) / chunks.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+                
+                try {
+                    const translatedChunk = await processApiRequest(chunks[i], createTranslationPrompt, targetLang);
+                    fullTranslatedText += translatedChunk + '\n\n';
+                } catch (error) {
+                    toggleModal(processingModalOverlay, false);
+                    showNotification(`Erro na tradução: ${error.message}`, 'error', 5000);
+                    return;
+                }
+            }
+
+            toggleModal(processingModalOverlay, false);
+            fullTranslatedText = fullTranslatedText.trim();
+            translationTargetLanguageStyled.textContent = targetLang;
+            translationTextContainer.textContent = fullTranslatedText;
+            updateCharCounter(fullTranslatedText, translationCharCount);
+            displayPercentageChange(rewrittenTextLength, fullTranslatedText.length, translationPercentageChange);
+            toggleModal(translationResultModalOverlay, true);
+        }
+
+        closeTranslationResultBtn.addEventListener('click', () => toggleModal(translationResultModalOverlay, false));
+        copyTranslationBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(fullTranslatedText).then(() => showNotification('Tradução copiada!', 'success'));
+        });
+        downloadTranslationBtn.addEventListener('click', () => {
+            const langCode = targetLangInput.value.trim().substring(0, 10).replace(/\s/g, '_');
+            const blob = new Blob([fullTranslatedText], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `traducao_${langCode}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+    </script>
+</body>
+</html>

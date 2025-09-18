@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Imagens</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+  <style>
+    /* Mantidos os mesmos estilos da sua página */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #111827;
+      color: #F9FAFB;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #1F2937;
+      padding: 10px 0;
+      z-index: 1000;
+    }
+
+    .navbar ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .navbar ul li {
+      display: inline;
+      margin: 0 20px;
+    }
+
+    .navbar ul li a {
+      color: #F9FAFB;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .navbar ul li a:hover {
+      color: #6366F1;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: #1F2937;
+      padding: 2rem;
+      border-radius: 12px;
+      margin-top: 60px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+      color: #9CA3AF;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #111827;
+      color: white;
+      resize: none;
+      height: 100px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-y: auto;
+    }
+
+    button {
+      padding: 0.4rem 0.6rem;
+      background: #6366F1;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #4F46E5;
+    }
+
+    .response-block {
+      background: #1F2937;
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      border: 1px solid #374151;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      min-height: 64px;
+    }
+
+    .copiar-button {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.8rem;
+      background-color: #6366F1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .copiar-button:hover {
+      background-color: #4F46E5;
+    }
+
+    #notification {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 2rem;
+      color: #6B7280;
+      font-size: 0.875rem;
+    }
+
+    #numPrompt {
+      margin-top: 1.5rem;
+      text-align: left;
+      font-weight: bold;
+      color: #9CA3AF;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar fixa no topo -->
+  <div class="navbar">
+    <ul>
+      <li><a href="index.html">Página Inicial</a></li>
+      <li><a href="roteiro.html">ROTEIRO</a></li>
+      <li><a href="prompts.html">PROMPTS</a></li>
+      <li><a href="estilos.html">ESTILOS</a></li>
+      <li><a href="legendas.html">LEGENDAS</a></li>
+      <li><a href="reescritor.html">REESCRITOR</a></li>
+    </ul>
+  </div>
+
+  <div class="container">
+    <h1>Gerador de Imagens</h1>
+
+    <label for="roteiro">Temas (um por linha ou separados por vírgulas)</label>
+    <textarea id="roteiro" placeholder="Ex.: Tecnologia verde
+Cidades do futuro"></textarea>
+
+    <!-- Um único botão Gerar -->
+    <button id="btnGerar">Gerar</button>
+
+    <div id="notification"></div>
+
+    <div id="imagensGeradas" style="display:none;">
+      <h2>Prompts</h2>
+      <div id="imagens"></div>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 - Gerador de Imagens</p>
+    </footer>
+  </div>
+
+  <script>
+    let filaPrompts = [];
+    let indiceAtual = 0;
+
+    // -------------------------------------------------
+    // MODELOS DE PROMPTS (EDITÁVEIS) — ALTERE AQUI
+    // -------------------------------------------------
+    const modelosPrompts = [
+      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTÓRIA ANTIGA PARA DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTÓRIA ANTIGA PARA DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA.",
+      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTORIA ANTIGUA PARA DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTORIA ANTIGUA PARA DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA.",
+      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTOIRE ANCIENNE POUR DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTOIRE ANCIENNE POUR DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA."
+    ];
+    // -------------------------------------------------
+
+    document.getElementById("btnGerar").addEventListener("click", () => {
+      const entrada = document.getElementById("roteiro").value.trim();
+      if (!entrada) {
+        showMessage("Por favor, digite pelo menos um tema.", "red");
+        return;
+      }
+
+      // Reseta estado
+      filaPrompts = [];
+      indiceAtual = 0;
+
+      // Suporta linhas e/ou vírgulas
+      const temas = entrada
+        .split(/\n|,/)
+        .map(t => t.trim())
+        .filter(t => t.length > 0);
+
+      // Monta a fila combinando cada tema com todos os modelos
+      temas.forEach(tema => {
+        modelosPrompts.forEach(modelo => {
+          filaPrompts.push(modelo.replace("[tema]", tema));
+        });
+      });
+
+      if (filaPrompts.length === 0) {
+        showMessage("Não há temas válidos para gerar.", "red");
+        return;
+      }
+
+      prepararAreaDePrompt();
+      exibirPromptAtual();
+      document.getElementById("imagensGeradas").style.display = "block";
+      showMessage("Fila de prompts criada com sucesso!", "green");
+    });
+
+    function prepararAreaDePrompt() {
+      const imagensDiv = document.getElementById("imagens");
+      imagensDiv.innerHTML = "";
+
+      const bloco = document.createElement("div");
+      bloco.classList.add("response-block");
+
+      const textoSpan = document.createElement("span");
+      textoSpan.id = "textoPromptAtual";
+
+      const copiarButton = document.createElement("button");
+      copiarButton.classList.add("copiar-button");
+      copiarButton.textContent = "Copiar";
+      copiarButton.addEventListener("click", () => {
+        const atual = filaPrompts[indiceAtual];
+        copiarTexto(atual).then(() => {
+          avancarPrompt();
+        }).catch(() => {
+          showMessage("Erro ao copiar. Tente novamente.", "red");
+        });
+      });
+
+      const contador = document.createElement("div");
+      contador.id = "numPrompt";
+
+      bloco.appendChild(textoSpan);
+      bloco.appendChild(copiarButton);
+      bloco.appendChild(contador);
+
+      imagensDiv.appendChild(bloco);
+    }
+
+    function exibirPromptAtual() {
+      const textoEl = document.getElementById("textoPromptAtual");
+      const contadorEl = document.getElementById("numPrompt");
+
+      if (indiceAtual < filaPrompts.length) {
+        textoEl.textContent = filaPrompts[indiceAtual];
+        contadorEl.textContent = `Prompt ${indiceAtual + 1} / ${filaPrompts.length}`;
+      } else {
+        // Fila concluída
+        textoEl.textContent = "Todos os prompts foram gerados e copiados.";
+        contadorEl.textContent = "";
+        showMessage("Fila concluída!", "green");
+        // Opcional: ocultar a área após alguns segundos
+        setTimeout(() => {
+          document.getElementById("imagensGeradas").style.display = "none";
+        }, 1200);
+      }
+    }
+
+    function avancarPrompt() {
+      indiceAtual++;
+      if (indiceAtual <= filaPrompts.length) {
+        if (indiceAtual <= filaPrompts.length - 1) {
+          showMessage(`Prompt ${indiceAtual} copiado`, "green");
+        }
+        exibirPromptAtual();
+      }
+    }
+
+    function copiarTexto(texto) {
+      return navigator.clipboard.writeText(texto);
+    }
+
+    function showMessage(msg, color = 'white') {
+      const notification = document.getElementById("notification");
+      notification.textContent = msg;
+      notification.style.color = color;
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
+
