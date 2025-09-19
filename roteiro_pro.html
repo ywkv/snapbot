@@ -191,7 +191,57 @@
 
         function copyTheme() {
             const theme = themes[currentThemeIndex];
-            navigator.clipboard.writeText(`Crie um roteiro com Tema: [${theme}].`)
+            navigator.clipboard.writeText(`Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "História Antiga para Dormir". 
+Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Instruções
+Depois de fornecer o Título Principal, o assistente gerará de 2 títulos de histórias todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
+
+Estrutura:
+Título principal: Um único título abrangente com várias histórias.
+Cada história: Cada história será dividida em 3 partes.
+
+Por exemplo:
+História 1: [Título da história 1] (3 partes, 1.500 e 2.000 tokens cada) - total 4.500–6.000 tokens
+História 2: [Título da história 2] (3 partes, 1.500 e 2.000 tokens cada) - total 4.500–6.000 tokens
+
+Siga as instruções:
+Comece com a História 1, Parte 1 (1.500 e 2.000 tokens).
+Concentre-se no tópico principal ou na figura histórica, descrevendo-os detalhadamente e com precisão histórica.
+Termine a Parte 1 com um pensamento ou questão não resolvida, estimulando a curiosidade pela próxima parte.
+Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2 da História 1?"
+A Parte 2 dará continuidade à Parte 1, aprofundando a narrativa, adicionando mais contexto e aproximando a história de sua resolução.
+Termine a Parte 2 com um ponto ou questão não resolvida para se preparar para a Parte 3.
+Após concluir a Parte 2, pergunte em poucas palavras: "Continuar para a Parte 3 da História 1?"
+A Parte 3 concluirá a história, focando no clímax ou resolução do evento e nos resultados finais ou lições aprendidas.
+Termine com uma reflexão instigante sobre como o evento impactou a história ou se relaciona com os tempos modernos.
+Repita esse processo para todas as outras histórias. Após concluir as 3 partes da História 1, passe para a História 2 e continue o processo.
+
+Requisitos de estilo de escrita:
+Tom: Calmo, informativo e ligeiramente imparcial, com foco em fatos históricos. Enfatize os detalhes tediosos, mas significativos, que moldaram a história, usando um estilo narrativo descritivo e rico.
+Voz: Dirija-se diretamente ao ouvinte ("você"), criando uma sensação de imersão na história.
+Profundidade: Inclua contexto histórico, estratégias de sobrevivência no mundo real e histórias pessoais que moldaram o curso da história. Mesmo que os detalhes sejam tediosos, apresente-os de uma forma que pareça significativa.
+Linguagem: Use palavras simples e diretas, para explicar os fatos de maneira clara e fácil de entender, sem exagerar nos detalhes, mantendo um tom apropriado para a história do sono. Evite tornar o conteúdo excessivamente dramático ou fictício.
+Finais: Cada Parte deve terminar com uma pergunta aberta ou um pensamento não resolvido, incentivando a curiosidade e a reflexão com no minimo caracteres.
+
+Requisitos de conteúdo:
+Use eventos, figuras e lugares históricos reais, concentrando-se em histórias antigas — coisas como detalhes da vida cotidiana, eventos há muito esquecidos ou figuras menos conhecidas e seu impacto.
+Cada história deve destacar a resiliência humana, a sobrevivência ou os resultados inesperados de um evento ou figura histórica.
+Evite incluir quaisquer elementos fictícios, a menos que estejam diretamente vinculados a experimentos mentais históricos documentados ou ambiguidades.
+O foco deve estar nas vidas cotidianas, nos fatos históricos ocultos e nas histórias não contadas que compõem nosso passado.
+
+Importante:
+- Cada Parte deve ter entre 1.500 e 2.000 tokens.
+- Certifique-se de que a história transite suavemente de uma Parte para outra.
+- Garanta que a imersão e o envolvimento sejam mantidos durante todo o processo.
+- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
+- Antes de começar com a historia me dê a estrutura de temas das 2 histórias e depois me pergunte se pode começar com a primeira história.
+- Evite interações, perguntas ou conclusões desnecessárias.
+
+A PARTE MAIS IMPORTANTE QUE VOCÊ NÃO DEVE ESQUECER:
+Quero que somente na (História 1 da parte 1) no início do primeiro parágrafo você  
+
+Tema: [${theme}].`)
                 .then(() => {
                     currentThemeIndex++;
                     if (currentThemeIndex < themes.length) {
@@ -209,7 +259,9 @@
 
         function copyIntro() {
             const theme = themes[currentThemeIndex] || 'Tema';
-            navigator.clipboard.writeText(`Crie uma introdução com o tema: [${theme}].`);
+            navigator.clipboard.writeText(`Crie uma introdução CURTA segundos de forma continua baseada no tema: [${theme}]. Comece apresentando o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente. Peça para os espectadores curtirem o vídeo e se inscreverem. Em seguida, incentive-os a comentar de onde estão assistindo e que horas são, gerando engajamento. Sugira que os espectadores criem um ambiente tranquilo para assistir. Por fim, crie uma frase instigante que desperte o interesse e envie o espectador em uma jornada, criando um mistério ou contexto envolvente sem entrar em muitos detalhes.
+
+Você criará e entregará somente a introdução de forma continua dentro de um bloco de código em plaintext, para que eu possa copiar o conteúdo com um clique. Use bloco de código markdown com plaintext apenas para o para a introdução continua. As perguntas de transição, devem sempre aparecer fora do bloco.`);
         }
 
         function clearContent() {
@@ -250,3 +302,4 @@
     </script>
 </body>
 </html>
+
