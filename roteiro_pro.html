@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -130,6 +131,7 @@
     <button onclick="clearContent()">Limpar</button>
     <button onclick="saveContent()">Salvar</button>
     <button id="introButton" onclick="copyIntro()">Intro</button>
+	<button id="introButton" onclick="copyTexto()">Texto</button>
     
     <div id="themeDisplay">
         <span id="themeText">Tema: <span id="themeName"></span></span>
@@ -260,6 +262,12 @@ Tema: [${theme}].`)
 
 Você criará e entregará somente a introdução de forma continua dentro de um bloco de código em plaintext, para que eu possa copiar o conteúdo com um clique. Use bloco de código markdown com plaintext apenas para o para a introdução continua. As perguntas de transição, devem sempre aparecer fora do bloco.`);
         }
+		
+		
+        function copyTexto() {
+            const theme = themes[currentThemeIndex] || 'Tema';
+            navigator.clipboard.writeText(`Sim, você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.`);
+        }		
 
         function clearContent() {
             document.querySelectorAll('.box textarea').forEach(textarea => { textarea.value = ''; });
