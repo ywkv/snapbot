@@ -145,19 +145,20 @@
   </form>
 
   <form id="uploadForm">
-    <label for="fileInput"></label><br>
-    <input type="file" id="fileInput" accept=".txt" multiple><br>
+    <label for="baseFolderInput">Selecione a pasta base:</label><br>
+    <input type="file" id="baseFolderInput" webkitdirectory mozdirectory directory multiple><br>
     <button type="button" id="uploadBtn">Converter Arquivos</button>
   </form>
 
   <div class="botoes">
-    <button id="downloadBtn">Download SRT</button>
+    <button id="downloadBtn">Baixar ZIP com SRTs</button>
     <button type="button" id="limparBtn">Limpar Campo</button>
   </div>
 
   <div id="resultado"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.8.0/dist/jszip.min.js"></script>
 <script>
   (function() {
     const CARACTERES_POR_BLOCO = 500;
@@ -223,63 +224,69 @@
       return numero.toString().padStart(tamanho, '0');
     }
 
-    function downloadSRT(conteudo, nomeArquivo) {
-      const blob = new Blob([conteudo], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = nomeArquivo;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+    function gerarZIP(pastasSRT) {
+      const zip = new JSZip();
+      const pastaBase = zip.folder("# VIDEOS");
 
-    function processarArquivos() {
-      const arquivos = document.getElementById('fileInput').files;
-      if (arquivos.length === 0) return;
-      
-      Array.from(arquivos).forEach((arquivo) => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const texto = e.target.result;
-          const srt = converterParaSRT(texto);
-          const nomeArquivo = arquivo.name.replace('.txt', '.srt');
-          downloadSRT(srt, nomeArquivo);
-        };
-        reader.readAsText(arquivo);
+      // Criando pastas 1 a 5 e pastas "legendas" dentro delas
+      for (let i = 1; i <= 5; i++) {
+        const pasta = pastaBase.folder(i.toString()).folder("legendas");
+
+        if (pastasSRT[i]) {
+          pastasSRT[i].forEach(file => {
+            pasta.file(file.nome, file.conteudo);
+          });
+        }
+      }
+
+      zip.generateAsync({ type: "blob" }).then(function(content) {
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(content);
+        link.download = "legendas.zip";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       });
     }
 
-    document.getElementById('conversorForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const texto = document.getElementById('textoInput').value;
-      const srt = converterParaSRT(texto);
-      document.getElementById('resultado').textContent = srt;
-      document.getElementById('downloadBtn').style.display = 'block';
-      document.getElementById('limparBtn').style.display = 'block';
-    });
+    function processarArquivos() {
+      const arquivos = document.getElementById('baseFolderInput').files;
+      const pastasSRT = {};
 
-    document.getElementById('downloadBtn').addEventListener('click', function() {
-      const srt = document.getElementById('resultado').textContent;
-      downloadSRT(srt, 'legendas.srt');
-    });
+      Array.from(arquivos).forEach((arquivo) => {
+        const caminhoArquivo = arquivo.webkitRelativePath.split('/');
+        const nomePasta = caminhoArquivo[1]; // Pasta 1, 2, 3, 4, 5
+        const nomeArquivo = arquivo.name;
+
+        if (caminhoArquivo[2] === "legendas" && (nomeArquivo === "pt.txt" || nomeArquivo === "es.txt" || nomeArquivo === "fr.txt")) {
+          const idioma = nomeArquivo.split('.')[0]; // pt, es, fr
+          const reader = new FileReader();
+
+          reader.onload = function(e) {
+            const texto = e.target.result;
+            const srt = converterParaSRT(texto);
+
+            if (!pastasSRT[nomePasta]) {
+              pastasSRT[nomePasta] = [];
+            }
+
+            pastasSRT[nomePasta].push({ nome: `${idioma}.srt`, conteudo: srt });
+          };
+          reader.readAsText(arquivo);
+        }
+      });
+
+      // Após processar todos os arquivos, gera o ZIP
+      setTimeout(() => gerarZIP(pastasSRT), 2000); // Aguarda o processamento dos arquivos
+    }
+
+    document.getElementById('uploadBtn').addEventListener('click', processarArquivos);
 
     document.getElementById('limparBtn').addEventListener('click', function() {
-      document.getElementById('textoInput').value = '';
       document.getElementById('resultado').textContent = '';
       document.getElementById('downloadBtn').style.display = 'none';
       document.getElementById('limparBtn').style.display = 'none';
     });
-
-    document.getElementById('uploadBtn').addEventListener('click', processarArquivos);
-
-    document.oncontextmenu = function() { return false; };
-    document.onkeydown = function(e) {
-      if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0))) {
-        return false;
-      }
-    };
   })();
 </script>
 
