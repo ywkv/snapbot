@@ -7,7 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: dark light; }
-    .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+    /* Fallback da classe .badge para funcionar bem mesmo com Tailwind via CDN */
+    .badge{
+      display:inline-flex;align-items:center;border-radius:9999px;
+      padding:2px 10px;font-size:.75rem;font-weight:600;line-height:1.2
+    }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
@@ -48,7 +52,7 @@
       <div id="cardH2H"  class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></div>
     </section>
 
-    <!-- DECISÃO simplificada: mostra apenas SIM / NÃO + info compacta -->
+    <!-- DECISÃO com 3 estados: SIM / TALVEZ / NÃO -->
     <section id="decision" class="hidden bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 space-y-6">
       <div>
         <h3 class="text-xl font-bold mb-3">Veredito — BTTS</h3>
@@ -225,16 +229,25 @@
     }
     function confidenceFromN(n, k=3){ return n / (n + k); }
 
-    // Decisor binário (SIM/NÃO)
-    function decideYesNo(p, effectiveN){
-      if (!isFinite(p) || effectiveN === 0) return {yes:false, threshold:0.55, reason: 'sem dados suficientes'};
-      const threshold = effectiveN < 5 ? 0.60 : 0.55;
-      return {yes: p >= threshold, threshold, reason: `effectiveN=${effectiveN}`};
+    // ===== NOVO: Decisor TRI-ESTADO (SIM / TALVEZ / NÃO)
+    // Regras:
+    // - Limiar alto (SIM): 60% se N efetivo < 5; caso contrário 55%
+    // - Limiar baixo (NÃO): 50% se N efetivo < 5; caso contrário 45%
+    // - TALVEZ: intervalo entre os dois limiares ou quando não há dados
+    function decideTri(p, effectiveN){
+      const tHi = effectiveN < 5 ? 0.60 : 0.55;
+      const tLo = effectiveN < 5 ? 0.50 : 0.45;
+      if (!isFinite(p) || effectiveN === 0){
+        return { verdict: 'TALVEZ', tHi, tLo, reason: 'sem dados suficientes' };
+      }
+      let verdict = 'TALVEZ';
+      if (p >= tHi) verdict = 'SIM';
+      else if (p <= tLo) verdict = 'NÃO';
+      return { verdict, tHi, tLo, reason: `effectiveN=${effectiveN}` };
     }
 
     function analyze(){
       const raw = $("taUnified").value || "";
-      // opcoes removidas conforme pedido
       const lower = false;
       const appendResult = false;
 
@@ -291,7 +304,7 @@
 
       const effectiveN = stH.n + stA.n + stD.n;
 
-      // BTTS combinado
+      // ===== BTTS combinado
       const baseBTTS = (wH * pH_post + wA * pA_post + wD * pD_post);
       const avgG_list = [stH.gpg, stA.gpg, stD.gpg].filter(Number.isFinite);
       const meanG = avgG_list.length ? avgG_list.reduce((a,b)=>a+b,0)/avgG_list.length : 2.6;
@@ -299,40 +312,68 @@
       let pBTTS = Math.min(1, Math.max(0, baseBTTS * factorGoalsBTTS));
       if (pH_post>=0.55 && pA_post>=0.55 && pD_post>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
 
-      // intervalo Wilson informativo
-      const wiH = wilsonInterval(stH.btts, stH.n);
-      const wiA = wilsonInterval(stA.btts, stA.n);
-      const wiD = wilsonInterval(stD.btts, stD.n);
+      // intervalo Wilson informativo (aprox. com N efetivo)
+      const wiBTTS = wilsonInterval(Math.round(pBTTS * effectiveN), effectiveN);
 
-      // decisão binária
-      const decisionBTTS = decideYesNo(pBTTS, effectiveN);
-      const badgeBTTS = decisionBTTS.yes ? 'bg-emerald-700 text-emerald-100' : 'bg-rose-700 text-rose-100';
+      // decisão TRI para BTTS
+      const triBTTS = decideTri(pBTTS, effectiveN);
+      const badgeBTTSClass =
+        triBTTS.verdict === 'SIM' ? 'bg-emerald-700 text-emerald-100' :
+        triBTTS.verdict === 'NÃO' ? 'bg-rose-700 text-rose-100' :
+        'bg-amber-600 text-amber-100';
+      const emojiBTTS =
+        triBTTS.verdict === 'SIM' ? '✅' :
+        triBTTS.verdict === 'NÃO' ? '⛔' : '🟡';
+
       $("decision").classList.remove('hidden');
       $("verdictLineBTTS").innerHTML = `
-        <div class="flex items-center gap-3">
-          <span class="badge ${badgeBTTS} text-sm">${decisionBTTS.yes ? '✅ SIM' : '⛔ NÃO'}</span>
-          <div class="text-zinc-300 text-sm">Prob: <strong>${pct(pBTTS)}</strong> — limiar ${(decisionBTTS.threshold*100).toFixed(0)}% — ${decisionBTTS.reason}</div>
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="badge ${badgeBTTSClass} text-sm">${emojiBTTS} ${triBTTS.verdict}</span>
+          <div class="text-zinc-300 text-sm">
+            Prob: <strong>${pct(pBTTS)}</strong>
+            • Limiar SIM ≥ ${(triBTTS.tHi*100).toFixed(0)}%
+            • TALVEZ ${Math.round(triBTTS.tLo*100)}–${Math.round(triBTTS.tHi*100)}%
+            • NÃO ≤ ${(triBTTS.tLo*100).toFixed(0)}%
+            — ${triBTTS.reason}
+          </div>
         </div>`;
-      $("infoBTTS").innerText = `Fonte (suavizado): Casa ${pct(pH_post)} (n=${stH.n}), Fora ${pct(pA_post)} (n=${stA.n}), H2H ${pct(pD_post)} (n=${stD.n}). GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}.`;
+      $("infoBTTS").innerText =
+        `Fonte (suavizado): Casa ${pct(pH_post)} (n=${stH.n}), Fora ${pct(pA_post)} (n=${stA.n}), H2H ${pct(pD_post)} (n=${stD.n}). `
+        + `GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}. `
+        + `IC95%~BTTS: [${pct(wiBTTS.lower)}–${pct(wiBTTS.upper)}]. Odds justas≈ ${fairOdds(pBTTS)}.`;
 
-      // Over 2.5 combinado
+      // ===== Over 2.5 combinado
       const baseO25 = (wH * pH_o_post + wA * pA_o_post + wD * pD_o_post);
       const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6));
       let pO25 = Math.min(1, Math.max(0, baseO25 * factorGoalsO25));
       if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03);
 
-      const wiH_o = wilsonInterval(stH.over25, stH.n);
-      const wiA_o = wilsonInterval(stA.over25, stA.n);
-      const wiD_o = wilsonInterval(stD.over25, stD.n);
+      const wiO25 = wilsonInterval(Math.round(pO25 * effectiveN), effectiveN);
 
-      const decisionO25 = decideYesNo(pO25, effectiveN);
-      const badgeO25 = decisionO25.yes ? 'bg-emerald-700 text-emerald-100' : 'bg-rose-700 text-rose-100';
+      const triO25 = decideTri(pO25, effectiveN);
+      const badgeO25Class =
+        triO25.verdict === 'SIM' ? 'bg-emerald-700 text-emerald-100' :
+        triO25.verdict === 'NÃO' ? 'bg-rose-700 text-rose-100' :
+        'bg-amber-600 text-amber-100';
+      const emojiO25 =
+        triO25.verdict === 'SIM' ? '✅' :
+        triO25.verdict === 'NÃO' ? '⛔' : '🟡';
+
       $("verdictLineO25").innerHTML = `
-        <div class="flex items-center gap-3">
-          <span class="badge ${badgeO25} text-sm">${decisionO25.yes ? '✅ SIM' : '⛔ NÃO'}</span>
-          <div class="text-zinc-300 text-sm">Prob: <strong>${pct(pO25)}</strong> — limiar ${(decisionO25.threshold*100).toFixed(0)}% — ${decisionO25.reason}</div>
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="badge ${badgeO25Class} text-sm">${emojiO25} ${triO25.verdict}</span>
+          <div class="text-zinc-300 text-sm">
+            Prob: <strong>${pct(pO25)}</strong>
+            • Limiar SIM ≥ ${(triO25.tHi*100).toFixed(0)}%
+            • TALVEZ ${Math.round(triO25.tLo*100)}–${Math.round(triO25.tHi*100)}%
+            • NÃO ≤ ${(triO25.tLo*100).toFixed(0)}%
+            — ${triO25.reason}
+          </div>
         </div>`;
-      $("infoO25").innerText = `Fonte (suavizado): Casa ${pct(pH_o_post)} (n=${stH.n}), Fora ${pct(pA_o_post)} (n=${stA.n}), H2H ${pct(pD_o_post)} (n=${stD.n}). GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}.`;
+      $("infoO25").innerText =
+        `Fonte (suavizado): Casa ${pct(pH_o_post)} (n=${stH.n}), Fora ${pct(pA_o_post)} (n=${stA.n}), H2H ${pct(pD_o_post)} (n=${stD.n}). `
+        + `GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}. `
+        + `IC95%~O2.5: [${pct(wiO25.lower)}–${pct(wiO25.upper)}]. Odds justas≈ ${fairOdds(pO25)}.`;
     }
 
     $("btnAnalyze").addEventListener('click', analyze);
