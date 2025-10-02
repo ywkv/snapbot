@@ -51,7 +51,7 @@
 
     <section id="decision" class="hidden bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 space-y-6">
       <div>
-        <h3 class="text-xl font-bold mb-3">Veredito — BTTS</h3>
+        <h3 class="text-xl font-bold mb-3">Ambos Marcam</h3>
         <div id="verdictLineBTTS" class="mb-3"></div>
         <div class="grid md:grid-cols-2 gap-4 text-sm">
           <div>
@@ -61,17 +61,17 @@
           <div>
             <h4 class="font-semibold mb-1">Regras de decisão</h4>
             <ul class="list-disc pl-6 space-y-1 text-zinc-300">
-              <li><span class="badge bg-emerald-900/50 text-emerald-200">BTTS Forte</span>: p ≥ 60% e Casa &amp; Fora ≥ 55%.</li>
-              <li><span class="badge bg-amber-900/40 text-amber-200">BTTS Leve</span>: 52% ≤ p &lt; 60%.</li>
+              <li><span class="badge bg-emerald-900/50 text-emerald-200">Forte</span>: p ≥ 60% e Casa &amp; Fora ≥ 55%.</li>
+              <li><span class="badge bg-amber-900/40 text-amber-200">Leve</span>: 52% ≤ p &lt; 60%.</li>
               <li><span class="badge bg-zinc-800 text-zinc-200">Neutro</span>: faixa intermediária não-criteriosa.</li>
-              <li><span class="badge bg-rose-900/50 text-rose-200">Contra-BTTS</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
+              <li><span class="badge bg-rose-900/50 text-rose-200">Ruim</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="border-t border-zinc-700 pt-6">
-        <h3 class="text-xl font-bold mb-3">Veredito — Over 2.5</h3>
+        <h3 class="text-xl font-bold mb-3">Mais 2.5</h3>
         <div id="verdictLineO25" class="mb-3"></div>
         <div class="grid md:grid-cols-2 gap-4 text-sm">
           <div>
@@ -81,10 +81,10 @@
           <div>
             <h4 class="font-semibold mb-1">Regras de decisão</h4>
             <ul class="list-disc pl-6 space-y-1 text-zinc-300">
-              <li><span class="badge bg-emerald-900/50 text-emerald-200">Over Forte</span>: p ≥ 60% e GPG médio ≥ 2.70.</li>
-              <li><span class="badge bg-amber-900/40 text-amber-200">Over Leve</span>: 52% ≤ p &lt; 60%.</li>
+              <li><span class="badge bg-emerald-900/50 text-emerald-200">Forte</span>: p ≥ 60% e GPG médio ≥ 2.70.</li>
+              <li><span class="badge bg-amber-900/40 text-amber-200">Leve</span>: 52% ≤ p &lt; 60%.</li>
               <li><span class="badge bg-zinc-800 text-zinc-200">Neutro</span>: faixa intermediária não-criteriosa.</li>
-              <li><span class="badge bg-rose-900/50 text-rose-200">Contra-Over</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
+              <li><span class="badge bg-rose-900/50 text-rose-200">Ruim</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
             </ul>
           </div>
         </div>
@@ -238,16 +238,16 @@
 
     function decideVerdictBTTS(p, pH, pA, pD){
       let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
-      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Contra-BTTS'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
-      else if (p >= 0.60 && pH>=0.55 && pA>=0.55) { label='BTTS Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
-      else if (p >= 0.52 && p < 0.60) { label='BTTS Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
+      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      else if (p >= 0.60 && pH>=0.55 && pA>=0.55) { label='Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
+      else if (p >= 0.52 && p < 0.60) { label='Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
       return {label, cls, emoji};
     }
     function decideVerdictO25(p, meanG, pH, pA, pD){
       let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
-      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Contra-Over'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
-      else if (p >= 0.60 && isFinite(meanG) && meanG >= 2.70) { label='Over Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
-      else if (p >= 0.52 && p < 0.60) { label='Over Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
+      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      else if (p >= 0.60 && isFinite(meanG) && meanG >= 2.70) { label='Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
+      else if (p >= 0.52 && p < 0.60) { label='Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
       return {label, cls, emoji};
     }
 
