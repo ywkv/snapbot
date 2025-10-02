@@ -17,8 +17,8 @@
       margin-bottom: 20px;
     }
     button {
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 8px 15px;
+      font-size: 14px;
       margin: 5px 5px 10px 0;
       cursor: pointer;
       border: none;
@@ -34,6 +34,10 @@
     }
     #exportBtn {
       background-color: #2ecc71;
+      color: white;
+    }
+    .btn-excluir {
+      background-color: #e74c3c;
       color: white;
     }
     input[type="text"] {
@@ -79,7 +83,7 @@
         font-size: 14px;
       }
       button {
-        font-size: 14px;
+        font-size: 13px;
       }
     }
   </style>
@@ -98,6 +102,7 @@
         <th>Jogo</th>
         <th>BTTS</th>
         <th>Gols 2,5</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody>
@@ -155,12 +160,25 @@
                                  <label><input type="radio" name="over-${jogoTexto}" value="menos2.5"> ❌</label>`;
             tr.appendChild(tdGols);
 
+            const tdAcao = document.createElement('td');
+            const btnExcluir = document.createElement('button');
+            btnExcluir.textContent = "🗑️ Excluir";
+            btnExcluir.className = "btn-excluir";
+            btnExcluir.onclick = () => excluirJogo(jogoTexto, tr);
+            tdAcao.appendChild(btnExcluir);
+            tr.appendChild(tdAcao);
+
             tbody.appendChild(tr);
             times = [];
             hora = '';
           }
         }
       });
+    }
+
+    function excluirJogo(jogo, linha) {
+      todosJogos = todosJogos.filter(j => j !== jogo);
+      linha.remove();
     }
 
     function exportarExcel() {
