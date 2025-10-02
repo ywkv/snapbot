@@ -17,23 +17,16 @@
       <div>
         <h1 class="text-2xl md:text-3xl font-bold">Analisador — Ambos Marcam (BTTS) + Over 2.5</h1>
         <p class="text-zinc-400 mt-1">
-          Cole <strong>os blocos bruto</strong> do Flashscore (com <em>Últimos jogos</em>, datas, siglas, "Mostrar mais jogos"...)
-      </p>
+          Cole <strong>qualquer bloco bruto</strong> do Flashscore (com <em>Últimos jogos</em>, datas, siglas SRA/LIB, "Mostrar mais jogos"...).
+          O script <strong>normaliza</strong> em <em>Casa/Fora/Confrontos</em> e calcula probabilidades de <em>BTTS</em> e <em>Over 2.5</em>.
+        </p>
       </div>
-      <div class="text-right">
-        <label class="text-sm text-zinc-400">Pesos (Casa / Fora / H2H)</label>
-        <div class="flex items-center gap-2 mt-2">
-          <input id="wHome" type="number" class="w-16 bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value="0.4" step="0.05" min="0" max="1">
-          <input id="wAway" type="number" class="w-16 bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value="0.4" step="0.05" min="0" max="1">
-          <input id="wH2H"  type="number" class="w-16 bg-zinc-900 border border-zinc-700 rounded px-2 py-1" value="0.2" step="0.05" min="0" max="1">
-        </div>
-        <p class="text-xs text-zinc-500 mt-1">A soma deve ser ≈ 1.0</p>
-      </div>
+
     </header>
 
     <section class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 space-y-3">
       <h2 class="font-semibold">Entrada — <span class="text-emerald-300">Geral (colar do Flashscore, sem formatação)</span></h2>
-      <textarea id="taUnified" rows="2" placeholder="Cole aqui todo o conteúdo bruto do Flashscore (Casa, Fora e Confrontos Diretos) — pode vir com datas, siglas e 'Mostrar mais jogos'." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm"></textarea>
+      <textarea id="taUnified" rows="5" placeholder="Cole aqui todo o conteúdo bruto do Flashscore (Casa, Fora e Confrontos Diretos) — pode vir com datas, siglas e 'Mostrar mais jogos'." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm"></textarea>
       <div class="flex items-center gap-4 text-sm text-zinc-400">
         <label class="flex items-center gap-2"><input id="optLower" type="checkbox" class="accent-emerald-400"> converter nomes para minúsculas</label>
         <label class="flex items-center gap-2"><input id="optResultSuffix" type="checkbox" class="accent-emerald-400"> manter sufixo de resultado ( - V/D/E) quando existir</label>
@@ -259,57 +252,6 @@
       return {label, cls, emoji};
     }
 
-    // ==== NOVA LÓGICA: FREQUÊNCIA PONDERADA + POISSON (NOSSO MODELO) ====
-
-    // weighted rate with weights [5,4,3,2,1] (most recent first)
-    function weightedRateBool(arrBool){
-      const weights = [5,4,3,2,1].slice(0, arrBool.length);
-      const wsum = weights.reduce((a,b)=>a+b,0);
-      if (wsum === 0) return 0;
-      let s = 0;
-      for (let i=0;i<arrBool.length;i++){
-        s += (arrBool[i] ? 1 : 0) * weights[i];
-      }
-      return s / wsum;
-    }
-
-    function mean(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
-
-    // Poisson BTTS probability
-    function poissonPBTTS(lh, la){
-      const p0h = Math.exp(-lh);
-      const p0a = Math.exp(-la);
-      return 1 - p0h - p0a + Math.exp(-(lh+la));
-    }
-    // Poisson Over2.5
-    function poissonPOver25(lh, la){
-      const lam = lh + la;
-      const p_le2 = Math.exp(-lam) * (1 + lam + (lam*lam)/2);
-      return 1 - p_le2;
-    }
-
-    // Estimate lambdas using simple heuristic:
-    // lam_home = (avg_home_scored + avg_away_conceded) / 2 * home_adv
-    // lam_away = (avg_away_scored + avg_home_conceded) / 2
-    function estimateLambdas(scHome, scAway){
-      // scHome entries: [homeGoals, oppGoals]
-      // scAway entries: [oppGoals, awayGoals]  <-- convención adotada no parser original
-      const home_scored = scHome.map(s => s[0]);
-      const home_conceded = scHome.map(s => s[1]);
-      const away_scored = scAway.map(s => s[1]);
-      const away_conceded = scAway.map(s => s[0]);
-
-      const avg_home_scored = mean(home_scored);
-      const avg_home_conceded = mean(home_conceded);
-      const avg_away_scored = mean(away_scored);
-      const avg_away_conceded = mean(away_conceded);
-
-      const lam_h = ((avg_home_scored + avg_away_conceded) / 2) * 1.03; // small home advantage
-      const lam_a = ((avg_away_scored + avg_home_conceded) / 2);
-      return [lam_h, lam_a];
-    }
-
-    // Main analyze function (replaces prior combination logic)
     function analyze(){
       const raw = $("taUnified").value || "";
       const lower = $("optLower").checked;
@@ -334,7 +276,7 @@
         tableHTML('H2H — placares detectados', scH2H),
       ].join('');
 
-      // 3) Estatísticas (originais para exibição)
+      // 3) Estatísticas
       const stH = statsFrom(scHome);
       const stA = statsFrom(scAway);
       const stD = statsFrom(scH2H);
@@ -344,92 +286,68 @@
       $("cardAway").innerHTML = cardHTML('FORA (últimos 5)', stA, 'bg-sky-900/40 text-sky-100');
       $("cardH2H").innerHTML  = cardHTML('H2H (últimos 5)',  stD, 'bg-amber-900/40 text-amber-100');
 
-      // --- Nosso modelo híbrido ---
-      // Frequency part: p_home_score, p_away_score using weighted recency
-      // For CASA: assume team goals are first in scHome entries
-      // For FORA: assume team goals are second in scAway entries (consistent com parsing original)
-      const p_home_score = scHome.length ? weightedRateBool(scHome.map(s => s[0] >= 1)) : 0;
-      const p_away_score = scAway.length ? weightedRateBool(scAway.map(s => s[1] >= 1)) : 0;
-      const freq_btts_ind = p_home_score * p_away_score;
+// Pesos fixos (não precisam de input)
+const wH = 0.4;   // peso jogos em casa
+const wA = 0.4;   // peso jogos fora
+const wD = 0.2;   // peso confrontos diretos
+const sumW = wH + wA + wD;
 
-      // H2H BTTS frequency (weighted boolean by recency)
-      const p_h2h_btts = scH2H.length ? weightedRateBool(scH2H.map(s => (s[0] > 0 && s[1] > 0))) : 0.5;
-      const p_h2h_over25 = scH2H.length ? weightedRateBool(scH2H.map(s => (s[0] + s[1] >= 3))) : 0.5;
-
-      // Poisson lambdas
-      const [lam_h, lam_a] = estimateLambdas(scHome, scAway);
-      const poisson_btts = poissonPBTTS(lam_h, lam_a);
-      const poisson_over25 = poissonPOver25(lam_h, lam_a);
-
-      // Final combination weights (fixed per sua solicitacao)
-      // BTTS: 50% Poisson, 35% Frequency, 15% H2H
-      const final_btts = 0.50 * poisson_btts + 0.35 * freq_btts_ind + 0.15 * p_h2h_btts;
-
-      // Over2.5: 80% Poisson, 20% H2H
-      const final_over25 = 0.80 * poisson_over25 + 0.20 * p_h2h_over25;
-
-      // Prepare display: keep legacy decision UI but feed final probs
-      const wH = parseFloat($("wHome").value || '0.4');
-      const wA = parseFloat($("wAway").value || '0.4');
-      const wD = parseFloat($("wH2H").value  || '0.2');
-      const sumW = wH + wA + wD || 1;
-
-      // For compatibility with the decision UI, compute "source" probabilities used previously (stH.pBTTS etc)
+      // BTTS combinado
       const pH = stH.pBTTS || 0, pA = stA.pBTTS || 0, pD = stD.pBTTS || 0;
-      const pH_o = stH.pO25 || 0, pA_o = stA.pO25 || 0, pD_o = stD.pO25 || 0;
-
-      // mean goals (legacy display)
+      const baseBTTS = (wH * pH + wA * pA + wD * pD) / sumW;
       const avgG_list = [stH.gpg, stA.gpg, stD.gpg].filter(Number.isFinite);
       const meanG = avgG_list.length ? avgG_list.reduce((a,b)=>a+b,0)/avgG_list.length : 2.6;
-
-      // Determine verdicts using existing rules but with our final probabilities
-      const {label: labB, cls: clsB, emoji: emB} = decideVerdictBTTS(final_btts, pH, pA, pD);
-      const {label: labO, cls: clsO, emoji: emO} = decideVerdictO25(final_over25, meanG, pH_o, pA_o, pD_o);
+      const factorGoalsBTTS = Math.min(1.2, Math.max(0.8, meanG / 2.6)); // baseline 2.6 g/jogo
+      let pBTTS = Math.min(1, Math.max(0, baseBTTS * factorGoalsBTTS));
+      if (pH>=0.55 && pA>=0.55 && pD>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
+      const {label: labB, cls: clsB, emoji: emB} = decideVerdictBTTS(pBTTS, pH, pA, pD);
 
       $("decision").classList.remove('hidden');
-
       $("verdictLineBTTS").innerHTML = `
         <div class="flex flex-wrap items-center gap-2">
           <span class="badge ${clsB}">${emB} ${labB}</span>
-          <span class="text-zinc-300">Prob. combinada (modelo final): <span class="font-semibold">${pct(final_btts)}</span></span>
+          <span class="text-zinc-300">Prob. combinada (p): <span class="font-semibold">${pct(pBTTS)}</span></span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Fonte(freq): Casa ${pct(p_home_score)}, Fora ${pct(p_away_score)}</span>
+          <span class="text-zinc-300">Casa: <strong>${pct(pH)}</strong></span>
+          <span class="text-zinc-300">Fora: <strong>${pct(pA)}</strong></span>
+          <span class="text-zinc-300">H2H: <strong>${pct(pD)}</strong></span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">H2H BTTS: <strong>${pct(p_h2h_btts)}</strong></span>
+          <span class="text-zinc-400">Gols médios: <strong>${isFinite(meanG)?meanG.toFixed(2):'—'}</strong> (fator ${factorGoalsBTTS.toFixed(2)})</span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-400">Lambdas: <strong>${lam_h.toFixed(2)}</strong> / <strong>${lam_a.toFixed(2)}</strong></span>
-          <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Poisson BTTS: <strong>${pct(poisson_btts)}</strong></span>
-          <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(final_btts)}</strong></span>
+          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(pBTTS)}</strong></span>
         </div>`;
 
       $("calcListBTTS").innerHTML = `
-        <li><strong>Poisson (50%)</strong> — P(BTTS) por λs: <code>${(poisson_btts*100).toFixed(1)}%</code> (λ casa=${lam_h.toFixed(2)}, λ fora=${lam_a.toFixed(2)})</li>
-        <li><strong>Frequência (35%)</strong> — p_home_score=${pct(p_home_score)}, p_away_score=${pct(p_away_score)}, combinação indep = <code>${(freq_btts_ind*100).toFixed(1)}%</code></li>
-        <li><strong>H2H (15%)</strong> — BTTS H2H (ponderado recência) = <code>${(p_h2h_btts*100).toFixed(1)}%</code></li>
-        <li><strong>p final</strong> = 0.50·Poisson + 0.35·Freq + 0.15·H2H = <code>${(final_btts*100).toFixed(1)}%</code></li>`;
+        <li><strong>p base (BTTS)</strong> = (wC·pC + wF·pF + wH2H·pH2H) / soma dos pesos = <code>${(baseBTTS*100).toFixed(1)}%</code></li>
+        <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.80, 1.20] = <code>${factorGoalsBTTS.toFixed(2)}</code></li>
+        <li><strong>p ajustado</strong> = clamp(p base × fator [+5 p.p. se 3 fontes ≥55%]) = <code>${(pBTTS*100).toFixed(1)}%</code></li>`;
 
-      // Over 2.5 display
+      // Over 2.5 combinado
+      const pH_o = stH.pO25 || 0, pA_o = stA.pO25 || 0, pD_o = stD.pO25 || 0;
+      const baseO25 = (wH * pH_o + wA * pA_o + wD * pD_o) / sumW;
+      const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6)); // dá um pouco mais de amplitude
+      let pO25 = Math.min(1, Math.max(0, baseO25 * factorGoalsO25));
+      if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03); // bônus suave em cenários muito over
+      const {label: labO, cls: clsO, emoji: emO} = decideVerdictO25(pO25, meanG, pH_o, pA_o, pD_o);
+
       $("verdictLineO25").innerHTML = `
         <div class="flex flex-wrap items-center gap-2">
           <span class="badge ${clsO}">${emO} ${labO}</span>
-          <span class="text-zinc-300">Prob. combinada (modelo final): <span class="font-semibold">${pct(final_over25)}</span></span>
+          <span class="text-zinc-300">Prob. combinada (p): <span class="font-semibold">${pct(pO25)}</span></span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">H2H Over2.5: <strong>${pct(p_h2h_over25)}</strong></span>
+          <span class="text-zinc-300">Casa: <strong>${pct(pH_o)}</strong></span>
+          <span class="text-zinc-300">Fora: <strong>${pct(pA_o)}</strong></span>
+          <span class="text-zinc-300">H2H: <strong>${pct(pD_o)}</strong></span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Poisson Over2.5: <strong>${pct(poisson_over25)}</strong></span>
+          <span class="text-zinc-400">Gols médios: <strong>${isFinite(meanG)?meanG.toFixed(2):'—'}</strong> (fator ${factorGoalsO25.toFixed(2)})</span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(final_over25)}</strong></span>
+          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(pO25)}</strong></span>
         </div>`;
 
       $("calcListO25").innerHTML = `
-        <li><strong>Poisson (80%)</strong> — P(Over2.5) por λs = <code>${(poisson_over25*100).toFixed(1)}%</code></li>
-        <li><strong>H2H (20%)</strong> — Over2.5 H2H (ponderado recência) = <code>${(p_h2h_over25*100).toFixed(1)}%</code></li>
-        <li><strong>p final</strong> = 0.80·Poisson + 0.20·H2H = <code>${(final_over25*100).toFixed(1)}%</code></li>`;
-
-      // Scroll to results (UX)
-      setTimeout(()=>{ document.querySelector('#decision').scrollIntoView({behavior:'smooth'}); }, 60);
+        <li><strong>p base (Over 2.5)</strong> = (wC·pC + wF·pF + wH2H·pH2H) / soma dos pesos = <code>${(baseO25*100).toFixed(1)}%</code></li>
+        <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.75, 1.25] = <code>${factorGoalsO25.toFixed(2)}</code></li>
+        <li><strong>p ajustado</strong> = clamp(p base × fator [+3 p.p. se GPG ≥ 2.9]) = <code>${(pO25*100).toFixed(1)}%</code></li>`;
     }
 
     $("btnAnalyze").addEventListener('click', analyze);
