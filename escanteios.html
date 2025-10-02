@@ -1,132 +1,421 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Analisador Universal de Escanteios</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Calculadora BTTS & Over2.5</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    :root { color-scheme: dark light; }
+    body { font-family: Arial, Helvetica, sans-serif; margin: 18px; color:#222 }
+    textarea { width:100%; height:220px; font-family:monospace; margin-bottom:8px; }
+    input[type="text"] { width:120px; }
+    button { padding:8px 12px; margin:6px 0; }
+    .panel { border:1px solid #ddd; padding:12px; border-radius:6px; margin-top:10px; background:#fafafa }
+    table { border-collapse: collapse; width:100%; margin-top:8px }
+    th,td { border:1px solid #ddd; padding:6px; text-align:left }
+    .ok { color:green; font-weight:700 }
+    .bad { color:crimson; font-weight:700 }
+    .small { font-size:0.9em; color:#555 }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
-  <div class="max-w-4xl mx-auto p-6 space-y-6">
-    <header>
-      <h1 class="text-2xl font-bold">Analisador Universal de Escanteios</h1>
-      <p class="text-zinc-400 mt-1">
-        Cole o bloco bruto do Flashscore (últimos jogos de dois times).<br>
-        O script calcula a <strong>média de escanteios</strong> de cada time detectado e a <strong>soma das médias</strong>.
-      </p>
-    </header>
+<body>
+  <h2>Calculadora BTTS & Over 2.5 — Cole os dados do jogo</h2>
 
-    <!-- Entrada -->
-    <section class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 space-y-3">
-      <h2 class="font-semibold">Entrada</h2>
-      <textarea id="taUnified" rows="18" placeholder="Cole aqui o conteúdo bruto do Flashscore" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm"></textarea>
-    </section>
+  <div class="small">Cole no formato (exemplo abaixo). A ferramenta tenta identificar automaticamente seções.</div>
+  <pre class="small">
+Palmeiras x Santos
 
-    <!-- Botões -->
-    <div class="flex items-center gap-3">
-      <button id="btnAnalyze" class="px-4 py-2 rounded-xl bg-white text-black font-semibold hover:opacity-90 transition">Analisar</button>
-      <button id="btnClear" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition">Limpar</button>
-    </div>
+Últimos jogos 5 (casa):
+Palmeiras 1 x 3 Flamengo
+Vasco 0 x 1 Palmeiras
+...
 
-    <!-- Resultados -->
-    <section id="results" class="hidden grid md:grid-cols-2 gap-4"></section>
-    <section id="total" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></section>
+Últimos jogos 5 (fora):
+Santos 0 x 3 Cuiabá
+Bahia 0 x 1 Santos
+...
+
+Últimos confrontos:
+Palmeiras 1 x 1 Santos
+Santos 0 x 1 Palmeiras
+...
+  </pre>
+
+  <textarea id="inputData" placeholder="Cole aqui os dados do jogo..."></textarea>
+
+  <div>
+    Odds BTTS (decimal, opcional): <input id="oddsBTTS" type="text" placeholder="ex: 1.90" />
+    &nbsp;&nbsp;
+    Odds Over2.5 (decimal, opcional): <input id="oddsO25" type="text" placeholder="ex: 1.95" />
+  </div>
+  <div style="margin-top:8px">
+    <button onclick="runAll()">Calcular</button>
+    <button onclick="clearAll()">Limpar</button>
   </div>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
+  <div id="output" class="panel" style="display:none"></div>
 
-    // Parser: detecta linha de placar e pega time acima/abaixo
-    function parseMatches(lines){
-      const rxScore = /^(\d+)\s*[-:]\s*(\d+)$/;
-      const out = [];
-      for (let i=0; i<lines.length; i++){
-        const m = lines[i].match(rxScore);
-        if (m && i>0 && i<lines.length-1){
-          out.push({
-            timeA: lines[i-1].trim(),
-            golsA: parseInt(m[1],10),
-            golsB: parseInt(m[2],10),
-            timeB: lines[i+1].trim(),
-          });
-        }
-      }
-      return out;
+<script>
+/* --- utilidades de texto --- */
+function normalizeName(s){
+  if(!s) return '';
+  // to lower and remove accents and extra spaces
+  s = s.trim().toLowerCase();
+  s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  s = s.replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+  return s;
+}
+
+/* tenta extrair seções do texto */
+function splitSections(text){
+  const lines = text.split(/\r?\n/).map(l=>l.trim()).filter(()=>true);
+  // locate header (teamA x teamB)
+  let headerLine = null;
+  for(let l of lines){
+    if(/.+\s+x\s+.+/i.test(l)){
+      headerLine = l;
+      break;
     }
+  }
+  // split by known section keywords (lowercased)
+  const lower = text.toLowerCase();
+  const secC = /ultim[oó]s jogos\s*5\s*\(casa\)|ultim[oó]s jogos\s*\(casa\)/i;
+  const secF = /ultim[oó]s jogos\s*5\s*\(fora\)|ultim[oó]s jogos\s*\(fora\)/i;
+  const secH = /ultim[oó]s (confrontos|confrontos diretos|h2h)/i;
 
-    // Calcula média de escanteios do time alvo
-    function cornerAvgFrom(matches, teamName) {
-      let soma = 0, n = 0;
-      for (const m of matches) {
-        if (m.timeA.includes(teamName)) {
-          soma += m.golsA; n++;
-        } else if (m.timeB.includes(teamName)) {
-          soma += m.golsB; n++;
+  // naive splitting: find indices of lines that are section headers
+  const idxs = [];
+  for(let i=0;i<lines.length;i++){
+    let l = lines[i].toLowerCase();
+    if(secC.test(lines[i])) idxs.push({type:'home',i});
+    else if(secF.test(lines[i])) idxs.push({type:'away',i});
+    else if(secH.test(lines[i])) idxs.push({type:'h2h',i});
+  }
+  // Gather lines between headers
+  const sections = {header: headerLine || '', home:[], away:[], h2h:[]};
+  // Determine areas: for each header, collect next lines until next header or blank+next non-score
+  function collect(startIdx){
+    const out=[]; 
+    for(let i=startIdx+1;i<lines.length;i++){
+      const L = lines[i];
+      if(/^\s*$/.test(L)) {
+        // allow blank as separator but stop if double blank? We'll continue until next header appears
+        // check if next lines contain a new header:
+        let j=i+1; 
+        if(j<lines.length && /.+\s+x\s+.+/.test(lines[j])) {
+          // could be a match line -> keep
         }
       }
-      return n ? (soma/n) : null;
+      // stop if this line itself is a section header
+      if(secC.test(L) || secF.test(L) || secH.test(L)) break;
+      out.push(L);
     }
+    return out;
+  }
 
-    function analyze(){
-      const raw = $("taUnified").value || "";
-      const lines = raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-
-      // Encontrar blocos "Resultados recentes do X"
-      let blocos = {};
-      for (let i=0; i<lines.length; i++){
-        if (lines[i].includes("Resultados recentes")) {
-          const nomeTime = lines[i-1]?.trim() || `Time${i}`;
-          // pega tudo até o próximo "Resultados recentes" ou fim
-          let j = i+1;
-          while(j < lines.length && !lines[j].includes("Resultados recentes")) j++;
-          blocos[nomeTime] = lines.slice(i+1, j);
-        }
+  // fill sections based on idxs order; if none found, try to heuristically split by keywords
+  if(idxs.length>0){
+    for(let k=0;k<idxs.length;k++){
+      const item = idxs[k];
+      // next header idx or end
+      const start = item.i;
+      // find end:
+      let end = lines.length;
+      for(let j=k+1;j<idxs.length;j++){
+        if(idxs[j].i>start){ end = idxs[j].i; break; }
       }
-
-      let cards = "";
-      let medias = [];
-
-      for (const time in blocos) {
-        const jogos = parseMatches(blocos[time]);
-        const media = cornerAvgFrom(jogos,time);
-        if (media != null) {
-          medias.push({time, media});
-          cards += `
-            <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
-              <h3 class="font-semibold mb-2">${time}</h3>
-              <p class="text-emerald-300">Média de escanteios: <b>${media.toFixed(2)}</b></p>
-            </div>`;
-        }
-      }
-
-      $("results").classList.remove('hidden');
-      $("results").innerHTML = cards;
-
-      // Soma das médias (apenas se tiver 2 times)
-      if (medias.length === 2){
-        const soma = (medias[0].media + medias[1].media).toFixed(2);
-        $("total").classList.remove('hidden');
-        $("total").innerHTML = `
-          <h3 class="font-semibold mb-2">Soma das médias</h3>
-          <p class="text-pink-300">${medias[0].time} (${medias[0].media.toFixed(2)}) + ${medias[1].time} (${medias[1].media.toFixed(2)}) = <b>${soma}</b></p>
-        `;
-      } else {
-        $("total").classList.add('hidden');
-        $("total").innerHTML = "";
-      }
+      const arr = lines.slice(start+1,end).map(l=>l.trim()).filter(l=>l.length>0);
+      if(item.type==='home') sections.home = arr;
+      if(item.type==='away') sections.away = arr;
+      if(item.type==='h2h') sections.h2h = arr;
     }
+  } else {
+    // fallback: try to find by keywords in the whole text
+    const all = lines.join('\n');
+    const mHome = all.match(/(?:ultim[oó]s jogos\s*5\s*\(casa\)|ultim[oó]s jogos\s*\(casa\))\s*:(.*?)(?:\n\n|\nultim|$)/is);
+    const mAway = all.match(/(?:ultim[oó]s jogos\s*5\s*\(fora\)|ultim[oó]s jogos\s*\(fora\))\s*:(.*?)(?:\n\n|\nultim|$)/is);
+    const mH = all.match(/(?:ultim[oó]s (?:confrontos|confrontos diretos|h2h))\s*:(.*?)(?:\n\n|$)/is);
+    sections.home = mHome ? mHome[1].trim().split(/\r?\n/).map(s=>s.trim()).filter(s=>s): [];
+    sections.away = mAway ? mAway[1].trim().split(/\r?\n/).map(s=>s.trim()).filter(s=>s): [];
+    sections.h2h = mH ? mH[1].trim().split(/\r?\n/).map(s=>s.trim()).filter(s=>s): [];
+  }
 
-    $("btnAnalyze").addEventListener('click', analyze);
-    $("btnClear").addEventListener('click', () => {
-      $("taUnified").value = '';
-      $("results").classList.add('hidden');
-      $("results").innerHTML = '';
-      $("total").classList.add('hidden');
-      $("total").innerHTML = '';
-    });
-  </script>
+  // also try to find header team names (first line with " x ")
+  const header = (headerLine || lines[0] || '').trim();
+  let teamA='', teamB='';
+  const hmatch = header.match(/(.+?)\s+x\s+(.+)/i);
+  if(hmatch){ teamA = hmatch[1].trim(); teamB = hmatch[2].trim(); }
+  sections.header = header;
+  sections.teamA = teamA;
+  sections.teamB = teamB;
+  return sections;
+}
+
+/* parse score line like "Palmeiras 1 x 3 Flamengo" -> {leftName, leftGoals, rightGoals, rightName} or null */
+function parseScoreLine(line){
+  // regex tolerant to "x" or "X" with spaces
+  const m = line.match(/^(.+?)\s+(\d+)\s*[xX]\s*(\d+)\s+(.+)$/);
+  if(!m) return null;
+  return {leftName: m[1].trim(), leftGoals: parseInt(m[2],10), rightGoals: parseInt(m[3],10), rightName: m[4].trim()};
+}
+
+/* build arrays: for home team's last5 at home (goals scored and conceded) */
+function extractTeamStats(lines, teamName, sectionType){
+  // lines: array of strings with score lines; teamName: original (not normalized); sectionType 'home' or 'away' or 'h2h'
+  const scored = [], conceded = [], rawMatches = [];
+  const n = lines.length;
+  for(let i=0;i<lines.length;i++){
+    const l = lines[i];
+    const p = parseScoreLine(l);
+    if(!p) continue;
+    // normalize comps
+    const nLeft = normalizeName(p.leftName);
+    const nRight = normalizeName(p.rightName);
+    const target = normalizeName(teamName);
+    let isLeft = (nLeft === target) || (nLeft.includes(target)) || (target.includes(nLeft));
+    let isRight = (nRight === target) || (nRight.includes(target)) || (target.includes(nRight));
+    // if both false, try a looser match (first word)
+    if(!isLeft && !isRight){
+      const tFirst = target.split(' ')[0];
+      if(nLeft.includes(tFirst)) isLeft = true;
+      if(nRight.includes(tFirst)) isRight = true;
+    }
+    if(!isLeft && !isRight){
+      // cannot match - skip
+      continue;
+    }
+    let gFor = isLeft ? p.leftGoals : p.rightGoals;
+    let gAgainst = isLeft ? p.rightGoals : p.leftGoals;
+    scored.push(gFor);
+    conceded.push(gAgainst);
+    rawMatches.push({line:l, for:gFor, against:gAgainst, left:p.leftName, right:p.rightName});
+    if(scored.length>=5) break; // take up to 5 (first occurrences in order provided)
+  }
+  return {scored, conceded, rawMatches};
+}
+
+/* extract H2H as tuples relative to match header (teamA home) */
+function extractH2H(lines, teamA, teamB){
+  const tuples = [];
+  for(let i=0;i<lines.length;i++){
+    const p = parseScoreLine(lines[i]);
+    if(!p) continue;
+    const nLeft = normalizeName(p.leftName);
+    const nRight = normalizeName(p.rightName);
+    const tA = normalizeName(teamA);
+    const tB = normalizeName(teamB);
+    // determine which side is which
+    let leftIsA = (nLeft === tA) || (nLeft.includes(tA)) || (tA.includes(nLeft));
+    let rightIsA = (nRight === tA) || (nRight.includes(tA)) || (tA.includes(nRight));
+    // fallback simple startsWith
+    if(!leftIsA && !rightIsA){
+      if(nLeft.split(' ')[0] === tA.split(' ')[0]) leftIsA = true;
+      if(nRight.split(' ')[0] === tA.split(' ')[0]) rightIsA = true;
+    }
+    // If we detect A on left, then tuple is (leftGoals, rightGoals) relative to A/B
+    if(leftIsA){
+      tuples.push([p.leftGoals, p.rightGoals]);
+    } else if(rightIsA){
+      tuples.push([p.rightGoals, p.leftGoals]);
+    } else {
+      // cannot map to A or B, skip
+      continue;
+    }
+    if(tuples.length>=5) break;
+  }
+  return tuples;
+}
+
+/* weighted rate - weights default [5,4,3,2,1] (more recent first) */
+function weightedRate(bools, weights){
+  if(!weights) weights = [5,4,3,2,1];
+  // if fewer than weights length, use prefix of weights
+  weights = weights.slice(0, bools.length);
+  const wsum = weights.reduce((a,b)=>a+b,0);
+  let s=0;
+  for(let i=0;i<bools.length;i++){
+    s += (bools[i]?1:0) * weights[i];
+  }
+  return (wsum===0)?0:(s/wsum);
+}
+
+/* poisson helpers */
+function poissonP0(lam){ return Math.exp(-lam); }
+function poissonP_BTT S(lam_h, lam_a){} // placeholder
+function poissonP_BTT S(lam_h, lam_a){
+  // avoid name issues
+  const p0h = Math.exp(-lam_h);
+  const p0a = Math.exp(-lam_a);
+  return 1 - p0h - p0a + Math.exp(-(lam_h + lam_a));
+}
+function poissonPover25(lam_h, lam_a){
+  const lam = lam_h + lam_a;
+  const p_le2 = Math.exp(-lam) * (1 + lam + (lam*lam)/2);
+  return 1 - p_le2;
+}
+
+/* lambda estimator (simple heuristic) */
+function estimateLambdas(home_scored_last5, home_conceded_last5, away_scored_last5, away_conceded_last5){
+  function avg(arr){ return arr.length? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+  const avg_home_scored = avg(home_scored_last5);
+  const avg_away_conceded = avg(away_conceded_last5);
+  const lam_h = ((avg_home_scored + avg_away_conceded) / 2) * 1.03; // slight home advantage
+  const avg_away_scored = avg(away_scored_last5);
+  const avg_home_conceded = avg(home_conceded_last5);
+  const lam_a = ((avg_away_scored + avg_home_conceded) / 2);
+  return [lam_h, lam_a];
+}
+
+/* primary model combining frequency + poisson + h2h */
+function modelFromData(home_scored_last5, home_conceded_last5, away_scored_last5, away_conceded_last5, h2h_tuples){
+  // frequency-based p home score / away score
+  const home_scored_bool = home_scored_last5.map(g => g>=1 ? 1 : 0);
+  const away_scored_bool = away_scored_last5.map(g => g>=1 ? 1 : 0);
+  const p_home_score = weightedRate(home_scored_bool);
+  const p_away_score = weightedRate(away_scored_bool);
+  const freq_btts_ind = p_home_score * p_away_score;
+
+  const h2h_btts_bool = h2h_tuples.map(t => (t[0]>0 && t[1]>0)?1:0);
+  const p_h2h_btts = h2h_tuples.length ? weightedRate(h2h_btts_bool) : 0.5;
+
+  const [lam_h, lam_a] = estimateLambdas(home_scored_last5, home_conceded_last5, away_scored_last5, away_conceded_last5);
+
+  const poisson_btts = poissonP_BTT S(lam_h, lam_a);
+  const poisson_over25 = poissonPover25(lam_h, lam_a);
+
+  // h2h over25 freq (use totals in h2h)
+  const totals_bool = h2h_tuples.map(t => (t[0] + t[1] >= 3) ? 1 : 0);
+  const p_h2h_over25 = h2h_tuples.length ? weightedRate(totals_bool) : 0.5;
+
+  // combine
+  const final_btts = 0.50 * poisson_btts + 0.35 * freq_btts_ind + 0.15 * p_h2h_btts;
+  const final_over25 = 0.80 * poisson_over25 + 0.20 * p_h2h_over25;
+
+  return {
+    p_home_score, p_away_score, freq_btts_ind, p_h2h_btts,
+    lam_h, lam_a, poisson_btts, poisson_over25,
+    final_btts, final_over25
+  };
+}
+
+/* implied prob and Kelly */
+function impliedProb(odds){ return odds>0 ? 1/odds : null; }
+function kellyFraction(p, odds){
+  const b = odds - 1;
+  const q = 1 - p;
+  if(b <= 0) return 0;
+  const f = (b*p - q)/b;
+  return Math.max(0, f);
+}
+
+/* main runner */
+function runAll(){
+  const txt = document.getElementById('inputData').value;
+  if(!txt || txt.trim().length<5){ alert('Cole os dados do jogo no campo de texto.'); return; }
+  const sec = splitSections(txt);
+  if(!sec.teamA || !sec.teamB){
+    if(!confirm('Não consegui detectar "TimeA x TimeB" automaticamente. Deseja prosseguir mesmo assim?')) return;
+  }
+
+  const teamA = sec.teamA || prompt('Digite o time da casa (ex: Palmeiras)') || '';
+  const teamB = sec.teamB || prompt('Digite o time visitante (ex: Santos)') || '';
+
+  // extract stats
+  const homeStats = extractTeamStats(sec.home, teamA, 'home');
+  const awayStats = extractTeamStats(sec.away, teamB, 'away');
+  const h2h = extractH2H(sec.h2h, teamA, teamB);
+
+  // If we cannot find any matches, try to parse all lines for either team
+  if(homeStats.scored.length===0 && sec.home.length>0){
+    // try to parse first 5 score-like lines directly as if they belong to teamA (fallback)
+    const candidate = [];
+    for(const l of sec.home){
+      const p = parseScoreLine(l);
+      if(p) candidate.push(l);
+      if(candidate.length>=5) break;
+    }
+    if(candidate.length>0){
+      const alt = extractTeamStats(candidate, teamA, 'home');
+      homeStats.scored = alt.scored; homeStats.conceded = alt.conceded;
+    }
+  }
+  if(awayStats.scored.length===0 && sec.away.length>0){
+    const candidate = [];
+    for(const l of sec.away){
+      const p = parseScoreLine(l);
+      if(p) candidate.push(l);
+      if(candidate.length>=5) break;
+    }
+    if(candidate.length>0){
+      const alt = extractTeamStats(candidate, teamB, 'away');
+      awayStats.scored = alt.scored; awayStats.conceded = alt.conceded;
+    }
+  }
+
+  // ensure arrays are length <=5 and in provided order (assumes most recent first in paste)
+  const homeSc = homeStats.scored.slice(0,5);
+  const homeCon = homeStats.conceded.slice(0,5);
+  const awaySc = awayStats.scored.slice(0,5);
+  const awayCon = awayStats.conceded.slice(0,5);
+
+  const model = modelFromData(homeSc, homeCon, awaySc, awayCon, h2h);
+
+  // read odds
+  const oBTTS = parseFloat(document.getElementById('oddsBTTS').value.replace(',','.')) || null;
+  const oO25 = parseFloat(document.getElementById('oddsO25').value.replace(',','.')) || null;
+  const impBTTS = oBTTS ? impliedProb(oBTTS) : null;
+  const impO25 = oO25 ? impliedProb(oO25) : null;
+  const valueBTTS = (impBTTS !== null) ? (model.final_btts - impBTTS) : null;
+  const valueO25 = (impO25 !== null) ? (model.final_over25 - impO25) : null;
+  const kellyBTTS = (oBTTS && model.final_btts) ? kellyFraction(model.final_btts, oBTTS) : null;
+  const kellyO25 = (oO25 && model.final_over25) ? kellyFraction(model.final_over25, oO25) : null;
+
+  // render output
+  const out = document.getElementById('output');
+  out.style.display = 'block';
+  out.innerHTML = `
+    <h3>Resultado — ${teamA} x ${teamB}</h3>
+    <div><strong>Dados lidos:</strong></div>
+    <div class="small">Últimos ${homeSc.length} jogos (casa de ${teamA}), Últimos ${awaySc.length} jogos (fora de ${teamB}), Últimos ${h2h.length} H2H</div>
+    <table>
+      <tr><th>Métrica</th><th>Valor</th></tr>
+      <tr><td>Prob. (modelo) — BTTS</td><td>${(model.final_btts*100).toFixed(1)} %</td></tr>
+      <tr><td>Prob. (modelo) — Over 2.5</td><td>${(model.final_over25*100).toFixed(1)} %</td></tr>
+      <tr><td>Lambda (casa)</td><td>${model.lam_h.toFixed(3)}</td></tr>
+      <tr><td>Lambda (fora)</td><td>${model.lam_a.toFixed(3)}</td></tr>
+      <tr><td>Poisson BTTS</td><td>${(model.poisson_btts*100).toFixed(1)} %</td></tr>
+      <tr><td>Poisson Over2.5</td><td>${(model.poisson_over25*100).toFixed(1)} %</td></tr>
+    </table>
+
+    ${impBTTS ? `<div style="margin-top:10px"><strong>Odds BTTS:</strong> ${oBTTS.toFixed(2)} → implied ${(impBTTS*100).toFixed(1)}%; valor = ${(valueBTTS*100).toFixed(1)} pp` : ''}
+    ${impO25 ? `<div><strong>Odds Over2.5:</strong> ${oO25.toFixed(2)} → implied ${(impO25*100).toFixed(1)}%; valor = ${(valueO25*100).toFixed(1)} pp</div>` : ''}
+
+    <div style="margin-top:10px">
+      <strong>Recomendações rápidas:</strong>
+      <ul>
+        <li>${(valueBTTS !== null && valueBTTS >= 0.05) ? '<span class="ok">BTTS parece VALOR (sugerido)</span>' : (valueBTTS !== null ? '<span class="bad">Sem valor evidente para BTTS</span>' : 'Informe odds para checar value')}</li>
+        <li>${(valueO25 !== null && valueO25 >= 0.05) ? '<span class="ok">Over2.5 parece VALOR (sugerido)</span>' : (valueO25 !== null ? '<span class="bad">Sem valor evidente para Over2.5</span>' : 'Informe odds para checar value')}</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:6px">
+      <strong>Kelly (full):</strong>
+      <div>BTTS: ${kellyBTTS!==null ? (kellyBTTS*100).toFixed(2) + '% (recom. Kelly fracional 1/4 → ' + (kellyBTTS*0.25*100).toFixed(2) + '%)' : '—'}</div>
+      <div>Over2.5: ${kellyO25!==null ? (kellyO25*100).toFixed(2) + '% (recom. Kelly fracional 1/4 → ' + (kellyO25*0.25*100).toFixed(2) + '%)' : '—'}</div>
+    </div>
+
+    <details style="margin-top:8px"><summary>Ver detalhes das entradas e cálculos</summary>
+      <div class="small" style="margin-top:8px">
+        <strong>Últimos jogos ${teamA} (casa):</strong><br>${homeSc.length? homeSc.join(', ') : '<em>nenhum encontrado</em>'}<br>
+        <strong>Últimos jogos ${teamB} (fora):</strong><br>${awaySc.length? awaySc.join(', ') : '<em>nenhum encontrado</em>'}<br>
+        <strong>Últimos H2H (relativo a ${teamA}):</strong><br>${h2h.length? h2h.map(t=> t[0]+'-'+t[1]).join(', ') : '<em>nenhum encontrado</em>'}
+      </div>
+    </details>
+  `;
+
+}
+
+/* helpers */
+function clearAll(){ document.getElementById('inputData').value=''; document.getElementById('oddsBTTS').value=''; document.getElementById('oddsO25').value=''; document.getElementById('output').style.display='none'; }
+</script>
 </body>
 </html>
