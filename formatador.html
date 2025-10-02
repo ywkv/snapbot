@@ -71,25 +71,17 @@
       background-color: #ecf0f1;
     }
     .radio-group label {
-      margin: 0 5px;
-      padding: 3px 6px;
-      border-radius: 4px;
-      cursor: pointer;
+      margin: 0 10px;
       font-size: 14px;
       font-weight: bold;
+      cursor: pointer;
     }
-    /* Cores */
-    .forte { background-color: #27ae60; color: #fff; }   /* Verde */
-    .leve { background-color: #f1c40f; color: #000; }   /* Amarelo */
-    .neutro { background-color: #95a5a6; color: #fff; } /* Cinza */
-    .baixo { background-color: #e74c3c; color: #fff; }  /* Vermelho */
+    .forte { color: #27ae60; }   /* Verde */
+    .neutro { color: #95a5a6; }  /* Cinza */
+    .baixo { color: #e74c3c; }   /* Vermelho */
+    .sim { color: #27ae60; }     /* Verde */
+    .nao { color: #e74c3c; }     /* Vermelho */
 
-    .radio-group input[type="radio"] {
-      display: none;
-    }
-    .radio-group input[type="radio"]:checked + span {
-      outline: 2px solid #2c3e50;
-    }
     @media(max-width: 768px) {
       table, th, td {
         font-size: 14px;
@@ -113,7 +105,7 @@
       <tr>
         <th>Jogo</th>
         <th>BTTS</th>
-        <th>Gols 2,5</th>
+        <th>Mais 2,5 Gols</th>
         <th>Ações</th>
       </tr>
     </thead>
@@ -164,20 +156,19 @@
             const tdBTTS = document.createElement('td');
             tdBTTS.className = 'radio-group';
             tdBTTS.innerHTML = `
-              <label><input type="radio" name="btts-${jogoTexto}" value="Forte"><span class="forte">Forte</span></label>
-              <label><input type="radio" name="btts-${jogoTexto}" value="Leve"><span class="leve">Leve</span></label>
-              <label><input type="radio" name="btts-${jogoTexto}" value="Neutro"><span class="neutro">Neutro</span></label>
-              <label><input type="radio" name="btts-${jogoTexto}" value="Baixo"><span class="baixo">Baixo</span></label>
+              <label class="forte"><input type="radio" name="btts-${jogoTexto}" value="Forte"> Forte</label>
+              <label class="neutro"><input type="radio" name="btts-${jogoTexto}" value="Neutro"> Neutro</label>
+              <label class="baixo"><input type="radio" name="btts-${jogoTexto}" value="Baixo"> Baixo</label>
             `;
             tr.appendChild(tdBTTS);
 
-            // Coluna Gols 2,5
+            // Coluna Mais 2,5 Gols
             const tdGols = document.createElement('td');
             tdGols.className = 'radio-group';
             tdGols.innerHTML = `
-              <label><input type="radio" name="over-${jogoTexto}" value="Mais"><span class="forte">Mais 2,5</span></label>
-              <label><input type="radio" name="over-${jogoTexto}" value="Menos"><span class="baixo">Menos 2,5</span></label>
-              <label><input type="radio" name="over-${jogoTexto}" value="Neutro"><span class="neutro">Neutro</span></label>
+              <label class="sim"><input type="radio" name="over-${jogoTexto}" value="Sim"> Sim</label>
+              <label class="neutro"><input type="radio" name="over-${jogoTexto}" value="Neutro"> Neutro</label>
+              <label class="nao"><input type="radio" name="over-${jogoTexto}" value="Não"> Não</label>
             `;
             tr.appendChild(tdGols);
 
@@ -204,7 +195,7 @@
     }
 
     function exportarExcel() {
-      let csv = 'Jogo;BTTS;Gols 2,5\n';
+      let csv = 'Jogo;BTTS;Mais 2,5 Gols\n';
 
       todosJogos.forEach(jogo => {
         const btts = document.querySelector(`input[name="btts-${jogo}"]:checked`);
