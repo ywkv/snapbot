@@ -70,16 +70,13 @@
     tbody tr:nth-child(even) {
       background-color: #ecf0f1;
     }
-    .radio-group label {
-      margin: 0 10px;
-      font-size: 14px;
-      font-weight: bold;
+    .checkbox-group {
+      text-align: center;
+    }
+    .checkbox-group input[type="checkbox"] {
+      transform: scale(1.3);
       cursor: pointer;
     }
-    .sim { color: #27ae60; }     /* Verde */
-    .neutro { color: #000000; }  /* Preto */
-    .nao { color: #e74c3c; }     /* Vermelho */
-
     @media(max-width: 768px) {
       table, th, td {
         font-size: 14px;
@@ -150,24 +147,16 @@
             tdJogo.textContent = jogoTexto;
             tr.appendChild(tdJogo);
 
-            // Coluna BTTS
+            // Coluna BTTS (checkbox apenas)
             const tdBTTS = document.createElement('td');
-            tdBTTS.className = 'radio-group';
-            tdBTTS.innerHTML = `
-              <label class="sim"><input type="radio" name="btts-${jogoTexto}" value="Sim"> Sim</label>
-              <label class="neutro"><input type="radio" name="btts-${jogoTexto}" value="Neutro"> Neutro</label>
-              <label class="nao"><input type="radio" name="btts-${jogoTexto}" value="Não"> Não</label>
-            `;
+            tdBTTS.className = 'checkbox-group';
+            tdBTTS.innerHTML = `<input type="checkbox" name="btts-${jogoTexto}">`;
             tr.appendChild(tdBTTS);
 
-            // Coluna Mais 2,5 Gols
+            // Coluna Mais 2,5 Gols (checkbox apenas)
             const tdGols = document.createElement('td');
-            tdGols.className = 'radio-group';
-            tdGols.innerHTML = `
-              <label class="sim"><input type="radio" name="over-${jogoTexto}" value="Sim"> Sim</label>
-              <label class="neutro"><input type="radio" name="over-${jogoTexto}" value="Neutro"> Neutro</label>
-              <label class="nao"><input type="radio" name="over-${jogoTexto}" value="Não"> Não</label>
-            `;
+            tdGols.className = 'checkbox-group';
+            tdGols.innerHTML = `<input type="checkbox" name="over-${jogoTexto}">`;
             tr.appendChild(tdGols);
 
             // Coluna Ações
@@ -196,13 +185,13 @@
       let csv = 'Jogo;BTTS;Mais 2,5 Gols\n';
 
       todosJogos.forEach(jogo => {
-        const btts = document.querySelector(`input[name="btts-${jogo}"]:checked`);
-        const gols = document.querySelector(`input[name="over-${jogo}"]:checked`);
-        if (btts || gols) {
-          const bttsVal = btts ? btts.value : '';
-          const golsVal = gols ? gols.value : '';
-          csv += `"${jogo}";"${bttsVal}";"${golsVal}"\n`;
-        }
+        const btts = document.querySelector(`input[name="btts-${jogo}"]`);
+        const gols = document.querySelector(`input[name="over-${jogo}"]`);
+        
+        const bttsVal = btts && btts.checked ? 'Sim' : 'Não';
+        const golsVal = gols && gols.checked ? 'Sim' : 'Não';
+        
+        csv += `"${jogo}";"${bttsVal}";"${golsVal}"\n`;
       });
 
       const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
