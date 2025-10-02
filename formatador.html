@@ -71,12 +71,24 @@
       background-color: #ecf0f1;
     }
     .radio-group label {
-      font-size: 20px;
       margin: 0 5px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
     }
+    /* Cores */
+    .forte { background-color: #27ae60; color: #fff; }   /* Verde */
+    .leve { background-color: #f1c40f; color: #000; }   /* Amarelo */
+    .neutro { background-color: #95a5a6; color: #fff; } /* Cinza */
+    .baixo { background-color: #e74c3c; color: #fff; }  /* Vermelho */
+
     .radio-group input[type="radio"] {
-      transform: scale(1.2);
-      margin-right: 3px;
+      display: none;
+    }
+    .radio-group input[type="radio"]:checked + span {
+      outline: 2px solid #2c3e50;
     }
     @media(max-width: 768px) {
       table, th, td {
@@ -148,18 +160,28 @@
             tdJogo.textContent = jogoTexto;
             tr.appendChild(tdJogo);
 
+            // Coluna BTTS
             const tdBTTS = document.createElement('td');
             tdBTTS.className = 'radio-group';
-            tdBTTS.innerHTML = `<label><input type="radio" name="btts-${jogoTexto}" value="sim"> ✅</label>
-                                 <label><input type="radio" name="btts-${jogoTexto}" value="nao"> ❌</label>`;
+            tdBTTS.innerHTML = `
+              <label><input type="radio" name="btts-${jogoTexto}" value="Forte"><span class="forte">Forte</span></label>
+              <label><input type="radio" name="btts-${jogoTexto}" value="Leve"><span class="leve">Leve</span></label>
+              <label><input type="radio" name="btts-${jogoTexto}" value="Neutro"><span class="neutro">Neutro</span></label>
+              <label><input type="radio" name="btts-${jogoTexto}" value="Baixo"><span class="baixo">Baixo</span></label>
+            `;
             tr.appendChild(tdBTTS);
 
+            // Coluna Gols 2,5
             const tdGols = document.createElement('td');
             tdGols.className = 'radio-group';
-            tdGols.innerHTML = `<label><input type="radio" name="over-${jogoTexto}" value="mais2.5"> ✅</label>
-                                 <label><input type="radio" name="over-${jogoTexto}" value="menos2.5"> ❌</label>`;
+            tdGols.innerHTML = `
+              <label><input type="radio" name="over-${jogoTexto}" value="Mais"><span class="forte">Mais 2,5</span></label>
+              <label><input type="radio" name="over-${jogoTexto}" value="Menos"><span class="baixo">Menos 2,5</span></label>
+              <label><input type="radio" name="over-${jogoTexto}" value="Neutro"><span class="neutro">Neutro</span></label>
+            `;
             tr.appendChild(tdGols);
 
+            // Coluna Ações
             const tdAcao = document.createElement('td');
             const btnExcluir = document.createElement('button');
             btnExcluir.textContent = "🗑️ Excluir";
@@ -188,8 +210,8 @@
         const btts = document.querySelector(`input[name="btts-${jogo}"]:checked`);
         const gols = document.querySelector(`input[name="over-${jogo}"]:checked`);
         if (btts || gols) {
-          const bttsVal = btts ? (btts.value === 'sim' ? '✅' : '❌') : '';
-          const golsVal = gols ? (gols.value === 'mais2.5' ? '✅' : '❌') : '';
+          const bttsVal = btts ? btts.value : '';
+          const golsVal = gols ? gols.value : '';
           csv += `"${jogo}";"${bttsVal}";"${golsVal}"\n`;
         }
       });
