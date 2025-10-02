@@ -3,31 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Analisador de Escanteios</title>
+  <title>Analisador Universal de Escanteios</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: dark light; }
-    .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
-
-  <!-- Navbar fixa -->
-  <nav class="fixed top-0 left-0 w-full bg-zinc-900/90 border-b border-zinc-800 backdrop-blur-md z-50">
-    <div class="max-w-4xl mx-auto px-6 py-3 flex justify-center gap-6 font-semibold text-sm">
-      <a href="index.html" class="hover:text-emerald-400 transition">Página Inicial</a>
-      <a href="escanteios.html" class="hover:text-emerald-400 transition">Escanteios</a>
-      <a href="gols.html" class="hover:text-emerald-400 transition">Gols</a>
-    </div>
-  </nav>
-
-  <!-- Conteúdo -->
-  <div class="max-w-4xl mx-auto p-6 space-y-6 pt-20">
+  <div class="max-w-4xl mx-auto p-6 space-y-6">
     <header>
-      <h1 class="text-2xl font-bold">Analisador de Escanteios</h1>
+      <h1 class="text-2xl font-bold">Analisador Universal de Escanteios</h1>
       <p class="text-zinc-400 mt-1">
-        Cole o bloco bruto do Flashscore (com últimos jogos).<br>
-        O script organiza e calcula a <strong>média de escanteios</strong> de cada time.
+        Cole o bloco bruto do Flashscore (últimos jogos de dois times).<br>
+        O script calcula a <strong>média de escanteios</strong> de cada time detectado e a <strong>soma das médias</strong>.
       </p>
     </header>
 
@@ -44,10 +32,8 @@
     </div>
 
     <!-- Resultados -->
-    <section id="results" class="hidden grid md:grid-cols-2 gap-4">
-      <div id="cardHome" class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></div>
-      <div id="cardAway" class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></div>
-    </section>
+    <section id="results" class="hidden grid md:grid-cols-2 gap-4"></section>
+    <section id="total" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></section>
   </div>
 
   <script>
@@ -81,51 +67,65 @@
           soma += m.golsB; n++;
         }
       }
-      return n ? (soma/n).toFixed(2) : "—";
+      return n ? (soma/n) : null;
     }
 
     function analyze(){
       const raw = $("taUnified").value || "";
       const lines = raw.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
 
-      // Divide em blocos Santos / Grêmio
-      const idxSantos = lines.findIndex(l => l.includes("Santos") && lines[lines.indexOf(l)+1]?.includes("Resultados recentes"));
-      const idxGremio = lines.findIndex(l => l.includes("Grêmio") && lines[lines.indexOf(l)+1]?.includes("Resultados recentes"));
-
-      const blocos = { santos: [], gremio: [] };
-      if (idxSantos >= 0) {
-        const start = idxSantos+2;
-        const end = idxGremio >= 0 ? idxGremio : lines.length;
-        blocos.santos = lines.slice(start,end);
-      }
-      if (idxGremio >= 0) {
-        const start = idxGremio+2;
-        blocos.gremio = lines.slice(start);
+      // Encontrar blocos "Resultados recentes do X"
+      let blocos = {};
+      for (let i=0; i<lines.length; i++){
+        if (lines[i].includes("Resultados recentes")) {
+          const nomeTime = lines[i-1]?.trim() || `Time${i}`;
+          // pega tudo até o próximo "Resultados recentes" ou fim
+          let j = i+1;
+          while(j < lines.length && !lines[j].includes("Resultados recentes")) j++;
+          blocos[nomeTime] = lines.slice(i+1, j);
+        }
       }
 
-      const jogosSantos = parseMatches(blocos.santos);
-      const jogosGremio = parseMatches(blocos.gremio);
+      let cards = "";
+      let medias = [];
 
-      const mediaSantos = cornerAvgFrom(jogosSantos,"Santos");
-      const mediaGremio = cornerAvgFrom(jogosGremio,"Grêmio");
+      for (const time in blocos) {
+        const jogos = parseMatches(blocos[time]);
+        const media = cornerAvgFrom(jogos,time);
+        if (media != null) {
+          medias.push({time, media});
+          cards += `
+            <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
+              <h3 class="font-semibold mb-2">${time}</h3>
+              <p class="text-emerald-300">Média de escanteios: <b>${media.toFixed(2)}</b></p>
+            </div>`;
+        }
+      }
 
       $("results").classList.remove('hidden');
-      $("cardHome").innerHTML = `
-        <h3 class="font-semibold mb-2">Casa (Santos)</h3>
-        <p class="text-emerald-300">Média de escanteios do Santos: <b>${mediaSantos}</b></p>
-      `;
-      $("cardAway").innerHTML = `
-        <h3 class="font-semibold mb-2">Fora (Grêmio)</h3>
-        <p class="text-sky-300">Média de escanteios do Grêmio: <b>${mediaGremio}</b></p>
-      `;
+      $("results").innerHTML = cards;
+
+      // Soma das médias (apenas se tiver 2 times)
+      if (medias.length === 2){
+        const soma = (medias[0].media + medias[1].media).toFixed(2);
+        $("total").classList.remove('hidden');
+        $("total").innerHTML = `
+          <h3 class="font-semibold mb-2">Soma das médias</h3>
+          <p class="text-pink-300">${medias[0].time} (${medias[0].media.toFixed(2)}) + ${medias[1].time} (${medias[1].media.toFixed(2)}) = <b>${soma}</b></p>
+        `;
+      } else {
+        $("total").classList.add('hidden');
+        $("total").innerHTML = "";
+      }
     }
 
     $("btnAnalyze").addEventListener('click', analyze);
     $("btnClear").addEventListener('click', () => {
       $("taUnified").value = '';
       $("results").classList.add('hidden');
-      $("cardHome").innerHTML = '';
-      $("cardAway").innerHTML = '';
+      $("results").innerHTML = '';
+      $("total").classList.add('hidden');
+      $("total").innerHTML = '';
     });
   </script>
 </body>
