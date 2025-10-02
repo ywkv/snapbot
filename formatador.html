@@ -76,10 +76,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .forte { color: #27ae60; }   /* Verde */
-    .neutro { color: #95a5a6; }  /* Cinza */
-    .baixo { color: #e74c3c; }   /* Vermelho */
     .sim { color: #27ae60; }     /* Verde */
+    .neutro { color: #000000; }  /* Preto */
     .nao { color: #e74c3c; }     /* Vermelho */
 
     @media(max-width: 768px) {
@@ -156,9 +154,9 @@
             const tdBTTS = document.createElement('td');
             tdBTTS.className = 'radio-group';
             tdBTTS.innerHTML = `
-              <label class="forte"><input type="radio" name="btts-${jogoTexto}" value="Forte"> Forte</label>
+              <label class="sim"><input type="radio" name="btts-${jogoTexto}" value="Sim"> Sim</label>
               <label class="neutro"><input type="radio" name="btts-${jogoTexto}" value="Neutro"> Neutro</label>
-              <label class="baixo"><input type="radio" name="btts-${jogoTexto}" value="Baixo"> Baixo</label>
+              <label class="nao"><input type="radio" name="btts-${jogoTexto}" value="Não"> Não</label>
             `;
             tr.appendChild(tdBTTS);
 
