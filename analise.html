@@ -1,4 +1,4 @@
-<!doctype html> 
+<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -7,11 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: dark light; }
-    /* Fallback da classe .badge para funcionar bem mesmo com Tailwind via CDN */
-    .badge{
-      display:inline-flex;align-items:center;border-radius:9999px;
-      padding:2px 10px;font-size:.75rem;font-weight:600;line-height:1.2
-    }
+    .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
@@ -31,7 +27,8 @@
       <h2 class="font-semibold">Entrada — <span class="text-emerald-300">Geral (colar do Flashscore, sem formatação)</span></h2>
       <textarea id="taUnified" rows="5" placeholder="Cole aqui todo o conteúdo bruto do Flashscore (Casa, Fora e Confrontos Diretos) — pode vir com datas, siglas e 'Mostrar mais jogos'." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl p-3 text-sm"></textarea>
       <div class="flex items-center gap-4 text-sm text-zinc-400">
-        <!-- Checkboxes removidos conforme solicitado -->
+        <label class="flex items-center gap-2"><input id="optLower" type="checkbox" class="accent-emerald-400"> converter nomes para minúsculas</label>
+        <label class="flex items-center gap-2"><input id="optResultSuffix" type="checkbox" class="accent-emerald-400"> manter sufixo de resultado ( - V/D/E) quando existir</label>
       </div>
     </section>
 
@@ -52,18 +49,45 @@
       <div id="cardH2H"  class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></div>
     </section>
 
-    <!-- DECISÃO com 3 estados: SIM / TALVEZ / NÃO -->
     <section id="decision" class="hidden bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 space-y-6">
       <div>
         <h3 class="text-xl font-bold mb-3">Veredito — BTTS</h3>
-        <div id="verdictLineBTTS" class="mb-1"></div>
-        <p id="infoBTTS" class="text-xs text-zinc-400"></p>
+        <div id="verdictLineBTTS" class="mb-3"></div>
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <h4 class="font-semibold mb-1">Cálculo (estilo tipster)</h4>
+            <ul id="calcListBTTS" class="list-disc pl-6 space-y-1 text-zinc-300"></ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-1">Regras de decisão</h4>
+            <ul class="list-disc pl-6 space-y-1 text-zinc-300">
+              <li><span class="badge bg-emerald-900/50 text-emerald-200">BTTS Forte</span>: p ≥ 60% e Casa &amp; Fora ≥ 55%.</li>
+              <li><span class="badge bg-amber-900/40 text-amber-200">BTTS Leve</span>: 52% ≤ p &lt; 60%.</li>
+              <li><span class="badge bg-zinc-800 text-zinc-200">Neutro</span>: faixa intermediária não-criteriosa.</li>
+              <li><span class="badge bg-rose-900/50 text-rose-200">Contra-BTTS</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="border-t border-zinc-700 pt-6">
         <h3 class="text-xl font-bold mb-3">Veredito — Over 2.5</h3>
-        <div id="verdictLineO25" class="mb-1"></div>
-        <p id="infoO25" class="text-xs text-zinc-400"></p>
+        <div id="verdictLineO25" class="mb-3"></div>
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <h4 class="font-semibold mb-1">Cálculo (estilo tipster)</h4>
+            <ul id="calcListO25" class="list-disc pl-6 space-y-1 text-zinc-300"></ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-1">Regras de decisão</h4>
+            <ul class="list-disc pl-6 space-y-1 text-zinc-300">
+              <li><span class="badge bg-emerald-900/50 text-emerald-200">Over Forte</span>: p ≥ 60% e GPG médio ≥ 2.70.</li>
+              <li><span class="badge bg-amber-900/40 text-amber-200">Over Leve</span>: 52% ≤ p &lt; 60%.</li>
+              <li><span class="badge bg-zinc-800 text-zinc-200">Neutro</span>: faixa intermediária não-criteriosa.</li>
+              <li><span class="badge bg-rose-900/50 text-rose-200">Contra-Over</span>: p ≤ 48% ou ≥2 fontes ≤ 40%.</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -212,44 +236,25 @@
         </div>`;
     }
 
-    // ===== NOVAS FUNÇÕES: smoothing (Beta), intervalo Wilson, confiança =====
-    function betaPosteriorMean(k, n, alpha=1, beta=1){
-      return (k + alpha) / (n + alpha + beta);
+    function decideVerdictBTTS(p, pH, pA, pD){
+      let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
+      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Contra-BTTS'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      else if (p >= 0.60 && pH>=0.55 && pA>=0.55) { label='BTTS Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
+      else if (p >= 0.52 && p < 0.60) { label='BTTS Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
+      return {label, cls, emoji};
     }
-    function wilsonInterval(k, n, z=1.96){
-      if (n === 0) return {p: NaN, lower: 0, upper: 1};
-      const p = k / n;
-      const z2 = z*z;
-      const denom = 1 + z2/n;
-      const centre = p + z2/(2*n);
-      const rad = z * Math.sqrt((p*(1-p) + z2/(4*n)) / n);
-      const lower = Math.max(0, (centre - rad) / denom);
-      const upper = Math.min(1, (centre + rad) / denom);
-      return {p, lower, upper};
-    }
-    function confidenceFromN(n, k=3){ return n / (n + k); }
-
-    // ===== NOVO: Decisor TRI-ESTADO (SIM / TALVEZ / NÃO)
-    // Regras:
-    // - Limiar alto (SIM): 60% se N efetivo < 5; caso contrário 55%
-    // - Limiar baixo (NÃO): 50% se N efetivo < 5; caso contrário 45%
-    // - TALVEZ: intervalo entre os dois limiares ou quando não há dados
-    function decideTri(p, effectiveN){
-      const tHi = effectiveN < 5 ? 0.60 : 0.55;
-      const tLo = effectiveN < 5 ? 0.50 : 0.45;
-      if (!isFinite(p) || effectiveN === 0){
-        return { verdict: 'TALVEZ', tHi, tLo, reason: 'sem dados suficientes' };
-      }
-      let verdict = 'TALVEZ';
-      if (p >= tHi) verdict = 'SIM';
-      else if (p <= tLo) verdict = 'NÃO';
-      return { verdict, tHi, tLo, reason: `effectiveN=${effectiveN}` };
+    function decideVerdictO25(p, meanG, pH, pA, pD){
+      let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
+      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Contra-Over'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      else if (p >= 0.60 && isFinite(meanG) && meanG >= 2.70) { label='Over Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
+      else if (p >= 0.52 && p < 0.60) { label='Over Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
+      return {label, cls, emoji};
     }
 
     function analyze(){
       const raw = $("taUnified").value || "";
-      const lower = false;
-      const appendResult = false;
+      const lower = $("optLower").checked;
+      const appendResult = $("optResultSuffix").checked;
 
       // 1) Normaliza → separa em Casa/Fora/H2H
       const secc = splitSections(raw);
@@ -280,100 +285,68 @@
       $("cardAway").innerHTML = cardHTML('FORA (últimos 5)', stA, 'bg-sky-900/40 text-sky-100');
       $("cardH2H").innerHTML  = cardHTML('H2H (últimos 5)',  stD, 'bg-amber-900/40 text-amber-100');
 
-      // pesos base
-      const wH_base = 0.4;
-      const wA_base = 0.4;
-      const wD_base = 0.2;
+// Pesos fixos (não precisam de input)
+const wH = 0.4;   // peso jogos em casa
+const wA = 0.4;   // peso jogos fora
+const wD = 0.2;   // peso confrontos diretos
+const sumW = wH + wA + wD;
 
-      // suavização Beta por fonte
-      const pH_post = betaPosteriorMean(stH.btts, stH.n, 1, 1);
-      const pA_post = betaPosteriorMean(stA.btts, stA.n, 1, 1);
-      const pD_post = betaPosteriorMean(stD.btts, stD.n, 1, 1);
-
-      const pH_o_post = betaPosteriorMean(stH.over25, stH.n, 1, 1);
-      const pA_o_post = betaPosteriorMean(stA.over25, stA.n, 1, 1);
-      const pD_o_post = betaPosteriorMean(stD.over25, stD.n, 1, 1);
-
-      // confiança por n
-      const cH = confidenceFromN(stH.n, 3), cA = confidenceFromN(stA.n, 3), cD = confidenceFromN(stD.n, 3);
-
-      // pesos ajustados por confiança
-      let wH = wH_base * cH, wA = wA_base * cA, wD = wD_base * cD;
-      const sumW_conf = (wH + wA + wD) || 1;
-      wH /= sumW_conf; wA /= sumW_conf; wD /= sumW_conf;
-
-      const effectiveN = stH.n + stA.n + stD.n;
-
-      // ===== BTTS combinado
-      const baseBTTS = (wH * pH_post + wA * pA_post + wD * pD_post);
+      // BTTS combinado
+      const pH = stH.pBTTS || 0, pA = stA.pBTTS || 0, pD = stD.pBTTS || 0;
+      const baseBTTS = (wH * pH + wA * pA + wD * pD) / sumW;
       const avgG_list = [stH.gpg, stA.gpg, stD.gpg].filter(Number.isFinite);
       const meanG = avgG_list.length ? avgG_list.reduce((a,b)=>a+b,0)/avgG_list.length : 2.6;
-      const factorGoalsBTTS = Math.min(1.2, Math.max(0.8, meanG / 2.6));
+      const factorGoalsBTTS = Math.min(1.2, Math.max(0.8, meanG / 2.6)); // baseline 2.6 g/jogo
       let pBTTS = Math.min(1, Math.max(0, baseBTTS * factorGoalsBTTS));
-      if (pH_post>=0.55 && pA_post>=0.55 && pD_post>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
-
-      // intervalo Wilson informativo (aprox. com N efetivo)
-      const wiBTTS = wilsonInterval(Math.round(pBTTS * effectiveN), effectiveN);
-
-      // decisão TRI para BTTS
-      const triBTTS = decideTri(pBTTS, effectiveN);
-      const badgeBTTSClass =
-        triBTTS.verdict === 'SIM' ? 'bg-emerald-700 text-emerald-100' :
-        triBTTS.verdict === 'NÃO' ? 'bg-rose-700 text-rose-100' :
-        'bg-amber-600 text-amber-100';
-      const emojiBTTS =
-        triBTTS.verdict === 'SIM' ? '✅' :
-        triBTTS.verdict === 'NÃO' ? '⛔' : '🟡';
+      if (pH>=0.55 && pA>=0.55 && pD>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
+      const {label: labB, cls: clsB, emoji: emB} = decideVerdictBTTS(pBTTS, pH, pA, pD);
 
       $("decision").classList.remove('hidden');
       $("verdictLineBTTS").innerHTML = `
-        <div class="flex flex-wrap items-center gap-3">
-          <span class="badge ${badgeBTTSClass} text-sm">${emojiBTTS} ${triBTTS.verdict}</span>
-          <div class="text-zinc-300 text-sm">
-            Prob: <strong>${pct(pBTTS)}</strong>
-            • Limiar SIM ≥ ${(triBTTS.tHi*100).toFixed(0)}%
-            • TALVEZ ${Math.round(triBTTS.tLo*100)}–${Math.round(triBTTS.tHi*100)}%
-            • NÃO ≤ ${(triBTTS.tLo*100).toFixed(0)}%
-            — ${triBTTS.reason}
-          </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="badge ${clsB}">${emB} ${labB}</span>
+          <span class="text-zinc-300">Prob. combinada (p): <span class="font-semibold">${pct(pBTTS)}</span></span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-300">Casa: <strong>${pct(pH)}</strong></span>
+          <span class="text-zinc-300">Fora: <strong>${pct(pA)}</strong></span>
+          <span class="text-zinc-300">H2H: <strong>${pct(pD)}</strong></span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-400">Gols médios: <strong>${isFinite(meanG)?meanG.toFixed(2):'—'}</strong> (fator ${factorGoalsBTTS.toFixed(2)})</span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(pBTTS)}</strong></span>
         </div>`;
-      $("infoBTTS").innerText =
-        `Fonte (suavizado): Casa ${pct(pH_post)} (n=${stH.n}), Fora ${pct(pA_post)} (n=${stA.n}), H2H ${pct(pD_post)} (n=${stD.n}). `
-        + `GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}. `
-        + `IC95%~BTTS: [${pct(wiBTTS.lower)}–${pct(wiBTTS.upper)}]. Odds justas≈ ${fairOdds(pBTTS)}.`;
 
-      // ===== Over 2.5 combinado
-      const baseO25 = (wH * pH_o_post + wA * pA_o_post + wD * pD_o_post);
-      const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6));
+      $("calcListBTTS").innerHTML = `
+        <li><strong>p base (BTTS)</strong> = (wC·pC + wF·pF + wH2H·pH2H) / soma dos pesos = <code>${(baseBTTS*100).toFixed(1)}%</code></li>
+        <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.80, 1.20] = <code>${factorGoalsBTTS.toFixed(2)}</code></li>
+        <li><strong>p ajustado</strong> = clamp(p base × fator [+5 p.p. se 3 fontes ≥55%]) = <code>${(pBTTS*100).toFixed(1)}%</code></li>`;
+
+      // Over 2.5 combinado
+      const pH_o = stH.pO25 || 0, pA_o = stA.pO25 || 0, pD_o = stD.pO25 || 0;
+      const baseO25 = (wH * pH_o + wA * pA_o + wD * pD_o) / sumW;
+      const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6)); // dá um pouco mais de amplitude
       let pO25 = Math.min(1, Math.max(0, baseO25 * factorGoalsO25));
-      if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03);
-
-      const wiO25 = wilsonInterval(Math.round(pO25 * effectiveN), effectiveN);
-
-      const triO25 = decideTri(pO25, effectiveN);
-      const badgeO25Class =
-        triO25.verdict === 'SIM' ? 'bg-emerald-700 text-emerald-100' :
-        triO25.verdict === 'NÃO' ? 'bg-rose-700 text-rose-100' :
-        'bg-amber-600 text-amber-100';
-      const emojiO25 =
-        triO25.verdict === 'SIM' ? '✅' :
-        triO25.verdict === 'NÃO' ? '⛔' : '🟡';
+      if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03); // bônus suave em cenários muito over
+      const {label: labO, cls: clsO, emoji: emO} = decideVerdictO25(pO25, meanG, pH_o, pA_o, pD_o);
 
       $("verdictLineO25").innerHTML = `
-        <div class="flex flex-wrap items-center gap-3">
-          <span class="badge ${badgeO25Class} text-sm">${emojiO25} ${triO25.verdict}</span>
-          <div class="text-zinc-300 text-sm">
-            Prob: <strong>${pct(pO25)}</strong>
-            • Limiar SIM ≥ ${(triO25.tHi*100).toFixed(0)}%
-            • TALVEZ ${Math.round(triO25.tLo*100)}–${Math.round(triO25.tHi*100)}%
-            • NÃO ≤ ${(triO25.tLo*100).toFixed(0)}%
-            — ${triO25.reason}
-          </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="badge ${clsO}">${emO} ${labO}</span>
+          <span class="text-zinc-300">Prob. combinada (p): <span class="font-semibold">${pct(pO25)}</span></span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-300">Casa: <strong>${pct(pH_o)}</strong></span>
+          <span class="text-zinc-300">Fora: <strong>${pct(pA_o)}</strong></span>
+          <span class="text-zinc-300">H2H: <strong>${pct(pD_o)}</strong></span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-400">Gols médios: <strong>${isFinite(meanG)?meanG.toFixed(2):'—'}</strong> (fator ${factorGoalsO25.toFixed(2)})</span>
+          <span class="text-zinc-500">|</span>
+          <span class="text-zinc-300">Fair odds (sem margem): <strong>${fairOdds(pO25)}</strong></span>
         </div>`;
-      $("infoO25").innerText =
-        `Fonte (suavizado): Casa ${pct(pH_o_post)} (n=${stH.n}), Fora ${pct(pA_o_post)} (n=${stA.n}), H2H ${pct(pD_o_post)} (n=${stD.n}). `
-        + `GPG médio: ${isFinite(meanG)?meanG.toFixed(2):'—'}. `
-        + `IC95%~O2.5: [${pct(wiO25.lower)}–${pct(wiO25.upper)}]. Odds justas≈ ${fairOdds(pO25)}.`;
+
+      $("calcListO25").innerHTML = `
+        <li><strong>p base (Over 2.5)</strong> = (wC·pC + wF·pF + wH2H·pH2H) / soma dos pesos = <code>${(baseO25*100).toFixed(1)}%</code></li>
+        <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.75, 1.25] = <code>${factorGoalsO25.toFixed(2)}</code></li>
+        <li><strong>p ajustado</strong> = clamp(p base × fator [+3 p.p. se GPG ≥ 2.9]) = <code>${(pO25*100).toFixed(1)}%</code></li>`;
     }
 
     $("btnAnalyze").addEventListener('click', analyze);
@@ -381,7 +354,9 @@
       $("taUnified").value = '';
       ["results","decision","detected"].forEach(id=>$(id).classList.add('hidden'));
       $("detectedTables").innerHTML = '';
-      ["cardHome","cardAway","cardH2H","verdictLineBTTS","verdictLineO25","infoBTTS","infoO25"].forEach(id=>{ const el = $(id); if (el) el.innerHTML = ''; });
+      ["cardHome","cardAway","cardH2H","verdictLineBTTS","calcListBTTS","verdictLineO25","calcListO25"].forEach(id=>{ const el = $(id); if (el) el.innerHTML = ''; });
+      $("optLower").checked = false;
+      $("optResultSuffix").checked = false;
     });
   </script>
 </body>
