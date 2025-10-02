@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Formatador Profissional de Jogos</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px 5px 10px 0;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    #extrairBtn {
+      background-color: #3498db;
+      color: white;
+    }
+    #exportBtn {
+      background-color: #2ecc71;
+      color: white;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 300px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      background-color: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ccc;
+    }
+    th {
+      background-color: #34495e;
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #ecf0f1;
+    }
+    .radio-group label {
+      font-size: 20px;
+      margin: 0 5px;
+    }
+    .radio-group input[type="radio"] {
+      transform: scale(1.2);
+      margin-right: 3px;
+    }
+    @media(max-width: 768px) {
+      table, th, td {
+        font-size: 14px;
+      }
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Formatador Profissional de Jogos</h1>
+
+  <button id="extrairBtn" onclick="extrair()">Extrair Jogos do Clipboard</button>
+  <button id="exportBtn" onclick="exportarExcel()">Exportar para Excel</button>
+
+  <input type="text" id="filtro" placeholder="Filtrar jogos..." onkeyup="filtrar()">
+
+  <table id="tabelaJogos">
+    <thead>
+      <tr>
+        <th>Jogo</th>
+        <th>BTTS</th>
+        <th>Gols 2,5</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <script>
+    let todosJogos = [];
+
+    async function extrair() {
+      try {
+        const texto = await navigator.clipboard.readText();
+        processarJogos(texto);
+      } catch (err) {
+        alert('Não foi possível acessar a área de transferência. Copie os dados e tente novamente.');
+        console.error(err);
+      }
+    }
+
+    function processarJogos(texto) {
+      const linhas = texto.split('\n').map(l => l.trim()).filter(l => l !== '');
+      const tbody = document.querySelector('#tabelaJogos tbody');
+      tbody.innerHTML = '';
+      todosJogos = [];
+
+      let hora = '';
+      let times = [];
+
+      linhas.forEach(linha => {
+        if (linha.includes('Classificação') || linha === '-' || linha === '') return;
+
+        if (/^\d{2}:\d{2}$/.test(linha)) {
+          hora = linha;
+          times = [];
+        } else if (hora) {
+          if (!times.includes(linha)) times.push(linha);
+          if (times.length === 2) {
+            const jogoTexto = `${hora} - ${times[0]} x ${times[1]}`;
+            todosJogos.push(jogoTexto);
+
+            const tr = document.createElement('tr');
+            const tdJogo = document.createElement('td');
+            tdJogo.textContent = jogoTexto;
+            tr.appendChild(tdJogo);
+
+            const tdBTTS = document.createElement('td');
+            tdBTTS.className = 'radio-group';
+            tdBTTS.innerHTML = `<label><input type="radio" name="btts-${jogoTexto}" value="sim"> ✅</label>
+                                 <label><input type="radio" name="btts-${jogoTexto}" value="nao"> ❌</label>`;
+            tr.appendChild(tdBTTS);
+
+            const tdGols = document.createElement('td');
+            tdGols.className = 'radio-group';
+            tdGols.innerHTML = `<label><input type="radio" name="over-${jogoTexto}" value="mais2.5"> ✅</label>
+                                 <label><input type="radio" name="over-${jogoTexto}" value="menos2.5"> ❌</label>`;
+            tr.appendChild(tdGols);
+
+            tbody.appendChild(tr);
+            times = [];
+            hora = '';
+          }
+        }
+      });
+    }
+
+    function exportarExcel() {
+      let csv = 'Jogo;BTTS;Gols 2,5\n';
+
+      todosJogos.forEach(jogo => {
+        const btts = document.querySelector(`input[name="btts-${jogo}"]:checked`);
+        const gols = document.querySelector(`input[name="over-${jogo}"]:checked`);
+        if (btts || gols) {
+          const bttsVal = btts ? (btts.value === 'sim' ? '✅' : '❌') : '';
+          const golsVal = gols ? (gols.value === 'mais2.5' ? '✅' : '❌') : '';
+          csv += `"${jogo}";"${bttsVal}";"${golsVal}"\n`;
+        }
+      });
+
+      const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'jogos_selecionados.csv';
+      link.click();
+    }
+
+    function filtrar() {
+      const filtro = document.getElementById('filtro').value.toLowerCase();
+      const tbody = document.querySelector('#tabelaJogos tbody');
+      tbody.querySelectorAll('tr').forEach(tr => {
+        const jogo = tr.cells[0].textContent.toLowerCase();
+        tr.style.display = jogo.includes(filtro) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
