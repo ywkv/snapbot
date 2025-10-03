@@ -76,8 +76,8 @@
       font-weight: bold;
       cursor: pointer;
     }
-    .sim { color: #27ae60; }     /* Verde */
-    .Talvez { color: #000000; }  /* Preto */
+    .Forte { color: #27ae60; }     /* Verde */
+    .Neutro { color: #000000; }  /* Preto */
     .nao { color: #e74c3c; }     /* Vermelho */
 
     @media(max-width: 768px) {
@@ -119,7 +119,7 @@
         const texto = await navigator.clipboard.readText();
         processarJogos(texto);
       } catch (err) {
-        alert('Não foi possível acessar a área de transferência. Copie os dados e tente novamente.');
+        alert('Ruim foi possível acessar a área de transferência. Copie os dados e tente novamente.');
         console.error(err);
       }
     }
@@ -154,9 +154,9 @@
             const tdBTTS = document.createElement('td');
             tdBTTS.className = 'radio-group';
             tdBTTS.innerHTML = `
-              <label class="sim"><input type="radio" name="btts-${jogoTexto}" value="Sim"> Sim</label>
-              <label class="Talvez"><input type="radio" name="btts-${jogoTexto}" value="Talvez"> Talvez</label>
-              <label class="nao"><input type="radio" name="btts-${jogoTexto}" value="Não"> Não</label>
+              <label class="Forte"><input type="radio" name="btts-${jogoTexto}" value="Forte"> Forte</label>
+              <label class="Neutro"><input type="radio" name="btts-${jogoTexto}" value="Neutro"> Neutro</label>
+              <label class="nao"><input type="radio" name="btts-${jogoTexto}" value="Ruim"> Ruim</label>
             `;
             tr.appendChild(tdBTTS);
 
@@ -164,9 +164,9 @@
             const tdGols = document.createElement('td');
             tdGols.className = 'radio-group';
             tdGols.innerHTML = `
-              <label class="sim"><input type="radio" name="over-${jogoTexto}" value="Sim"> Sim</label>
-              <label class="Talvez"><input type="radio" name="over-${jogoTexto}" value="Talvez"> Talvez</label>
-              <label class="nao"><input type="radio" name="over-${jogoTexto}" value="Não"> Não</label>
+              <label class="Forte"><input type="radio" name="over-${jogoTexto}" value="Forte"> Forte</label>
+              <label class="Neutro"><input type="radio" name="over-${jogoTexto}" value="Neutro"> Neutro</label>
+              <label class="nao"><input type="radio" name="over-${jogoTexto}" value="Ruim"> Ruim</label>
             `;
             tr.appendChild(tdGols);
 
