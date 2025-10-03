@@ -32,10 +32,22 @@
       </div>
     </section>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap">
       <button id="btnAnalyze" class="px-4 py-2 rounded-xl bg-white text-black font-semibold hover:opacity-90 transition">Analisar</button>
       <button id="btnClear" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition">Limpar</button>
+      <!-- === Botão Copiar (novo) === -->
+      <button id="btnCopy" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-500 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>Copiar</button>
+      <span id="copyStatus" class="text-sm text-zinc-400"></span>
     </div>
+
+    <!-- Saída rápida para conferência do texto que será copiado -->
+    <section id="export" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
+      <h3 class="font-semibold mb-2">Resumo em linha (para copiar)</h3>
+      <div class="relative">
+        <code id="exportLine" class="block w-full whitespace-pre-wrap break-words text-sm bg-zinc-950 border border-zinc-800 rounded-xl p-3"></code>
+      </div>
+      <p class="text-xs text-zinc-500 mt-2">Formato (3 colunas para Excel — Jogo, BTTS, Over 2.5): <span class="font-mono">Time A x Time B 	 (n%) - Nível 	 (n%) - Nível</span></p>
+    </section>
 
     <section id="detected" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
       <h3 class="font-semibold mb-2">Placar(es) detectados (após normalização)</h3>
@@ -96,6 +108,15 @@
     </footer>
   </div>
 
+  <!-- ===== Scroll-to-top button (adicionado) ===== -->
+  <button id="btnTop" aria-label="Subir ao topo" title="Subir ao topo"
+    class="fixed right-6 bottom-6 z-50 p-3 rounded-full bg-white text-black shadow-lg transition-transform duration-200 transform opacity-0 pointer-events-none focus:outline-none focus:ring-2 focus:ring-emerald-400">
+    <!-- SVG chevron up -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-middle">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
   <script>
     // ===== Utilidades & Seletores =====
     const $ = (id) => document.getElementById(id);
@@ -105,6 +126,9 @@
     const isResultLetter = (s) => /^[VDE]$/i.test(s.trim());
     const isAllCapsShort = (s) => /^[A-Z]{2,5}$/.test(s.trim()); // SRA, LIB etc.
     const bannedLines = ["Mostrar mais jogos", "Mostrar mais", "Show more"];
+
+    // Estado para copiar
+    let lastSummary = "";
 
     function isHeader(s){
       const t = s.trim();
@@ -157,6 +181,25 @@
       return secc;
     }
 
+    // === Captura "Últimos jogos: Time A" e "Últimos jogos: Time B" ===
+    function extractTeamsFromHeaders(raw, toLower=false){
+      const lines = raw.split(/\r?\n/);
+      const rx = /^(Últimos jogos|Ultimos jogos)\s*:\s*(.+)$/i;
+      const found = [];
+      for (const line of lines){
+        const m = line.match(rx);
+        if (m && m[2].trim()){
+          found.push(m[2].trim());
+          if (found.length === 2) break;
+        }
+      }
+      const [teamA, teamB] = [found[0] || 'Time A', found[1] || 'Time B'];
+      return {
+        teamA: toLower ? teamA.toLowerCase() : teamA,
+        teamB: toLower ? teamB.toLowerCase() : teamB,
+      };
+    }
+
     // ===== Extração de placares =====
     function extractInlineScores(lines){
       const out = [];
@@ -189,6 +232,7 @@
     }
 
     function pct(n){ return isFinite(n) ? (n*100).toFixed(1) + '%' : '—'; }
+    function pct0(n){ return isFinite(n) ? Math.round(n*100) + '%' : '—'; }
     function fairOdds(p){ return (p>0 ? (1/p).toFixed(2) : '—'); }
 
     function tableHTML(title, scores){
@@ -256,6 +300,9 @@
       const lower = $("optLower").checked;
       const appendResult = $("optResultSuffix").checked;
 
+      // 0) Captura os nomes dos times dos cabeçalhos
+      const { teamA, teamB } = extractTeamsFromHeaders(raw, lower);
+
       // 1) Normaliza → separa em Casa/Fora/H2H
       const secc = splitSections(raw);
       const casaNorm = parseLinesToMatches(secc.casa, { lower, appendResult }).list;
@@ -285,11 +332,11 @@
       $("cardAway").innerHTML = cardHTML('FORA (últimos 5)', stA, 'bg-sky-900/40 text-sky-100');
       $("cardH2H").innerHTML  = cardHTML('H2H (últimos 5)',  stD, 'bg-amber-900/40 text-amber-100');
 
-// Pesos fixos (não precisam de input)
-const wH = 0.4;   // peso jogos em casa
-const wA = 0.4;   // peso jogos fora
-const wD = 0.2;   // peso confrontos diretos
-const sumW = wH + wA + wD;
+      // Pesos fixos (não precisam de input)
+      const wH = 0.4;   // peso jogos em casa
+      const wA = 0.4;   // peso jogos fora
+      const wD = 0.2;   // peso confrontos diretos
+      const sumW = wH + wA + wD;
 
       // BTTS combinado
       const pH = stH.pBTTS || 0, pA = stA.pBTTS || 0, pD = stD.pBTTS || 0;
@@ -347,17 +394,90 @@ const sumW = wH + wA + wD;
         <li><strong>p base (Over 2.5)</strong> = (wC·pC + wF·pF + wH2H·pH2H) / soma dos pesos = <code>${(baseO25*100).toFixed(1)}%</code></li>
         <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.75, 1.25] = <code>${factorGoalsO25.toFixed(2)}</code></li>
         <li><strong>p ajustado</strong> = clamp(p base × fator [+3 p.p. se GPG ≥ 2.9]) = <code>${(pO25*100).toFixed(1)}%</code></li>`;
+
+      // === Monta a linha de exportação (3 colunas: Jogo 	 BTTS 	 Over 2.5) ===
+      const col1 = `${teamA} x ${teamB}`;           // Jogo
+      const col2 = `(${pct0(pBTTS)}) - ${labB}`;    // BTTS
+      const col3 = `(${pct0(pO25)}) - ${labO}`;     // Over 2.5
+      const line = `${col1}	${col2}	${col3}`;   // TABs para Excel
+      lastSummary = line;
+      // Exibição amigável (TAB -> espaços)
+      $("exportLine").textContent = `${col1}    ${col2}    ${col3}`;
+      $("export").classList.remove('hidden');
+      $("btnCopy").disabled = false;
+      $("copyStatus").textContent = '';
     }
 
     $("btnAnalyze").addEventListener('click', analyze);
     $("btnClear").addEventListener('click', () => {
       $("taUnified").value = '';
-      ["results","decision","detected"].forEach(id=>$(id).classList.add('hidden'));
+      ["results","decision","detected","export"].forEach(id=>$(id).classList.add('hidden'));
       $("detectedTables").innerHTML = '';
-      ["cardHome","cardAway","cardH2H","verdictLineBTTS","calcListBTTS","verdictLineO25","calcListO25"].forEach(id=>{ const el = $(id); if (el) el.innerHTML = ''; });
+      ["cardHome","cardAway","cardH2H","verdictLineBTTS","calcListBTTS","verdictLineO25","calcListO25","exportLine"].forEach(id=>{ const el = $(id); if (el) el.textContent = ''; });
       $("optLower").checked = false;
       $("optResultSuffix").checked = false;
+      $("btnCopy").disabled = true;
+      $("copyStatus").textContent = '';
     });
+
+    // ===== Ação do botão Copiar =====
+    $("btnCopy").addEventListener('click', async () => {
+      if (!lastSummary){
+        $("copyStatus").textContent = 'Nada para copiar — clique em Analisar primeiro.';
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(lastSummary);
+        const btn = $("btnCopy");
+        const old = btn.textContent;
+        btn.textContent = 'Copiado!';
+        $("copyStatus").textContent = 'Linha copiada para a área de transferência.';
+        setTimeout(()=>{ btn.textContent = old; $("copyStatus").textContent = ''; }, 1500);
+      } catch (e){
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = lastSummary; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); $("copyStatus").textContent = 'Copiado (fallback).'; }
+        catch { $("copyStatus").textContent = 'Não foi possível copiar automaticamente.'; }
+        ta.remove();
+      }
+    });
+
+    // ===== Scroll-to-top behavior =====
+    (function setupScrollTop(){
+      const btn = $("btnTop");
+      if (!btn) return;
+      const showAfter = 250; // mostra botão após 250px de scroll. ajuste se quiser.
+
+      function onScroll(){
+        if (window.scrollY > showAfter){
+          btn.classList.remove('opacity-0','pointer-events-none','scale-95');
+          btn.classList.add('opacity-100','scale-100');
+        } else {
+          btn.classList.add('opacity-0','pointer-events-none','scale-95');
+          btn.classList.remove('opacity-100','scale-100');
+        }
+      }
+
+      // Initial state
+      btn.classList.add('opacity-0','pointer-events-none','scale-95');
+      btn.classList.remove('opacity-100');
+
+      window.addEventListener('scroll', onScroll, {passive:true});
+
+      // Smooth scroll to top
+      btn.addEventListener('click', function(e){
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Also show the button if user tabs to it (accessibility)
+      btn.addEventListener('focus', () => {
+        btn.classList.remove('opacity-0','pointer-events-none','scale-95');
+        btn.classList.add('opacity-100','scale-100');
+      });
+      btn.addEventListener('blur', onScroll);
+    })();
   </script>
 </body>
 </html>
