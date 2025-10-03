@@ -124,8 +124,10 @@
     const isScoreNum = (s) => /^\d{1,2}$/.test(s.trim());
     const isDate = (s) => /^\d{2}\.\d{2}\.\d{2}$/.test(s.trim());
     const isResultLetter = (s) => /^[VDE]$/i.test(s.trim());
-    const isAllCapsShort = (s) => /^[A-Z]{2,5}$/.test(s.trim()); // SRA, LIB etc.
+    const isAllCapsShort = (s) => /^[A-Z]{2,3}$/.test(s.trim()); // SRA, LIB etc.
     const bannedLines = ["Mostrar mais jogos", "Mostrar mais", "Show more"];
+    // Times detectados nos cabeçalhos para permitir CAIXA ALTA curta (ex.: CRB)
+    let headerTeamsLower = new Set();
 
     // Estado para copiar
     let lastSummary = "";
@@ -137,7 +139,11 @@
     function isNoise(t){
       if (!t.trim()) return true;
       if (bannedLines.some(b => startsWithI(t,b))) return true;
-      if (isDate(t) || isAllCapsShort(t)) return true;
+      if (isDate(t)) return true;
+      // Se for sigla curta em CAIXA ALTA (2-3), só trate como ruído se NÃO for um dos times dos cabeçalhos
+      if (isAllCapsShort(t)) {
+        if (!headerTeamsLower.has(t.toLowerCase())) return true;
+      }
       return false;
     }
     function isTeamName(s){
@@ -302,6 +308,8 @@
 
       // 0) Captura os nomes dos times dos cabeçalhos
       const { teamA, teamB } = extractTeamsFromHeaders(raw, lower);
+      // Guarda times dos headers para liberar nomes em CAIXA ALTA curta (ex.: CRB)
+      headerTeamsLower = new Set([String(teamA).toLowerCase(), String(teamB).toLowerCase()]);
 
       // 1) Normaliza → separa em Casa/Fora/H2H
       const secc = splitSections(raw);
