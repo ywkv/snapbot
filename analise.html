@@ -3,11 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BTTS + Over 2.5 Analyzer — Campo Único + Normalizador (Flashscore)</title>
+  <title>BTTS + Over 2.5 + 1X2 Analyzer — Campo Único + Normalizador (Flashscore)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root { color-scheme: dark light; }
     .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium; }
+    .meter { @apply h-2 rounded-full overflow-hidden bg-zinc-800 border border-zinc-700; }
+    .meter > div { height: 100%; }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
@@ -15,12 +17,11 @@
   <div class="max-w-6xl mx-auto p-6 space-y-6 pt-20">
     <header class="flex items-start justify-between gap-4">
       <div>
-        <h1 class="text-2xl md:text-3xl font-bold">Analisador — Ambos Marcam (BTTS) + Over 2.5</h1>
+        <h1 class="text-2xl md:text-3xl font-bold">Analisador — Ambos Marcam (BTTS) + Over 2.5 + Resultado (1X2)</h1>
         <p class="text-zinc-400 mt-1">
-          Cole <strong>qualquer bloco bruto</strong> do Flashscore (com <em>Últimos jogos</em>, datas, siglas, "Mostrar mais jogos"...).
+          Cole <strong>qualquer bloco bruto</strong> do Flashscore (com <em>Últimos jogos</em>, datas, siglas, "Mostrar mais jogos"...). Agora inclui <span class="font-semibold text-emerald-300">projeção 1X2 (Casa, Empate, Fora)</span> com contexto de mando.
         </p>
       </div>
-
     </header>
 
     <section class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 space-y-3">
@@ -35,18 +36,16 @@
     <div class="flex items-center gap-3 flex-wrap">
       <button id="btnAnalyze" class="px-4 py-2 rounded-xl bg-white text-black font-semibold hover:opacity-90 transition">Analisar</button>
       <button id="btnClear" class="px-4 py-2 rounded-xl bg-zinc-800 text-zinc-100 hover:bg-zinc-700 transition">Limpar</button>
-      <!-- === Botão Copiar (novo) === -->
       <button id="btnCopy" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-semibold hover:bg-emerald-500 transition disabled:opacity-40 disabled:cursor-not-allowed" disabled>Copiar</button>
       <span id="copyStatus" class="text-sm text-zinc-400"></span>
     </div>
 
-    <!-- Saída rápida para conferência do texto que será copiado -->
     <section id="export" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
       <h3 class="font-semibold mb-2">Resumo em linha (para copiar)</h3>
       <div class="relative">
         <code id="exportLine" class="block w-full whitespace-pre-wrap break-words text-sm bg-zinc-950 border border-zinc-800 rounded-xl p-3"></code>
       </div>
-      <p class="text-xs text-zinc-500 mt-2">Formato (3 colunas para Excel — Jogo, BTTS, Over 2.5): <span class="font-mono">Time A x Time B 	 (n%) - Nível 	 (n%) - Nível</span></p>
+      <p class="text-xs text-zinc-500 mt-2">Formato (4 colunas para Excel — Jogo, BTTS, Over 2,5, 1X2): <span class="font-mono">Time A x Time B 	 BTTS (n%) - Nível 	 Over 2,5 (n%) - Nível 	 Casa/Empate/Fora (n%) - Nível</span></p>
     </section>
 
     <section id="detected" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
@@ -61,7 +60,13 @@
       <div id="cardH2H"  class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4"></div>
     </section>
 
-    <section id="decision" class="hidden bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 space-y-6">
+    <section id="wdlContext" class="hidden bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4">
+      <h3 class="font-semibold mb-3">1X2 — desempenho por contexto (últimos jogos)</h3>
+      <div id="wdlGrid" class="grid md:grid-cols-5 gap-4"></div>
+      <p class="text-xs text-zinc-400 mt-3">Os cartões mostram taxa de vitórias/empates/derrotas quando cada time atua em casa ou fora; H2H usa apenas partidas com o mandante igual ao time da casa atual.</p>
+    </section>
+
+    <section id="decision" class="hidden bg-zinc-900/80 border border-zinc-700 rounded-2xl p-6 space-y-8">
       <div>
         <h3 class="text-xl font-bold mb-3">Ambos Marcam</h3>
         <div id="verdictLineBTTS" class="mb-3"></div>
@@ -101,6 +106,37 @@
           </div>
         </div>
       </div>
+
+      <div class="border-t border-zinc-700 pt-6">
+        <h3 class="text-xl font-bold mb-3">Resultado (1X2)</h3>
+        <div id="verdictLine1X2" class="mb-4"></div>
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <h4 class="font-semibold mb-1">Cálculo e ponderação</h4>
+            <ul id="calcList1X2" class="list-disc pl-6 space-y-1 text-zinc-300"></ul>
+          </div>
+          <div>
+            <h4 class="font-semibold mb-1">Regras de decisão</h4>
+            <ul class="list-disc pl-6 space-y-1 text-zinc-300">
+              <li><span class="badge bg-emerald-900/50 text-emerald-200">Forte</span>: pTopo ≥ 55%, margem ≥ 8 p.p. e amostra efetiva ≥ 3 por fonte.</li>
+              <li><span class="badge bg-amber-900/40 text-amber-200">Leve</span>: 52% ≤ pTopo &lt; 55% ou margem de 4–8 p.p.</li>
+              <li><span class="badge bg-zinc-800 text-zinc-200">Neutro</span>: distribuição equilibrada (margem &lt; 4 p.p.).</li>
+              <li><span class="badge bg-rose-900/50 text-rose-200">Ruim</span>: pTopo ≤ 48% ou 2+ fontes com amostra ≤ 1.</li>
+            </ul>
+          </div>
+        </div>
+        <div id="tips1X2" class="mt-3 text-sm text-zinc-300"></div>
+      </div>
+    </section>
+
+    <!-- ===== Painel de Testes Rápidos (dev) ===== -->
+    <section class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-4 space-y-2">
+      <h3 class="font-semibold">Testes embutidos</h3>
+      <p class="text-xs text-zinc-400">Preenche o textarea com dados sintéticos e roda a análise. Útil para conferir BTTS, O2.5 e 1X2 sem ter que colar nada.</p>
+      <div class="flex gap-2 flex-wrap">
+        <button class="px-3 py-1 rounded-lg bg-zinc-800" onclick="runBuiltInTest('equilibrado')">Teste A — equilibrado</button>
+        <button class="px-3 py-1 rounded-lg bg-zinc-800" onclick="runBuiltInTest('over_btts')">Teste B — over & ambos</button>
+      </div>
     </section>
 
     <footer class="pt-4 text-xs text-zinc-500">
@@ -108,10 +144,8 @@
     </footer>
   </div>
 
-  <!-- ===== Scroll-to-top button (adicionado) ===== -->
   <button id="btnTop" aria-label="Subir ao topo" title="Subir ao topo"
     class="fixed right-6 bottom-6 z-50 p-3 rounded-full bg-white text-black shadow-lg transition-transform duration-200 transform opacity-0 pointer-events-none focus:outline-none focus:ring-2 focus:ring-emerald-400">
-    <!-- SVG chevron up -->
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-middle">
       <polyline points="18 15 12 9 6 15"></polyline>
     </svg>
@@ -124,9 +158,8 @@
     const isScoreNum = (s) => /^\d{1,2}$/.test(s.trim());
     const isDate = (s) => /^\d{2}\.\d{2}\.\d{2}$/.test(s.trim());
     const isResultLetter = (s) => /^[VDE]$/i.test(s.trim());
-    const isAllCapsShort = (s) => /^[A-Z]{2,3}$/.test(s.trim()); // SRA, LIB etc.
+    const isAllCapsShort = (s) => /^[A-Z]{2,3}$/.test(s.trim());
     const bannedLines = ["Mostrar mais jogos", "Mostrar mais", "Show more"];
-    // Times detectados nos cabeçalhos para permitir CAIXA ALTA curta (ex.: CRB)
     let headerTeamsLower = new Set();
 
     // Estado para copiar
@@ -140,7 +173,6 @@
       if (!t.trim()) return true;
       if (bannedLines.some(b => startsWithI(t,b))) return true;
       if (isDate(t)) return true;
-      // Se for sigla curta em CAIXA ALTA (2-3), só trate como ruído se NÃO for um dos times dos cabeçalhos
       if (isAllCapsShort(t)) {
         if (!headerTeamsLower.has(t.toLowerCase())) return true;
       }
@@ -156,7 +188,6 @@
     }
     function normalizeCase(name, lower){ return lower ? name.toLowerCase() : name; }
 
-    // Converte sequência TeamA, TeamB, G1, G2, [V/D/E?] em "TeamA G1 x G2 TeamB"
     function parseLinesToMatches(lines, opts){
       const clean = lines.map(s=>s.replace(/\t/g,' ').trim()).filter(Boolean).filter(l => !bannedLines.some(b=>startsWithI(l,b)));
       const out = [];
@@ -171,7 +202,6 @@
       return {list: out};
     }
 
-    // Divide o colado em 3 seções: 1º "Últimos jogos" → Casa; 2º "Últimos jogos" → Fora; "Confrontos diretos" → H2H
     function splitSections(all){
       const lines = all.split(/\r?\n/);
       const idxs = [];
@@ -187,7 +217,6 @@
       return secc;
     }
 
-    // === Captura "Últimos jogos: Time A" e "Últimos jogos: Time B" ===
     function extractTeamsFromHeaders(raw, toLower=false){
       const lines = raw.split(/\r?\n/);
       const rx = /^(Últimos jogos|Ultimos jogos)\s*:\s*(.+)$/i;
@@ -200,27 +229,27 @@
         }
       }
       const [teamA, teamB] = [found[0] || 'Time A', found[1] || 'Time B'];
-      return {
-        teamA: toLower ? teamA.toLowerCase() : teamA,
-        teamB: toLower ? teamB.toLowerCase() : teamB,
-      };
+      return { teamA: toLower ? teamA.toLowerCase() : teamA, teamB: toLower ? teamB.toLowerCase() : teamB };
     }
 
-    // ===== Extração de placares =====
-    function extractInlineScores(lines){
-      const out = [];
-      const rx = /(\d{1,2})\s*[-:xX]\s*(\d{1,2})/; // 1-0, 1:0, 1 x 0
+    // ===== Parser de linhas normalizadas → objetos {homeTeam, awayTeam, gH, gA, res?}
+    function parseNormalizedMatches(lines){
+      const rx = /^(.*?)\s+(\d{1,2})\s*[xX:\-]\s*(\d{1,2})\s+(.*?)(?:\s*\-\s*([VDE]))?\s*$/i;
+      const list = [];
       for (const line of lines){
         const m = line.match(rx);
-        if (m){
-          const a = parseInt(m[1], 10), b = parseInt(m[2], 10);
-          if (!isNaN(a)&&!isNaN(b)&&a<=20&&b<=20) out.push([a,b]);
-        }
+        if (!m) continue;
+        const homeTeam = m[1].trim();
+        const gH = parseInt(m[2],10);
+        const gA = parseInt(m[3],10);
+        const awayTeam = m[4].trim();
+        const res = m[5] ? m[5].toUpperCase() : null;
+        if (Number.isFinite(gH) && Number.isFinite(gA)) list.push({homeTeam, awayTeam, gH, gA, res});
       }
-      return out;
+      return list;
     }
 
-    // ===== Estatísticas por conjunto =====
+    // ===== Estatísticas básicas (BTTS/O2.5)
     function statsFrom(scores){
       const n = scores.length;
       if (n === 0) return {n:0, btts:0, pBTTS:NaN, over25:0, pO25:NaN, gpg:NaN, streakBTTS:0};
@@ -286,43 +315,92 @@
         </div>`;
     }
 
-    function decideVerdictBTTS(p, pH, pA, pD){
+    // ===== WDL por equipe/condição =====
+    function wdlForTeam(matchesParsed, team){
+      const agg = { home: {n:0, w:0, d:0, l:0}, away: {n:0, w:0, d:0, l:0}, all:  {n:0, w:0, d:0, l:0} };
+      for (const m of matchesParsed){
+        if (m.homeTeam === team){
+          agg.home.n++; agg.all.n++;
+          if (m.gH > m.gA){ agg.home.w++; agg.all.w++; }
+          else if (m.gH === m.gA){ agg.home.d++; agg.all.d++; }
+          else { agg.home.l++; agg.all.l++; }
+        } else if (m.awayTeam === team){
+          agg.away.n++; agg.all.n++;
+          if (m.gA > m.gH){ agg.away.w++; agg.all.w++; }
+          else if (m.gA === m.gH){ agg.away.d++; agg.all.d++; }
+          else { agg.away.l++; agg.all.l++; }
+        }
+      }
+      function rates(x){ return x.n ? {pW:x.w/x.n, pD:x.d/x.n, pL:x.l/x.n} : {pW:NaN,pD:NaN,pL:NaN}; }
+      return { home: {...agg.home, ...rates(agg.home)}, away: {...agg.away, ...rates(agg.away)}, all:  {...agg.all,  ...rates(agg.all)} };
+    }
+
+    function wdlCard(title, obj){
+      const n = obj.n || 0;
+      const warn = n < 2 ? '<div class="text-amber-300 text-xs">amostra baixa</div>' : '';
+      return `
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-3">
+          <div class="flex items-center justify-between mb-1"><h4 class="font-semibold text-sm">${title}</h4><span class="badge bg-zinc-800 text-zinc-200">n=${n}</span></div>
+          ${warn}
+          <div class="text-xs grid grid-cols-3 gap-2">
+            <div>
+              <div class="text-zinc-400">Vitórias</div>
+              <div class="font-semibold">${isFinite(obj.pW)?pct(obj.pW):'—'}</div>
+            </div>
+            <div>
+              <div class="text-zinc-400">Empates</div>
+              <div class="font-semibold">${isFinite(obj.pD)?pct(obj.pD):'—'}</div>
+            </div>
+            <div>
+              <div class="text-zinc-400">Derrotas</div>
+              <div class="font-semibold">${isFinite(obj.pL)?pct(obj.pL):'—'}</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function decideVerdictBTTS(p, pH_btts, pA_btts, pD_btts){
       let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
-      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
-      else if (p >= 0.60 && pH>=0.55 && pA>=0.55) { label='Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
+      if (p <= 0.48 || [pH_btts,pA_btts,pD_btts].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      else if (p >= 0.60 && pH_btts>=0.55 && pA_btts>=0.55) { label='Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
       else if (p >= 0.52 && p < 0.60) { label='Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
       return {label, cls, emoji};
     }
-    function decideVerdictO25(p, meanG, pH, pA, pD){
+    function decideVerdictO25(p, meanG, pH_o, pA_o, pD_o){
       let label = 'Neutro', cls = 'bg-zinc-800 text-zinc-100', emoji='⚖️';
-      if (p <= 0.48 || [pH,pA,pD].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
+      if (p <= 0.48 || [pH_o,pA_o,pD_o].filter(x=>x<=0.40).length >= 2) { label = 'Ruim'; cls='bg-rose-900/60 text-rose-100'; emoji='⛔'; }
       else if (p >= 0.60 && isFinite(meanG) && meanG >= 2.70) { label='Forte'; cls='bg-emerald-900/60 text-emerald-100'; emoji='🔥'; }
       else if (p >= 0.52 && p < 0.60) { label='Leve'; cls='bg-amber-900/60 text-amber-100'; emoji='✨'; }
       return {label, cls, emoji};
     }
+
+    function clamp01(x){ return Math.max(0, Math.min(1, x)); }
 
     function analyze(){
       const raw = $("taUnified").value || "";
       const lower = $("optLower").checked;
       const appendResult = $("optResultSuffix").checked;
 
-      // 0) Captura os nomes dos times dos cabeçalhos
+      // Times dos cabeçalhos
       const { teamA, teamB } = extractTeamsFromHeaders(raw, lower);
-      // Guarda times dos headers para liberar nomes em CAIXA ALTA curta (ex.: CRB)
       headerTeamsLower = new Set([String(teamA).toLowerCase(), String(teamB).toLowerCase()]);
 
-      // 1) Normaliza → separa em Casa/Fora/H2H
+      // Seções
       const secc = splitSections(raw);
       const casaNorm = parseLinesToMatches(secc.casa, { lower, appendResult }).list;
       const foraNorm = parseLinesToMatches(secc.fora, { lower, appendResult }).list;
       const h2hNorm  = parseLinesToMatches(secc.h2h,  { lower, appendResult }).list;
 
-      // 2) Extrai os scores
-      const scHome = extractInlineScores(casaNorm);
-      const scAway = extractInlineScores(foraNorm);
-      const scH2H  = extractInlineScores(h2hNorm);
+      // Parser rico
+      const parsedHome = parseNormalizedMatches(casaNorm);
+      const parsedAway = parseNormalizedMatches(foraNorm);
+      const parsedH2H  = parseNormalizedMatches(h2hNorm);
 
-      // Mostrar detecção
+      // Mostrar detecção básica de placares
+      const scHome = parsedHome.map(m=>[m.gH,m.gA]);
+      const scAway = parsedAway.map(m=>[m.gH,m.gA]);
+      const scH2H  = parsedH2H.map(m=>[m.gH,m.gA]);
+
       $("detected").classList.remove('hidden');
       $("detectedTables").innerHTML = [
         tableHTML('CASA — placares detectados', scHome),
@@ -330,7 +408,7 @@
         tableHTML('H2H — placares detectados', scH2H),
       ].join('');
 
-      // 3) Estatísticas
+      // Estatísticas BTTS/O2.5
       const stH = statsFrom(scHome);
       const stA = statsFrom(scAway);
       const stD = statsFrom(scH2H);
@@ -340,21 +418,18 @@
       $("cardAway").innerHTML = cardHTML('FORA (últimos 5)', stA, 'bg-sky-900/40 text-sky-100');
       $("cardH2H").innerHTML  = cardHTML('H2H (últimos 5)',  stD, 'bg-amber-900/40 text-amber-100');
 
-      // Pesos fixos (não precisam de input)
-      const wH = 0.4;   // peso jogos em casa
-      const wA = 0.4;   // peso jogos fora
-      const wD = 0.2;   // peso confrontos diretos
-      const sumW = wH + wA + wD;
+      // Pesos base
+      const wH = 0.4, wA = 0.4, wD = 0.2; const sumW = wH + wA + wD;
 
-      // BTTS combinado
-      const pH = stH.pBTTS || 0, pA = stA.pBTTS || 0, pD = stD.pBTTS || 0;
-      const baseBTTS = (wH * pH + wA * pA + wD * pD) / sumW;
+      // ===== BTTS combinado (usar sufixo _btts para evitar colisão com 1X2) =====
+      const pH_btts = stH.pBTTS || 0, pA_btts = stA.pBTTS || 0, pD_btts = stD.pBTTS || 0;
+      const baseBTTS = (wH * pH_btts + wA * pA_btts + wD * pD_btts) / sumW;
       const avgG_list = [stH.gpg, stA.gpg, stD.gpg].filter(Number.isFinite);
       const meanG = avgG_list.length ? avgG_list.reduce((a,b)=>a+b,0)/avgG_list.length : 2.6;
-      const factorGoalsBTTS = Math.min(1.2, Math.max(0.8, meanG / 2.6)); // baseline 2.6 g/jogo
-      let pBTTS = Math.min(1, Math.max(0, baseBTTS * factorGoalsBTTS));
-      if (pH>=0.55 && pA>=0.55 && pD>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
-      const {label: labB, cls: clsB, emoji: emB} = decideVerdictBTTS(pBTTS, pH, pA, pD);
+      const factorGoalsBTTS = Math.min(1.2, Math.max(0.8, meanG / 2.6));
+      let pBTTS = clamp01(baseBTTS * factorGoalsBTTS);
+      if (pH_btts>=0.55 && pA_btts>=0.55 && pD_btts>=0.55) pBTTS = Math.min(1, pBTTS + 0.05);
+      const {label: labB, cls: clsB, emoji: emB} = decideVerdictBTTS(pBTTS, pH_btts, pA_btts, pD_btts);
 
       $("decision").classList.remove('hidden');
       $("verdictLineBTTS").innerHTML = `
@@ -362,9 +437,9 @@
           <span class="badge ${clsB}">${emB} ${labB}</span>
           <span class="text-zinc-300">Prob. combinada (p): <span class="font-semibold">${pct(pBTTS)}</span></span>
           <span class="text-zinc-500">|</span>
-          <span class="text-zinc-300">Casa: <strong>${pct(pH)}</strong></span>
-          <span class="text-zinc-300">Fora: <strong>${pct(pA)}</strong></span>
-          <span class="text-zinc-300">H2H: <strong>${pct(pD)}</strong></span>
+          <span class="text-zinc-300">Casa: <strong>${pct(pH_btts)}</strong></span>
+          <span class="text-zinc-300">Fora: <strong>${pct(pA_btts)}</strong></span>
+          <span class="text-zinc-300">H2H: <strong>${pct(pD_btts)}</strong></span>
           <span class="text-zinc-500">|</span>
           <span class="text-zinc-400">Gols médios: <strong>${isFinite(meanG)?meanG.toFixed(2):'—'}</strong> (fator ${factorGoalsBTTS.toFixed(2)})</span>
           <span class="text-zinc-500">|</span>
@@ -376,12 +451,12 @@
         <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.80, 1.20] = <code>${factorGoalsBTTS.toFixed(2)}</code></li>
         <li><strong>p ajustado</strong> = clamp(p base × fator [+5 p.p. se 3 fontes ≥55%]) = <code>${(pBTTS*100).toFixed(1)}%</code></li>`;
 
-      // Over 2.5 combinado
+      // ===== Over 2.5 combinado =====
       const pH_o = stH.pO25 || 0, pA_o = stA.pO25 || 0, pD_o = stD.pO25 || 0;
       const baseO25 = (wH * pH_o + wA * pA_o + wD * pD_o) / sumW;
-      const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6)); // dá um pouco mais de amplitude
-      let pO25 = Math.min(1, Math.max(0, baseO25 * factorGoalsO25));
-      if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03); // bônus suave em cenários muito over
+      const factorGoalsO25 = Math.min(1.25, Math.max(0.75, meanG / 2.6));
+      let pO25 = clamp01(baseO25 * factorGoalsO25);
+      if (meanG >= 2.9) pO25 = Math.min(1, pO25 + 0.03);
       const {label: labO, cls: clsO, emoji: emO} = decideVerdictO25(pO25, meanG, pH_o, pA_o, pD_o);
 
       $("verdictLineO25").innerHTML = `
@@ -403,14 +478,145 @@
         <li><strong>fator de gols</strong> = média(GPG fontes) / 2.6 → limitado a [0.75, 1.25] = <code>${factorGoalsO25.toFixed(2)}</code></li>
         <li><strong>p ajustado</strong> = clamp(p base × fator [+3 p.p. se GPG ≥ 2.9]) = <code>${(pO25*100).toFixed(1)}%</code></li>`;
 
-      // === Monta a linha de exportação (3 colunas: Jogo 	 BTTS 	 Over 2.5) ===
-      const col1 = `${teamA} x ${teamB}`;           // Jogo
-      const col2 = `(${pct0(pBTTS)}) - ${labB}`;    // BTTS
-      const col3 = `(${pct0(pO25)}) - ${labO}`;     // Over 2.5
-      const line = `${col1}	${col2}	${col3}`;   // TABs para Excel
+      // ===== 1X2 =====
+      const WDL_A = wdlForTeam(parsedHome, teamA);
+      const WDL_B = wdlForTeam(parsedAway, teamB);
+      const H2H_Ahome = parsedH2H.filter(m => m.homeTeam === teamA);
+      const WDL_H2H_Ahome = wdlForTeam(H2H_Ahome, teamA).all;
+
+      $("wdlContext").classList.remove('hidden');
+      const cards = [];
+      cards.push(wdlCard(`${teamA} em casa`, WDL_A.home));
+      cards.push(wdlCard(`${teamA} fora`, WDL_A.away));
+      cards.push(wdlCard(`${teamB} em casa`, WDL_B.home));
+      cards.push(wdlCard(`${teamB} fora`, WDL_B.away));
+      cards.push(wdlCard(`H2H (mandante ${teamA})`, WDL_H2H_Ahome));
+      $("wdlGrid").innerHTML = cards.join('');
+
+      const A_home_win   = isFinite(WDL_A.home.pW) ? WDL_A.home.pW : WDL_A.all.pW;
+      const A_home_draw  = isFinite(WDL_A.home.pD) ? WDL_A.home.pD : WDL_A.all.pD;
+      const A_home_loss  = isFinite(WDL_A.home.pL) ? WDL_A.home.pL : WDL_A.all.pL;
+
+      const B_away_win   = isFinite(WDL_B.away.pW) ? WDL_B.away.pW : WDL_B.all.pW;
+      const B_away_draw  = isFinite(WDL_B.away.pD) ? WDL_B.away.pD : WDL_B.all.pD;
+      const B_away_loss  = isFinite(WDL_B.away.pL) ? WDL_B.away.pL : WDL_B.all.pL;
+
+      const H2H_A_win    = isFinite(WDL_H2H_Ahome.pW) ? WDL_H2H_Ahome.pW : NaN;
+      const H2H_A_draw   = isFinite(WDL_H2H_Ahome.pD) ? WDL_H2H_Ahome.pD : NaN;
+      const H2H_A_loss   = isFinite(WDL_H2H_Ahome.pL) ? WDL_H2H_Ahome.pL : NaN;
+
+      // Pesos para 1X2
+      const w_H_win = 0.45, w_H_opp = 0.35, w_H_h2h = 0.20;
+      const w_A_win = 0.45, w_A_opp = 0.35, w_A_h2h = 0.20;
+      const w_D_a   = 0.34, w_D_b   = 0.34, w_D_h2h= 0.32;
+
+      function blend(parts){
+        const usable = parts.filter(p=> isFinite(p.v) && isFinite(p.w) && p.w>0);
+        const W = usable.reduce((s,p)=>s+p.w,0);
+        if (!usable.length || W===0) return {p:NaN, used:[]};
+        const p = usable.reduce((s,p)=> s + (p.v * p.w), 0) / W;
+        return {p, used: usable.map(u=>({name:u.name, v:u.v, w:u.w}))};
+      }
+
+      const PH_raw = blend([
+        {name:`${teamA} em casa vence`, v:A_home_win, w:w_H_win},
+        {name:`${teamB} fora perde`,   v:B_away_loss, w:w_H_opp},
+        {name:`H2H (A mandante)`,      v:H2H_A_win,  w:w_H_h2h},
+      ]);
+      const PA_raw = blend([
+        {name:`${teamB} fora vence`,   v:B_away_win, w:w_A_win},
+        {name:`${teamA} em casa perde`,v:A_home_loss,w:w_A_opp},
+        {name:`H2H (A mandante)`,      v:H2H_A_loss,w:w_A_h2h},
+      ]);
+      const PD_raw = blend([
+        {name:`${teamA} em casa empata`, v:A_home_draw, w:w_D_a},
+        {name:`${teamB} fora empata`,    v:B_away_draw, w:w_D_b},
+        {name:`H2H (A mandante)`,        v:H2H_A_draw, w:w_D_h2h},
+      ]);
+
+      // Ajuste por gols médios: mais gols, menos empates
+      const fDraw = clamp01(Math.max(0.75, Math.min(1.20, 2.6 / (isFinite(meanG)?meanG:2.6))));
+      let pH1 = PH_raw.p, pD1 = PD_raw.p, pA1 = PA_raw.p;
+      if (isFinite(pD1)) pD1 = clamp01(pD1 * fDraw);
+
+      const s0 = [pH1,pD1,pA1].filter(isFinite).reduce((a,b)=>a+b,0);
+      let pH = pH1, pD2 = pD1, pA = pA1;
+      if (s0 > 0){ pH = pH1 / s0; pD2 = pD1 / s0; pA = pA1 / s0; }
+
+      const arr = [ {k:'Casa',p:pH}, {k:'Empate',p:pD2}, {k:'Fora',p:pA} ].sort((a,b)=>b.p-a.p);
+      const top = arr[0], second = arr[1];
+      const margin = isFinite(top.p) && isFinite(second.p) ? (top.p - second.p) : NaN;
+      const effN = [WDL_A.home.n, WDL_B.away.n, WDL_H2H_Ahome.n].map(x=>x||0);
+      const lowSources = effN.filter(n=>n<=1).length;
+      let lab1='Neutro', cls1='bg-zinc-800 text-zinc-100', em1='⚖️';
+      if (!isFinite(top.p) || !isFinite(second.p)){
+        lab1='Ruim'; cls1='bg-rose-900/60 text-rose-100'; em1='⛔';
+      } else if (top.p <= 0.48 || lowSources>=2){
+        lab1='Ruim'; cls1='bg-rose-900/60 text-rose-100'; em1='⛔';
+      } else if (top.p >= 0.55 && margin >= 0.08 && effN.every(n=>n>=3)){
+        lab1='Forte'; cls1='bg-emerald-900/60 text-emerald-100'; em1='🔥';
+      } else if (top.p >= 0.52 && margin >= 0.04){
+        lab1='Leve'; cls1='bg-amber-900/60 text-amber-100'; em1='✨';
+      }
+
+      const barH = isFinite(pH) ? Math.round(pH*100) : 0;
+      const barD = isFinite(pD2)? Math.round(pD2*100): 0;
+      const barA = isFinite(pA) ? Math.round(pA*100) : 0;
+      $("verdictLine1X2").innerHTML = `
+        <div class="space-y-2">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge ${cls1}">${em1} ${lab1}</span>
+            <span class="text-zinc-300">Casa: <strong>${pct(pH)}</strong> <span class="text-zinc-500">(odds justas ${fairOdds(pH)})</span></span>
+            <span class="text-zinc-500">|</span>
+            <span class="text-zinc-300">Empate: <strong>${pct(pD2)}</strong> <span class="text-zinc-500">(odds ${fairOdds(pD2)})</span></span>
+            <span class="text-zinc-500">|</span>
+            <span class="text-zinc-300">Fora: <strong>${pct(pA)}</strong> <span class="text-zinc-500">(odds ${fairOdds(pA)})</span></span>
+          </div>
+          <div class="meter">
+            <div class="bg-emerald-600" style="width:${barH}%"></div>
+            <div class="bg-zinc-400" style="width:${barD}%"></div>
+            <div class="bg-sky-600" style="width:${barA}%"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-zinc-400">
+            <span>Casa ${barH}%</span><span>Empate ${barD}%</span><span>Fora ${barA}%</span>
+          </div>
+        </div>`;
+
+      function usedToHTML(tag, obj){
+        if (!obj.used || !obj.used.length) return `<li>${tag}: insuficiente</li>`;
+        const parts = obj.used.map(u=>`${u.name} = ${(u.v*100).toFixed(0)}% [w=${u.w}]`).join('; ');
+        return `<li><strong>${tag}</strong> → média ponderada: <code>${(obj.p*100).toFixed(1)}%</code> | ${parts}</li>`;
+      }
+      $("calcList1X2").innerHTML = [
+        usedToHTML('Casa', PH_raw),
+        usedToHTML('Empate', PD_raw) + ` <span class="text-zinc-400">(ajuste por gols médios = ${ ( (isFinite(meanG)?(2.6/meanG):1) ).toFixed(2) } → fator ${fDraw.toFixed(2)})</span>`,
+        usedToHTML('Fora', PA_raw),
+        `<li>Renormalização para soma = 100%.</li>`
+      ].join('');
+
+      let tip = '';
+      const topKey = top.k;
+      if (lab1==='Forte'){
+        if (topKey==='Casa') tip = `Palpite principal: <strong>Casa</strong>. Alternativa conservadora: <em>Casa DNB</em>.`;
+        else if (topKey==='Fora') tip = `Palpite principal: <strong>Fora</strong>. Alternativa conservadora: <em>Fora DNB</em>.`;
+        else tip = `Palpite principal: <strong>Empate</strong>. Alternativa: <em>Dupla chance</em> a favor do time subvalorizado.`;
+      } else if (lab1==='Leve'){
+        tip = `Cenário moderado. Trabalhar <em>dupla chance</em> no sentido do favorito ou <em>empate anula</em>.`;
+      } else if (lab1==='Neutro'){
+        tip = `Distribuição equilibrada. Valor pode estar em mercados alternativos (cantos, cartões) ou <em>placar correto</em> especulativo.`;
+      } else {
+        tip = `Condições ruins para 1X2 seco. Prefira esperar escalações/ao vivo.`;
+      }
+      $("tips1X2").innerHTML = tip;
+
+      // ===== Linha de exportação (4 colunas) =====
+      const col1 = `${teamA} x ${teamB}`;
+      const col2 = `BTTS (${pct0(pBTTS)}) - ${labB}`;
+      const col3 = `Over 2,5 (${pct0(pO25)}) - ${labO}`;
+      const col4 = `${top.k} (${pct0(top.p)}) - ${lab1}`;
+      const line = `${col1}\t${col2}\t${col3}\t${col4}`;
       lastSummary = line;
-      // Exibição amigável (TAB -> espaços)
-      $("exportLine").textContent = `${col1}    ${col2}    ${col3}`;
+      $("exportLine").textContent = `${col1}    ${col2}    ${col3}    ${col4}`;
       $("export").classList.remove('hidden');
       $("btnCopy").disabled = false;
       $("copyStatus").textContent = '';
@@ -419,16 +625,15 @@
     $("btnAnalyze").addEventListener('click', analyze);
     $("btnClear").addEventListener('click', () => {
       $("taUnified").value = '';
-      ["results","decision","detected","export"].forEach(id=>$(id).classList.add('hidden'));
+      ["results","decision","detected","export","wdlContext"].forEach(id=>$(id).classList.add('hidden'));
       $("detectedTables").innerHTML = '';
-      ["cardHome","cardAway","cardH2H","verdictLineBTTS","calcListBTTS","verdictLineO25","calcListO25","exportLine"].forEach(id=>{ const el = $(id); if (el) el.textContent = ''; });
+      ["cardHome","cardAway","cardH2H","verdictLineBTTS","calcListBTTS","verdictLineO25","calcListO25","exportLine","verdictLine1X2","calcList1X2","tips1X2","wdlGrid"].forEach(id=>{ const el = $(id); if (el) el.textContent = ''; });
       $("optLower").checked = false;
       $("optResultSuffix").checked = false;
       $("btnCopy").disabled = true;
       $("copyStatus").textContent = '';
     });
 
-    // ===== Ação do botão Copiar =====
     $("btnCopy").addEventListener('click', async () => {
       if (!lastSummary){
         $("copyStatus").textContent = 'Nada para copiar — clique em Analisar primeiro.';
@@ -442,7 +647,6 @@
         $("copyStatus").textContent = 'Linha copiada para a área de transferência.';
         setTimeout(()=>{ btn.textContent = old; $("copyStatus").textContent = ''; }, 1500);
       } catch (e){
-        // Fallback
         const ta = document.createElement('textarea');
         ta.value = lastSummary; document.body.appendChild(ta); ta.select();
         try { document.execCommand('copy'); $("copyStatus").textContent = 'Copiado (fallback).'; }
@@ -451,12 +655,10 @@
       }
     });
 
-    // ===== Scroll-to-top behavior =====
     (function setupScrollTop(){
       const btn = $("btnTop");
       if (!btn) return;
-      const showAfter = 250; // mostra botão após 250px de scroll. ajuste se quiser.
-
+      const showAfter = 250;
       function onScroll(){
         if (window.scrollY > showAfter){
           btn.classList.remove('opacity-0','pointer-events-none','scale-95');
@@ -466,26 +668,24 @@
           btn.classList.remove('opacity-100','scale-100');
         }
       }
-
-      // Initial state
       btn.classList.add('opacity-0','pointer-events-none','scale-95');
       btn.classList.remove('opacity-100');
-
       window.addEventListener('scroll', onScroll, {passive:true});
-
-      // Smooth scroll to top
-      btn.addEventListener('click', function(e){
-        e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-
-      // Also show the button if user tabs to it (accessibility)
-      btn.addEventListener('focus', () => {
-        btn.classList.remove('opacity-0','pointer-events-none','scale-95');
-        btn.classList.add('opacity-100','scale-100');
-      });
+      btn.addEventListener('click', function(e){ e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+      btn.addEventListener('focus', () => { btn.classList.remove('opacity-0','pointer-events-none','scale-95'); btn.classList.add('opacity-100','scale-100'); });
       btn.addEventListener('blur', onScroll);
     })();
+
+    // ======= Testes embutidos =======
+    function runBuiltInTest(kind){
+      const a = `Últimos jogos: Arsenal\nArsenal\nChelsea\n2\n1\nV\nArsenal\nBrighton\n1\n1\nE\nArsenal\nNewcastle\n0\n2\nD\nArsenal\nFulham\n3\n1\nV\nArsenal\nBrentford\n2\n2\nE\nÚltimos jogos: Manchester City\nMan City\nTottenham\n2\n2\nE\nMan City\nLiverpool\n3\n1\nV\nMan City\nEverton\n1\n0\nV\nMan City\nWolves\n0\n1\nD\nMan City\nAston Villa\n2\n1\nV\nConfrontos diretos\nArsenal\nMan City\n1\n0\nV\nMan City\nArsenal\n2\n2\nE`;
+
+      const b = `Últimos jogos: Feyenoord\nFeyenoord\nHeracles\n4\n1\nV\nFeyenoord\nUtrecht\n3\n2\nV\nFeyenoord\nNEC\n2\n2\nE\nFeyenoord\nPSV\n3\n3\nE\nFeyenoord\nAZ\n2\n1\nV\nÚltimos jogos: Ajax\nAjax\nPSV\n2\n3\nD\nAjax\nAZ\n2\n2\nE\nAjax\nFeyenoord\n1\n3\nD\nAjax\nHeracles\n3\n1\nV\nAjax\nTwente\n2\n2\nE\nConfrontos diretos\nFeyenoord\nAjax\n2\n1\nV\nAjax\nFeyenoord\n3\n3\nE`;
+
+      $("taUnified").value = kind === 'over_btts' ? b : a;
+      analyze();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
   </script>
 </body>
 </html>
