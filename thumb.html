@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
   <style>
-    /* Mantidos os mesmos estilos da sua página */
     body {
       font-family: 'Inter', sans-serif;
       background: #111827;
@@ -190,14 +189,16 @@ Cidades do futuro"></textarea>
   </div>
 
   <script>
+    'use strict';
+
     let filaPrompts = [];
     let indiceAtual = 0;
 
     // -------------------------------------------------
-    // MODELOS DE PROMPTS (EDITÁVEIS) — ALTERE AQUI
+    // MODELOS DE PROMPTS (EDITÁVEIS) — AGORA COM CRASES
     // -------------------------------------------------
     const modelosPrompts = [
-      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+`Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
 
 Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
 
@@ -223,9 +224,8 @@ O tom emocional da miniatura deve refletir a reinterpretação histórica, com a
 🧾 4. Texto
 Adicionar o texto “HISTÓRIA ANTIGA PARA DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
 
-
-Tema: "[tema] | História Antiga"",
-      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+Tema: "[tema] | História Antiga"`,
+`Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
 
 Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
 
@@ -251,9 +251,8 @@ O tom emocional da miniatura deve refletir a reinterpretação histórica, com a
 🧾 4. Texto
 Adicionar o texto “HISTORIA ANTIGUA PARA DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
 
-
-Tema: "[tema] | História Antiga"",
-      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+Tema: "[tema] | História Antiga"`,
+`Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
 
 Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
 
@@ -279,13 +278,12 @@ O tom emocional da miniatura deve refletir a reinterpretação histórica, com a
 🧾 4. Texto
 Adicionar o texto “HISTOIRE ANCIENNE POUR DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
 
-
-Tema: "[tema] | História Antiga"
-"
+Tema: "[tema] | História Antiga"`
     ];
     // -------------------------------------------------
 
-    document.getElementById("btnGerar").addEventListener("click", () => {
+    const btnGerar = document.getElementById("btnGerar");
+    btnGerar.addEventListener("click", () => {
       const entrada = document.getElementById("roteiro").value.trim();
       if (!entrada) {
         showMessage("Por favor, digite pelo menos um tema.", "red");
@@ -333,13 +331,15 @@ Tema: "[tema] | História Antiga"
       const copiarButton = document.createElement("button");
       copiarButton.classList.add("copiar-button");
       copiarButton.textContent = "Copiar";
-      copiarButton.addEventListener("click", () => {
+      copiarButton.addEventListener("click", async () => {
         const atual = filaPrompts[indiceAtual];
-        copiarTexto(atual).then(() => {
-          avancarPrompt();
-        }).catch(() => {
-          showMessage("Erro ao copiar. Tente novamente.", "red");
-        });
+        const copiou = await copiarTexto(atual);
+        if (copiou) {
+          showMessage(`Prompt ${indiceAtual + 1} copiado.`, "green");
+        } else {
+          showMessage("Não consegui copiar automaticamente. Copie manualmente e clique novamente para avançar.", "orange");
+        }
+        avancarPrompt();
       });
 
       const contador = document.createElement("div");
@@ -361,10 +361,9 @@ Tema: "[tema] | História Antiga"
         contadorEl.textContent = `Prompt ${indiceAtual + 1} / ${filaPrompts.length}`;
       } else {
         // Fila concluída
-        textoEl.textContent = "Todos os prompts foram gerados e copiados.";
+        textoEl.textContent = "Todos os prompts foram gerados.";
         contadorEl.textContent = "";
         showMessage("Fila concluída!", "green");
-        // Opcional: ocultar a área após alguns segundos
         setTimeout(() => {
           document.getElementById("imagensGeradas").style.display = "none";
         }, 1200);
@@ -374,15 +373,34 @@ Tema: "[tema] | História Antiga"
     function avancarPrompt() {
       indiceAtual++;
       if (indiceAtual <= filaPrompts.length) {
-        if (indiceAtual <= filaPrompts.length - 1) {
-          showMessage(`Prompt ${indiceAtual} copiado`, "green");
-        }
         exibirPromptAtual();
       }
     }
 
-    function copiarTexto(texto) {
-      return navigator.clipboard.writeText(texto);
+    async function copiarTexto(texto) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(texto);
+          return true;
+        }
+      } catch (e) {
+        // continua para fallback
+      }
+      // Fallback para ambientes sem HTTPS/permite clipboard
+      try {
+        const area = document.createElement("textarea");
+        area.value = texto;
+        area.style.position = "fixed";
+        area.style.top = "-9999px";
+        document.body.appendChild(area);
+        area.focus();
+        area.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(area);
+        return ok;
+      } catch (e) {
+        return false;
+      }
     }
 
     function showMessage(msg, color = 'white') {
@@ -393,10 +411,3 @@ Tema: "[tema] | História Antiga"
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
