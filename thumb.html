@@ -197,9 +197,91 @@ Cidades do futuro"></textarea>
     // MODELOS DE PROMPTS (EDITÁVEIS) — ALTERE AQUI
     // -------------------------------------------------
     const modelosPrompts = [
-      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTÓRIA ANTIGA PARA DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTÓRIA ANTIGA PARA DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA.",
-      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTORIA ANTIGUA PARA DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTORIA ANTIGUA PARA DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA.",
-      "Crie uma thumbnail chamativa com personagens em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: [tema]. O texto: HISTOIRE ANCIENNE POUR DORMIR, deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: HISTOIRE ANCIENNE POUR DORMIR, no lado esquerdo. EM ANEXO ENVIO IMAGENS COMO REFERÊNCIA."
+      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+
+Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
+
+🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR:
+
+🎨 1. Estilo e Textura
+Ilustração digital com detalhes realistas e iluminação cinematográfica
+Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes bem definidos, como luz dourada suave, luz natural do dia ou luz indireta de fontes suaves
+Uso de uma paleta de cores cinematográficas mais equilibrada, com tons mais quentes como bege, dourado, laranja suave, juntamente com azul profundo e escarlate, criando um ambiente histórico alternativo com mais luminosidade
+Personagens com expressões faciais intensas e emocionais, especialmente figuras lendárias ou modificadas de personagens históricos
+Roupas detalhadas e imersivas, combinando uma interpretação histórica com elementos alternativos ou fantasiosos
+Ambientes cinematográficos ricos, como paisagens épicas, ruínas misteriosas ou cidades perdidas, com atmosferas de mistério, mas com mais luminosidade e contraste nas sombras
+
+🖼️ 2. Composição
+A composição deve colocar o personagem principal no centro da imagem, em um close-up dramático, com o fundo suavizado para manter o foco no protagonista, mas ainda com detalhes que contextualizem a cena histórica ou mítica.
+Emoção intensa e visualmente impactante, como momentos de luta histórica, revelações ou destruição épica de civilizações
+
+🔥 3. Iluminação e Clima
+Iluminação suave e equilibrada, com fontes de luz mais claras, como luz dourada do amanhecer ou luz suave de tarde
+Evitar luz excessivamente escura, favorecendo ambientes de mistério e drama, mas mantendo uma boa visibilidade e contraste com luz suave que cria uma sensação de profundidade e clareza
+O tom emocional da miniatura deve refletir a reinterpretação histórica, com atmosferas introspectivas, épicas, reveladoras ou até aterrorizantes, mas com clareza na imagem
+
+🧾 4. Texto
+Adicionar o texto “HISTÓRIA ANTIGA PARA DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
+
+
+Tema: "[tema] | História Antiga"",
+      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+
+Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
+
+🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR:
+
+🎨 1. Estilo e Textura
+Ilustração digital com detalhes realistas e iluminação cinematográfica
+Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes bem definidos, como luz dourada suave, luz natural do dia ou luz indireta de fontes suaves
+Uso de uma paleta de cores cinematográficas mais equilibrada, com tons mais quentes como bege, dourado, laranja suave, juntamente com azul profundo e escarlate, criando um ambiente histórico alternativo com mais luminosidade
+Personagens com expressões faciais intensas e emocionais, especialmente figuras lendárias ou modificadas de personagens históricos
+Roupas detalhadas e imersivas, combinando uma interpretação histórica com elementos alternativos ou fantasiosos
+Ambientes cinematográficos ricos, como paisagens épicas, ruínas misteriosas ou cidades perdidas, com atmosferas de mistério, mas com mais luminosidade e contraste nas sombras
+
+🖼️ 2. Composição
+A composição deve colocar o personagem principal no centro da imagem, em um close-up dramático, com o fundo suavizado para manter o foco no protagonista, mas ainda com detalhes que contextualizem a cena histórica ou mítica.
+Emoção intensa e visualmente impactante, como momentos de luta histórica, revelações ou destruição épica de civilizações
+
+🔥 3. Iluminação e Clima
+Iluminação suave e equilibrada, com fontes de luz mais claras, como luz dourada do amanhecer ou luz suave de tarde
+Evitar luz excessivamente escura, favorecendo ambientes de mistério e drama, mas mantendo uma boa visibilidade e contraste com luz suave que cria uma sensação de profundidade e clareza
+O tom emocional da miniatura deve refletir a reinterpretação histórica, com atmosferas introspectivas, épicas, reveladoras ou até aterrorizantes, mas com clareza na imagem
+
+🧾 4. Texto
+Adicionar o texto “HISTORIA ANTIGUA PARA DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
+
+
+Tema: "[tema] | História Antiga"",
+      "Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+
+Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
+
+🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR:
+
+🎨 1. Estilo e Textura
+Ilustração digital com detalhes realistas e iluminação cinematográfica
+Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes bem definidos, como luz dourada suave, luz natural do dia ou luz indireta de fontes suaves
+Uso de uma paleta de cores cinematográficas mais equilibrada, com tons mais quentes como bege, dourado, laranja suave, juntamente com azul profundo e escarlate, criando um ambiente histórico alternativo com mais luminosidade
+Personagens com expressões faciais intensas e emocionais, especialmente figuras lendárias ou modificadas de personagens históricos
+Roupas detalhadas e imersivas, combinando uma interpretação histórica com elementos alternativos ou fantasiosos
+Ambientes cinematográficos ricos, como paisagens épicas, ruínas misteriosas ou cidades perdidas, com atmosferas de mistério, mas com mais luminosidade e contraste nas sombras
+
+🖼️ 2. Composição
+A composição deve colocar o personagem principal no centro da imagem, em um close-up dramático, com o fundo suavizado para manter o foco no protagonista, mas ainda com detalhes que contextualizem a cena histórica ou mítica.
+Emoção intensa e visualmente impactante, como momentos de luta histórica, revelações ou destruição épica de civilizações
+
+🔥 3. Iluminação e Clima
+Iluminação suave e equilibrada, com fontes de luz mais claras, como luz dourada do amanhecer ou luz suave de tarde
+Evitar luz excessivamente escura, favorecendo ambientes de mistério e drama, mas mantendo uma boa visibilidade e contraste com luz suave que cria uma sensação de profundidade e clareza
+O tom emocional da miniatura deve refletir a reinterpretação histórica, com atmosferas introspectivas, épicas, reveladoras ou até aterrorizantes, mas com clareza na imagem
+
+🧾 4. Texto
+Adicionar o texto “HISTOIRE ANCIENNE POUR DORMIR” no lado esquerdo da imagem, posicionado com margem segura (afastado da borda) e centralizado verticalmente, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.
+
+
+Tema: "[tema] | História Antiga"
+"
     ];
     // -------------------------------------------------
 
@@ -311,6 +393,7 @@ Cidades do futuro"></textarea>
   </script>
 </body>
 </html>
+
 
 
 
