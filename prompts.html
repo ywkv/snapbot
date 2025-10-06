@@ -316,7 +316,7 @@
     <div id="promptsGerados" style="display:none;">
       <!-- Prompt 1 -->
       <div class="prompt-container">
-        <label for="prompt1">ANALISAR TEMAS</label>
+        <label for="prompt1">CRIAR TITULOS</label>
         <div class="prompt-box">
           <pre id="prompt1" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt1')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
@@ -334,7 +334,7 @@
 	  
       <!-- Prompt 3 -->
       <div class="prompt-container">
-        <label for="prompt3">TRADUZIR TÍTULOS</label>
+        <label for="prompt3">THUMBNAIL</label>
         <div class="prompt-box">
           <pre id="prompt3" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt3')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
@@ -360,7 +360,7 @@
 	  
       <!-- Prompt 6 -->
       <div class="prompt-container">
-        <label for="prompt6">THUMBNAIL</label>
+        <label for="prompt6">VAZIO</label>
         <div class="prompt-box">
           <pre id="prompt6" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt6')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
@@ -413,15 +413,7 @@ function gerarPrompts() {
     return;
   }
 
-      const prompt1 = `Você é um agente especializado em identificar temas de conteúdo de sucesso para YouTube. Vou fornecer uma lista de temas e você deve analisar cada um deles com base nos seguintes critérios: relevância do público, potencial de engajamento, busca e tendências atuais, e concorrência. Para cada tema, forneça:
-
-Análise do Tema: Uma breve descrição de como o tema pode se destacar no YouTube.
-
-Nota de Viabilidade (1 a 10): A nota representa o quão provável é que esse tema tenha sucesso no YouTube.
-
-Racionalização da Nota: Explique brevemente por que você deu essa nota, mencionando fatores como demanda de pesquisa, potencial de viralização, ou outros aspectos relevantes.
-
-Após analisar todos os temas, forneça um Top 5 com os cinco temas mais promissores, classificados pela sua nota de viabilidade.`;
+      const prompt1 = `Crie 5 sugestões de títulos chamativos para um vídeo do YouTube baseado no tema: "${tema}". Os títulos devem ser curtos e claros com no máximo até 60 caracteres, utilizando gramática correta e capitalização adequada, com uso de clickbait leve e mistério. O objetivo é despertar curiosidade imediata, atrair cliques e favorecer a performance no algoritmo do YouTube.`;
       const prompt2 = `Crie 18 prompts de imagem para ilustrar um vídeo com o tema: [${tema}]. Os prompts devem ser escritos em inglês e projetados para capturar a essência profunda da história. Cada prompt deve gerar uma cena visual que ressoe emocionalmente, seja de forma simbólica, literal ou emocionalmente evocativa. A ideia central da história deve ser refletida de forma impactante em cada imagem.
 
 Seja extremamente detalhado nas descrições de:
@@ -434,10 +426,9 @@ Seja extremamente detalhado nas descrições de:
 
 As imagens devem ser visualmente intensas e altamente expressivas, focando em capturar a essência emocional e simbólica de cada cena, conectando-a diretamente com a narrativa da história. Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.`;
 
-      const prompt3 = `Traduza os Títulos abaixo para o [Português, Espanhol e Frances]
-Use letras maiúsculas e minúsculas como títulos reais do YouTube
-Me entregue os títulos limpos sem nenhuma observação.
-Títulos: ${roteiro}`;
+      const prompt3 = `Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube. Você é especialista na criação de miniaturas visuais geradas por IA para histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+
+Pensando em um vídeo do YouTube com o seguinte tema: "${tema} | História Antiga", me dê uma sugestão de thumbnail altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Descreva a thumbnail de forma visual e cinematográfica, com elementos que transmitam emoções de mistério, respeito, reflexão e imersão histórica. A imagem deve mostrar um personagem em close-up, no canto direito da imagem, olhando diretamente para a câmera, com o rosto altamente detalhado, bem definido e em alta qualidade, com uma expressão que combine com o contexto histórico da história — seja de determinação, sabedoria, coragem ou contemplação. Use elementos simbólicos criando uma atmosfera que remeta à riqueza do passado. Adicionar o texto “HISTÓRIA ANTIGA PARA DORMIR” no lado esquerdo esquerdo da imagem, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.`;
       const prompt4 = `# ESPECIALISTA EM SEO UNIVERSAL
 Você é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de "histórias antigas para dormir sobre eventos históricos, personagens, civilizações e mitologias". Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO.
 
@@ -570,43 +561,12 @@ TEMA: [${tema}]
 Você criará e entregará um uníco BLOCO DE CÓDIGO, dentro de plaintext, para que eu possa copiar o bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
 
 Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou instruções.`;
-      const prompt6 = `Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas sobre eventos históricos, personagens, civilizações e mitologias. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
-
-Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
-
-🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR NO PROMPT:
-
-🎨 1. Estilo e Textura
-Ilustração digital com detalhes realistas e iluminação cinematográfica
-Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes bem definidos, como luz dourada suave, luz natural do dia ou luz indireta de fontes suaves
-Uso de uma paleta de cores cinematográficas mais equilibrada, com tons mais quentes como bege, dourado, laranja suave, juntamente com azul profundo e escarlate, criando um ambiente histórico alternativo com mais luminosidade
-Personagens com expressões faciais intensas e emocionais, especialmente figuras lendárias ou modificadas de personagens históricos
-Roupas detalhadas e imersivas, combinando uma interpretação histórica com elementos alternativos ou fantasiosos
-Ambientes cinematográficos ricos, como paisagens épicas, ruínas misteriosas ou cidades perdidas, com atmosferas de mistério, mas com mais luminosidade e contraste nas sombras
-
-🖼️ 2. Composição
-A composição deve colocar o personagem principal no centro da imagem, em um close-up dramático, com o fundo suavizado para manter o foco no protagonista, mas ainda com detalhes que contextualizem a cena histórica ou mítica.
-Emoção intensa e visualmente impactante, como momentos de luta histórica, revelações ou destruição épica de civilizações
-
-🔥 3. Iluminação e Clima
-Iluminação suave e equilibrada, com fontes de luz mais claras, como luz dourada do amanhecer ou luz suave de tarde
-Evitar luz excessivamente escura, favorecendo ambientes de mistério e drama, mas mantendo uma boa visibilidade e contraste com luz suave que cria uma sensação de profundidade e clareza
-O tom emocional da miniatura deve refletir a reinterpretação histórica, com atmosferas introspectivas, épicas, reveladoras ou até aterrorizantes, mas com clareza na imagem
-
-🧾 4. Texto
-Nenhum texto deve ser incluído na miniatura. O foco está exclusivamente na imagem, que deve ser suficientemente impactante para contar a história visualmente.
-
-🔚 FORMATO:
-Depois de fornecer o título do vídeo, sua tarefa é retornar:
-Uma miniatura cinematográfica detalhada em estilo realista, pronta para uso em plataformas como MidJourney, Leonardo AI, etc.
-Sugestão de tom de cor correspondente à emoção e à história
-
-Título do Vídeo: [${tema}]`;
+      const prompt6 = `VAZIO`;
 
 
       document.getElementById("prompt1").textContent = prompt1;
       document.getElementById("prompt2").textContent = prompt2;
-	  document.getElementById("prompt3").innerHTML = prompt3.replace(/\n/g, "<br>");
+      document.getElementById("prompt3").textContent = prompt3;
       document.getElementById("prompt4").textContent = prompt4;
       document.getElementById("prompt5").textContent = prompt5;
       document.getElementById("prompt6").textContent = prompt6;
@@ -670,8 +630,3 @@ Título do Vídeo: [${tema}]`;
   </script>
 </body>
 </html>
-
-
-
-
-
