@@ -1,5 +1,4 @@
-
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
@@ -8,275 +7,157 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
   <style>
+  /* Ajuste: mostrar apenas UMA linha no box de ideias,
+     mas manter o texto completo disponível para copiar */
+  .gerar-temas-texto {
+    flex: 1;
+    min-width: 0;
+    color: #F9FAFB;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Removemos qualquer regra anterior que forçava várias linhas em #prompt3 */
   #prompt3 {
-  white-space: normal;     /* Permite que o texto ocupe múltiplas linhas */
-  overflow: visible;       /* Deixa o texto visível, sem cortes */
-  text-overflow: unset;    /* Remove o uso das reticências */
-  max-height: none;        /* Remove a altura máxima para o prompt 5 */
-}
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #111827;
-      color: #F9FAFB;
-      margin: 0;
-      padding: 2rem;
-    }
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 100px;
+  }
 
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #1F2937;
-      padding: 10px 0;
-      z-index: 1000;
-    }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #111827;
+    color: #F9FAFB;
+    margin: 0;
+    padding: 2rem;
+  }
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1F2937;
+    padding: 10px 0;
+    z-index: 1000;
+  }
+  .navbar ul { list-style-type: none; margin: 0; padding: 0; text-align: center; }
+  .navbar ul li { display: inline; margin: 0 20px; }
+  .navbar ul li a { color: #F9FAFB; text-decoration: none; font-weight: bold; font-size: 1rem; text-transform: uppercase; }
+  .navbar ul li a:hover { color: #6366F1; }
 
-    .navbar ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
+  .container {
+    max-width: 800px;
+    margin: auto;
+    background: #1F2937;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 60px;
+  }
 
-    .navbar ul li {
-      display: inline;
-      margin: 0 20px;
-    }
+  h1 { text-align: center; margin-bottom: 1.5rem; }
+  label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; color: #9CA3AF; }
 
-    .navbar ul li a {
-      color: #F9FAFB;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-      text-transform: uppercase;
-    }
+  /* Box de IDEIAS (fixo em 15) */
+  .gerar-temas-box {
+    background: #1F2937;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #374151;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    min-height: 80px;
+  }
 
-    .navbar ul li a:hover {
-      color: #6366F1;
-    }
+  input, button, textarea {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #374151;
+    background: #111827;
+    color: white;
+    box-sizing: border-box;
+  }
+  .button-container { display: flex; flex-direction: column; }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #1F2937;
-      padding: 2rem;
-      border-radius: 12px;
-      margin-top: 60px;
-    }
+  button {
+    background: #6366F1;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+  }
+  button:hover { background: #4F46E5; }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
+  .response-block {
+    background: #1F2937;
+    padding: 1rem;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    border: 1px solid #374151;
+    margin-top: 1rem;
+    max-height: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #notification { margin-top: 1rem; text-align: center; font-weight: bold; }
+  footer { text-align: center; margin-top: 2rem; color: #6B7280; font-size: 0.875rem; }
 
-    label {
-      display: block;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-      color: #9CA3AF;
-    }
+  .prompt-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    background: #1F2937;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #374151;
+  }
 
-    /* Estilo do box para "GERAR TEMAS" */
-    .gerar-temas-box {
-      background: #1F2937;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1rem;
-      height: 80px; /* Altura fixa para o campo de "GERAR TEMAS" */
-      overflow: hidden; /* Impede que o conteúdo ultrapasse */
-    }
+  .copiar-button-prompt2 {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    background-color: #6366F1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: auto;
+    margin-left: 1rem;
+  }
+  .copiar-button-prompt2:hover { background-color: #4F46E5; }
 
-    .gerar-temas-texto {
-      color: #F9FAFB;
-      font-size: 1rem;
-      white-space: nowrap;
-      text-overflow: ellipsis; /* Exibe reticências se o conteúdo for muito grande */
-      overflow: hidden;
-      display: block;
-    }
+  .prompt-container { margin-top: 1.5rem; }
 
-    /* Ajuste no input e button */
-    input, button, textarea {
-      width: 100%;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      background: #111827;
-      color: white;
-      box-sizing: border-box; /* Garante que o padding não afete o tamanho total */
-    }
+  /* Área de texto do conteúdo */
+  .textarea-container {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #1F2937;
+    border-radius: 8px;
+    border: 1px solid #374151;
+  }
 
-    /* Ajuste para garantir que o botão e o campo tenham a mesma largura */
-    .button-container {
-      display: flex;
-      flex-direction: column;
-    }
+  .text-info {
+    margin-top: 1rem;
+    color: #F9FAFB;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 
-    button {
-      background: #6366F1;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    button:hover {
-      background: #4F46E5;
-    }
-
-    .response-block {
-      background: #1F2937;
-      padding: 1rem;
-      border-radius: 8px;
-      white-space: pre-wrap;
-      border: 1px solid #374151;
-      margin-top: 1rem;
-      max-height: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    #notification {
-      margin-top: 1rem;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 2rem;
-      color: #6B7280;
-      font-size: 0.875rem;
-    }
-
-    .prompt-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 1rem;
-      background: #1F2937;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #374151;
-    }
-
-    .copiar-button-prompt2 {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.8rem;
-      background-color: #6366F1;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      width: auto;
-      margin-left: 1rem;
-    }
-
-    .copiar-button-prompt2:hover {
-      background-color: #4F46E5;
-    }
-
-    .response-block-gerar-temas {
-      max-height: 50px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
-      white-space: nowrap;
-    }
-
-    .tema-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .numero-temas {
-      width: 50px;
-      padding: 0.5rem;
-      margin-left: 10px;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      background: #111827;
-      color: white;
-    }
-
-    .prompt-container {
-      margin-top: 1.5rem;
-    }
-
-    /* Estilo para a área de texto do conteúdo */
-    .textarea-container {
-      margin-top: 2rem;
-      padding: 1rem;
-      background: #1F2937;
-      border-radius: 8px;
-      border: 1px solid #374151;
-    }
-
-    .text-info {
-      margin-top: 1rem;
-      color: #F9FAFB;
-      font-size: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    /* Botões "Copiar" e "Salvar" */
-    .action-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 1rem;
-    }
-
-    .action-buttons button {
-      width: 48%;
-      padding: 1rem;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .action-buttons .copiar {
-      background: #6366F1;
-    }
-
-    .action-buttons .salvar {
-      background: #34D399;
-    }
-
-    .action-buttons button:hover {
-      opacity: 0.9;
-    }
-
-    /* Botão pequeno para copiar o conteúdo de "Gerar Temas" */
-.copiar-gerar-temas {
-  background: #6366F1;
-  color: white;
-  font-size: 0.8rem;
-  padding: 0.5rem 0.5rem;  /* Diminui o padding */
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  margin: 1rem auto;  /* Centraliza o botão */
-  display: block;
-  width: 100%;  /* Define a largura como metade do tamanho original */
-}
-
-
-    .copiar-gerar-temas:hover {
-      background: #4F46E5;
-    }
-
-    /* Adiciona espaço entre o botão e o campo "Tema para os Prompts" */
-    .button-container {
-      margin-top: 0.5rem;
-    }
-
+  .action-buttons { display: flex; justify-content: space-between; margin-top: 1rem; }
+  .action-buttons button { width: 48%; padding: 1rem; font-size: 1rem; cursor: pointer; }
+  .action-buttons .copiar { background: #6366F1; }
+  .action-buttons .salvar { background: #34D399; }
+  .action-buttons button:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -291,32 +172,38 @@
 
   <div class="container">
     <h1>Gerador de Prompts Personalizados</h1>
-	
-    <!-- Box de GERAR TEMAS -->
+
+    <!-- Box de IDEIAS FIXAS (15) com botão de copiar ao lado -->
     <div class="gerar-temas-box">
-      <p class="gerar-temas-texto" id="gerarTemas">Selecione a quantidade de temas, ao lado, para gerar as histórias.</p>
-      <input type="number" id="numeroTemas" class="numero-temas" placeholder="0" oninput="gerarTemas()" />
+      <!-- Mostramos só uma linha, mas copiamos o texto COMPLETO ao clicar -->
+      <p class="gerar-temas-texto" id="gerarTemas">Prompt para gerar ideias para vídeos ...</p>
+      <button class="copiar-button-prompt2" id="copiarGerarTemasBtn" title="Copiar conteúdo de ideias">
+        <i class="fa-solid fa-copy"></i> Copiar Prompt
+      </button>
     </div>
-	
-    <button class="copiar-gerar-temas" onclick="copiarGerarTemas()">COPIAR CONTEÚDO</button>
-	
-    <label for="tema">Tema para os Prompts</label>
+
+    <!-- Campo de TÍTULO para gerar variações com botão copiar -->
+    <label for="tituloIdeias" style="margin-top:1rem;">CRIAR TÍTULOS</label>
+    <div class="prompt-box">
+      <input type="text" id="tituloIdeias" placeholder="Digite o título aqui...">
+      <button class="copiar-button-prompt2" id="copiarTituloBtn" title="Copiar prompt de títulos">
+        <i class="fa-solid fa-copy"></i> Copiar
+      </button>
+    </div>
+
+    <label for="tema">Digite o tema escolhido abaixo:</label>
     <div class="button-container">
       <input type="text" id="tema" placeholder="Digite o tema aqui...">
-	  <label for="roteiro">Adicione seu Roteiro</label>
-	 <textarea id="roteiro" placeholder="Digite seu roteiro aqui..." rows="4"></textarea>
+      <!-- Campo 'Adicione seu Roteiro' removido por solicitação -->
       <button onclick="gerarPrompts()"><i class="fa-solid fa-magic"></i> Gerar Prompts Personalizados</button>
     </div>
-	
-	
-	
 
     <div id="notification"></div>
 
     <div id="promptsGerados" style="display:none;">
       <!-- Prompt 1 -->
       <div class="prompt-container">
-        <label for="prompt1">CRIAR TITULOS</label>
+        <label for="prompt1">IMAGENS PARA O ROTEIRO</label>
         <div class="prompt-box">
           <pre id="prompt1" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt1')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
@@ -325,39 +212,39 @@
 
       <!-- Prompt 2 -->
       <div class="prompt-container">
-        <label for="prompt2">IMAGENS PARA O ROTEIRO</label>
+        <label for="prompt2">THUMBNAIL</label>
         <div class="prompt-box">
           <pre id="prompt2" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt2')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
         </div>
       </div>
-	  
+
       <!-- Prompt 3 -->
       <div class="prompt-container">
-        <label for="prompt3">THUMBNAIL</label>
+        <label for="prompt3">SEO DO YOUTUBE</label>
         <div class="prompt-box">
           <pre id="prompt3" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt3')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
         </div>
-      </div>	  
-	  
+      </div>
+
       <!-- Prompt 4 -->
       <div class="prompt-container">
-        <label for="prompt4">SEO DO YOUTUBE</label>
         <div class="prompt-box">
           <pre id="prompt4" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt4')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
         </div>
       </div>
-	  
+
       <!-- Prompt 5 -->
       <div class="prompt-container">
+        <label for="prompt5">VAZIO</label>
         <div class="prompt-box">
           <pre id="prompt5" class="response-block"></pre>
           <button onclick="copiarPrompt('prompt5')" class="copiar-button-prompt2"><i class="fa-solid fa-copy"></i> Copiar</button>
         </div>
       </div>
-	  
+
       <!-- Prompt 6 -->
       <div class="prompt-container">
         <label for="prompt6">VAZIO</label>
@@ -374,186 +261,71 @@
   </div>
 
   <script>
-   
-  function copiarPrompt(id) {
-  const promptText = document.getElementById(id).textContent;  // Pega o conteúdo do prompt
-  navigator.clipboard.writeText(promptText).then(() => {
-    showMessage("Conteúdo copiado com sucesso!", "green");
-  }).catch(err => {
-    showMessage("Falha ao copiar o conteúdo!", "red");
-  });
-}
-    function gerarTemas() {
-      const numeroTemas = parseInt(document.getElementById("numeroTemas").value) || 10;
-      const gerarTemasElement = document.getElementById("gerarTemas");
-      let temas = `Sua função agora é atuar como um estrategista de conteúdo experiente no YouTube. Sua única tarefa gerar ideias inovadoras e clicáveis ​​para temas de vídeo que combinem com um canal sobre: "Histórias Antigas". 
-	  
-	  O conteúdo deve ser interessante, informativo e relaxante — sem ser dramático ou emocionalmente intenso. 
-
-Gere ${numeroTemas} ideias únicas e criativas para vídeos nessa área. Os tópicos devem ser baseados em história antiga, vida medieval, impérios esquecidos, vida cotidiana em séculos passados, costumes bizarros, pestes, guerras (de forma suave), realeza e aspectos pouco conhecidos ou negligenciados da história. Evite tópicos excessivamente intensos ou perturbadores e garanta que cada ideia seja adequada para uma escuta relaxante na hora de dormir. 
-
-- Regras:
-Numere os títulos (ex.: 1., 2., 3.)
-Use capitalização de título (cada palavra importante com inicial maiúscula), igual aos títulos do YouTube
-Não explique os títulos — apenas publique-os diretamente
-Use palavras poderosas relevantes
-Cada título deve ter no máximo 50 caracteres. Não ultrapasse esse limite
-
-Lógica de palavras-chave: Incorpore um ou dois substantivos otimizados para SEO em cada título, mantendo a formulação natural.
-Cada título deve ter no máximo 50 caracteres. Não ultrapasse esse limite.`;
-      gerarTemasElement.textContent = temas;
+    function showMessage(msg, color = 'white') {
+      const notification = document.getElementById('notification');
+      notification.textContent = msg;
+      notification.style.color = color;
     }
 
-function gerarPrompts() {
-  const tema = document.getElementById("tema").value.trim();
-  const roteiro = document.getElementById("roteiro").value.trim();  // Novo campo de roteiro
-  
-  if (!tema && !roteiro) {
-    showMessage("Digite um tema ou um roteiro para gerar os prompts.", "red");
-    return;
-  }
+    function copiarPrompt(id) {
+      const promptText = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(promptText).then(() => {
+        showMessage('Conteúdo copiado com sucesso!', 'green');
+      }).catch(() => {
+        showMessage('Falha ao copiar o conteúdo!', 'red');
+      });
+    }
 
-      const prompt1 = `Crie 5 sugestões de títulos chamativos para um vídeo do YouTube baseado no tema: "${tema}". Os títulos devem ser curtos e claros com no máximo até 60 caracteres, utilizando gramática correta e capitalização adequada, com uso de clickbait leve e mistério. O objetivo é despertar curiosidade imediata, atrair cliques e favorecer a performance no algoritmo do YouTube.`;
-      const prompt2 = `Crie 18 prompts de imagem para ilustrar um vídeo com o tema: [${tema}]. Os prompts devem ser escritos em inglês e projetados para capturar a essência profunda da história. Cada prompt deve gerar uma cena visual que ressoe emocionalmente, seja de forma simbólica, literal ou emocionalmente evocativa. A ideia central da história deve ser refletida de forma impactante em cada imagem.
+    // Prompt fixo de 15 ideias (texto COMPLETO fica escondido em data-* para copiar)
+    function gerarTemas() {
+      const numeroTemas = 15;
+      const gerarTemasElement = document.getElementById('gerarTemas');
+      const temas = `Sua função agora é atuar como um estrategista de conteúdo experiente no YouTube. Sua única tarefa é gerar ideias inovadoras e clicáveis para temas de vídeo que combinem com um canal sobre: "Histórias Antigas".\n\nO conteúdo deve ser interessante, informativo e relaxante — sem ser dramático ou emocionalmente intenso.\n\nGere ${numeroTemas} ideias únicas e criativas para vídeos nessa área. Os tópicos devem ser baseados em história antiga, vida medieval, impérios esquecidos, vida cotidiana em séculos passados, costumes bizarros, pestes, guerras (de forma suave), realeza e aspectos pouco conhecidos ou negligenciados da história. Evite tópicos excessivamente intensos ou perturbadores e garanta que cada ideia seja adequada para uma escuta relaxante na hora de dormir.\n\n- Regras:\nNumere os títulos (ex.: 1., 2., 3.)\nUse capitalização de título (cada palavra importante com inicial maiúscula), igual aos títulos do YouTube\nNão explique os títulos — apenas publique-os diretamente\nUse palavras poderosas relevantes\nCada título deve ter no máximo 50 caracteres. Não ultrapasse esse limite\n\nLógica de palavras-chave: Incorpore um ou dois substantivos otimizados para SEO em cada título, mantendo a formulação natural.\nCada título deve ter no máximo 50 caracteres. Não ultrapasse esse limite.`;
+      // Guardamos o conteúdo completo no dataset para copiar
+      gerarTemasElement.dataset.fullPrompt = temas;
+      // Mostramos apenas uma linha "amigável"
+      gerarTemasElement.textContent = 'Prompt para gerar ideias para vídeos ...';
+    }
 
-Seja extremamente detalhado nas descrições de:
+    function copiarGerarTemas() {
+      const el = document.getElementById('gerarTemas');
+      const texto = el.dataset.fullPrompt || el.textContent;
+      navigator.clipboard.writeText(texto).then(() => {
+        showMessage('Conteúdo copiado com sucesso!', 'green');
+      }).catch(() => {
+        showMessage('Falha ao copiar o conteúdo!', 'red');
+      });
+    }
 
-- Ambiente e cenário: descreva com precisão o ambiente, incluindo a hora do dia, clima, estação do ano, localização e qualquer característica única que contribua para o sentimento da cena.
+    // Copiar a partir do campo de título, no formato solicitado
+    function copiarTitulo() {
+      const titulo = document.getElementById('tituloIdeias').value.trim();
+      if (!titulo) {
+        showMessage('Preencha o título para copiar.', 'red');
+        return;
+      }
+      const texto = `Crie 5 sugestões de títulos chamativos para um vídeo do YouTube baseado no tema: "${titulo}". Os títulos devem ser curtos e claros com no máximo até 60 caracteres, utilizando gramática correta e capitalização adequada, com uso de clickbait leve e mistério. O objetivo é despertar curiosidade imediata, atrair cliques e favorecer a performance no algoritmo do YouTube.`;
+      navigator.clipboard.writeText(texto).then(() => {
+        showMessage('Conteúdo copiado com sucesso!', 'green');
+      }).catch(() => {
+        showMessage('Falha ao copiar o conteúdo!', 'red');
+      });
+    }
 
-- Personagens: forneça detalhes precisos sobre idade, gênero, etnia, cor de cabelo e olhos, roupas e acessórios. Também descreva expressões faciais, postura, interações entre os personagens (se houver) e qualquer ação que eles estejam executando.
+    function gerarPrompts() {
+      const tema = document.getElementById('tema').value.trim();
+      if (!tema) {
+        showMessage('Digite um tema para gerar os prompts.', 'red');
+        return;
+      }
 
-- Iluminação e clima emocional: descreva a luz de forma a refletir o tom emocional da cena (luz suave, sombras dramáticas, luz dourada do pôr-do-sol, etc.). O clima e a atmosfera devem ser imersivos e transmitir uma sensação clara (mistério, tranquilidade, medo, magia, etc.).
+      const prompt1 = `Crie 18 prompts de imagem para ilustrar um vídeo com o tema: [${tema}]. Os prompts devem ser escritos em inglês e projetados para capturar a essência profunda da história. Cada prompt deve gerar uma cena visual que ressoe emocionalmente, seja de forma simbólica, literal ou emocionalmente evocativa. A ideia central da história deve ser refletida de forma impactante em cada imagem.\n\nSeja extremamente detalhado nas descrições de:\n\n- Ambiente e cenário: descreva com precisão o ambiente, incluindo a hora do dia, clima, estação do ano, localização e qualquer característica única que contribua para o sentimento da cena.\n\n- Personagens: forneça detalhes precisos sobre idade, gênero, etnia, cor de cabelo e olhos, roupas e acessórios. Também descreva expressões faciais, postura, interações entre os personagens (se houver) e qualquer ação que eles estejam executando.\n\n- Iluminação e clima emocional: descreva a luz de forma a refletir o tom emocional da cena (luz suave, sombras dramáticas, luz dourada do pôr-do-sol, etc.). O clima e a atmosfera devem ser imersivos e transmitir uma sensação clara (mistério, tranquilidade, medo, magia, etc.).\n\nAs imagens devem ser visualmente intensas e altamente expressivas, focando em capturar a essência emocional e simbólica de cada cena, conectando-a diretamente com a narrativa da história. Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.`;
 
-As imagens devem ser visualmente intensas e altamente expressivas, focando em capturar a essência emocional e simbólica de cada cena, conectando-a diretamente com a narrativa da história. Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.`;
+      const prompt2 = `Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube. Você é especialista na criação de miniaturas visuais geradas por IA para histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.\n\nPensando em um vídeo do YouTube com o seguinte tema: "${tema} | História Antiga", me dê uma sugestão de thumbnail altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Descreva a thumbnail de forma visual e cinematográfica, com elementos que transmitam emoções de mistério, respeito, reflexão e imersão histórica. A imagem deve mostrar um personagem em close-up, no canto direito da imagem, olhando diretamente para a câmera, com o rosto altamente detalhado, bem definido e em alta qualidade, com uma expressão que combine com o contexto histórico da história — seja de determinação, sabedoria, coragem ou contemplação. Use elementos simbólicos criando uma atmosfera que remeta à riqueza do passado. Adicionar o texto “HISTÓRIA ANTIGA PARA DORMIR” no lado esquerdo da imagem, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.`;
 
-      const prompt3 = `Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube. Você é especialista na criação de miniaturas visuais geradas por IA para histórias antigas. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+      const prompt3 = `# ESPECIALISTA EM SEO UNIVERSAL\nVocê é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de "histórias antigas para dormir sobre eventos históricos, personagens, civilizações e mitologias". Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO.\n\n# SISTEMA DE DETECÇÃO AUTOMÁTICA DE NICHO\nAo receber o título e narração, você irá automaticamente identificar o tipo de conteúdo e aplicar as estratégias específicas para o nicho de "histórias antigas para dormir sobre eventos históricos, personagens, civilizações e mitologias".\n\n# PROCESSO DE TRABALHO\n\nETAPA 1: AGUARDANDO INPUT\nQuando este prompt for ativado, você deve PRIMEIRO solicitar as informações necessárias:\n\nSEO YouTube Universal Ativado! Por favor, forneça:\n\n[PAÍS]: \n[IDIOMA]: \n[TÍTULO]: \n\nETAPA 2: PROCESSAMENTO E ENTREGA\nApós receber o input, você criará e entregará um único BLOCO DE CÓDIGO, cada um dentro de plaintext, separados, para que eu possa copiar cada bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.\n\n---\n\nPARTE 1: DESCRIÇÃO DO VÍDEO\n\n[Título no idioma mencionado]\n\nHOOK INICIAL ADAPTATIVO (200 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]\n- Pergunta ou afirmação provocativa específica do nicho identificado\n- Deve aparecer no preview\n- Gerar curiosidade imediata usando gatilhos do nicho\n- Incluir palavras-chave principais do tema\n\nCORPO PRINCIPAL OTIMIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]\n- Listar benefícios/promessas adequados ao tipo de conteúdo\n- Repetir palavras-chave naturalmente no contexto\n- Incluir variações de termos de busca populares no nicho\n- Criar conexão emocional apropriada ao público\n- Usar power words específicas da categoria\n\nPARÁGRAFO DE ENGAJAMENTO PERSONALIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]\n- Call-to-action adaptado ao nicho\n- Criar senso de comunidade usando linguagem do grupo\n- Agradecer de forma contextualizada\n- Incentivar interação relevante ao tipo de conteúdo\n\nREQUISITO RÍGIDO: A soma dos 4 elementos acima = ~ 600 caracteres no máximo.\n\nSEÇÃO DE HASHTAGS (15-20 hashtags)\nFormato: \nHashtags:\n#Hashtag1 #Hashtag2 #Hashtag3\n\nDistribuição adaptada ao nicho:\n- 5 hashtags ultra-populares da categoria\n- 5 hashtags de nicho específico do tema\n- 5 hashtags long-tail relacionadas\n- 5 hashtags emergentes/trending do setor\n\nTAGS PARA O YOUTUBE\n\nFormato: tag1, tag2, tag3, tag longa quatro\n- 10-20 tags estratégicas do nicho identificado\n- Mix de cauda curta e longa relevantes ao tema\n- Baseadas no comportamento de busca do público-alvo\n- LIMITE: 350 caracteres do campo de tags do YouTube\n\n----\n\n# REGRAS DE OTIMIZAÇÃO ADAPTATIVAS\n\nRepetição Estratégica:\n- Palavra-chave principal: 15-20x (contextualizada ao nicho)\n- Palavras-chave secundárias: 8-12x cada (naturais ao tema)\n\nLocalização Cultural:\n- Usar expressões e gírias do país-alvo + nicho\n- Adaptar completamente ao SEO local e cultural\n- Incluir trending topics da categoria no país\n\n----\n\n# PESQUISA SIMULADA ADAPTATIVA\n\nAntes de criar, você deve simular uma pesquisa específica do nicho identificado:\n- Top 10 vídeos similares da categoria no idioma/país\n- Trending hashtags e tags do nicho específico\n- Perguntas mais buscadas sobre o tema\n- Competidores diretos da área e suas estratégias\n- Gaps de palavras-chave não exploradas no setor\n\n---\n\n# FORMATO DE ENTREGA OBRIGATÓRIO\n\nBLOCO: \n\n[Aqui vai o texto da descrição]\n\n[aqui vai as hashtags]\n\n[Aqui vai a lista de tags separadas por vírgulas,\nespecíficas do nicho identificado]\n\n---\n\n# INSTRUÇÕES ESPECIAIS\n\n- Se o título mencionar números, SEMPRE incluir variações escritas\n- Incluir termos de voice search apropriados ao nicho\n- Adaptar completamente ao SEO local e do setor\n- Manter estrutura e tamanhos EXATAMENTE como especificado\n- IMPORTANTE: Os títulos "Hashtags:" devem ser traduzidos:\n  - Português: "Hashtags:"\n  - Espanhol: "Hashtags:" \n  - Inglês: "Hashtags:" \n  - Francês: "Hashtags:" \n  - Etc.\n\n---\n\n# INÍCIO DO PROCESSO\n\nMODO ATIVADO: SEO Universal Adaptativo v1.0 🚀`;
 
-Pensando em um vídeo do YouTube com o seguinte tema: "${tema} | História Antiga", me dê uma sugestão de thumbnail altamente chamativa e criativa que gere curiosidade extrema e incentive o clique. Descreva a thumbnail de forma visual e cinematográfica, com elementos que transmitam emoções de mistério, respeito, reflexão e imersão histórica. A imagem deve mostrar um personagem em close-up, no canto direito da imagem, olhando diretamente para a câmera, com o rosto altamente detalhado, bem definido e em alta qualidade, com uma expressão que combine com o contexto histórico da história — seja de determinação, sabedoria, coragem ou contemplação. Use elementos simbólicos criando uma atmosfera que remeta à riqueza do passado. Adicionar o texto “HISTÓRIA ANTIGA PARA DORMIR” no lado esquerdo esquerdo da imagem, em tipografia elegante e definida em negrito, harmonizando com o clima histórico e cinematográfico.`;
-      const prompt4 = `# ESPECIALISTA EM SEO UNIVERSAL
-Você é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de "histórias antigas para dormir sobre eventos históricos, personagens, civilizações e mitologias". Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO.
-
-# SISTEMA DE DETECÇÃO AUTOMÁTICA DE NICHO
-Ao receber o título e narração, você irá automaticamente identificar o tipo de conteúdo e aplicar as estratégias específicas para o nicho de "histórias antigas para dormir sobre eventos históricos, personagens, civilizações e mitologias".
-
-
-# PROCESSO DE TRABALHO
-
-ETAPA 1: AGUARDANDO INPUT
-Quando este prompt for ativado, você deve PRIMEIRO solicitar as informações necessárias:
-
-SEO YouTube Universal Ativado! Por favor, forneça:
-
-[PAÍS]: 
-[IDIOMA]: 
-[TÍTULO]: 
-
-ETAPA 2: PROCESSAMENTO E ENTREGA
-Após receber o input, você criará e entregará um único BLOCO DE CÓDIGO, cada um dentro de plaintext, separados, para que eu possa copiar cada bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
-
----
-
-PARTE 1: DESCRIÇÃO DO VÍDEO
-
-[Título no idioma mencionado]
-
-HOOK INICIAL ADAPTATIVO (200 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-- Pergunta ou afirmação provocativa específica do nicho identificado
-- Deve aparecer no preview
-- Gerar curiosidade imediata usando gatilhos do nicho
-- Incluir palavras-chave principais do tema
-
-CORPO PRINCIPAL OTIMIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-- Listar benefícios/promessas adequados ao tipo de conteúdo
-- Repetir palavras-chave naturalmente no contexto
-- Incluir variações de termos de busca populares no nicho
-- Criar conexão emocional apropriada ao público
-- Usar power words específicas da categoria
-
-PARÁGRAFO DE ENGAJAMENTO PERSONALIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-- Call-to-action adaptado ao nicho
-- Criar senso de comunidade usando linguagem do grupo
-- Agradecer de forma contextualizada
-- Incentivar interação relevante ao tipo de conteúdo
-
-REQUISITO RÍGIDO: A soma dos 4 elementos acima = ~ 600 caracteres no máximo.
-
-SEÇÃO DE HASHTAGS (15-20 hashtags)
-Formato: 
-Hashtags:
-#Hashtag1 #Hashtag2 #Hashtag3
-
-Distribuição adaptada ao nicho:
-- 5 hashtags ultra-populares da categoria
-- 5 hashtags de nicho específico do tema
-- 5 hashtags long-tail relacionadas
-- 5 hashtags emergentes/trending do setor
-
-TAGS PARA O YOUTUBE
-
-Formato: tag1, tag2, tag3, tag longa quatro
-- 10-20 tags estratégicas do nicho identificado
-- Mix de cauda curta e longa relevantes ao tema
-- Baseadas no comportamento de busca do público-alvo
-- LIMITE: 350 caracteres do campo de tags do YouTube
-
-----
-
-# REGRAS DE OTIMIZAÇÃO ADAPTATIVAS
-
-Repetição Estratégica:
-- Palavra-chave principal: 15-20x (contextualizada ao nicho)
-- Palavras-chave secundárias: 8-12x cada (naturais ao tema)
-
-Localização Cultural:
-- Usar expressões e gírias do país-alvo + nicho
-- Adaptar completamente ao SEO local e cultural
-- Incluir trending topics da categoria no país
-
-----
-
-# PESQUISA SIMULADA ADAPTATIVA
-
-Antes de criar, você deve simular uma pesquisa específica do nicho identificado:
-- Top 10 vídeos similares da categoria no idioma/país
-- Trending hashtags e tags do nicho específico
-- Perguntas mais buscadas sobre o tema
-- Competidores diretos da área e suas estratégias
-- Gaps de palavras-chave não exploradas no setor
-
----
-
-# FORMATO DE ENTREGA OBRIGATÓRIO
-
-BLOCO: 
-
-[Aqui vai o texto da descrição]
-
-[aqui vai as hashtags]
-
-[Aqui vai a lista de tags separadas por vírgulas,
-específicas do nicho identificado]
-
----
-
-# INSTRUÇÕES ESPECIAIS
-
-- Se o título mencionar números, SEMPRE incluir variações escritas
-- Incluir termos de voice search apropriados ao nicho
-- Adaptar completamente ao SEO local e do setor
-- Manter estrutura e tamanhos EXATAMENTE como especificado
-- IMPORTANTE: Os títulos "Hashtags:" devem ser traduzidos:
-  - Português: "Hashtags:"
-  - Espanhol: "Hashtags:" 
-  - Inglês: "Hashtags:" 
-  - Francês: "Hashtags:" 
-  - Etc.
-
----
-
-# INÍCIO DO PROCESSO
-
-MODO ATIVADO: SEO Universal Adaptativo v1.0 🚀`;
-      const prompt5 = `Me entregue o contéudo em um idioma e pais por vez, sempre perguntando se pode seguir para o proximo idioma.
+      const prompt4 = `Me entregue o contéudo em um idioma e pais por vez, sempre perguntando se pode seguir para o proximo idioma.
 PAIS: Brasil, Espanha e França
 IDIOMA: Português, Espanhol e Francês
 TEMA: [${tema}]
@@ -561,72 +333,42 @@ TEMA: [${tema}]
 Você criará e entregará um uníco BLOCO DE CÓDIGO, dentro de plaintext, para que eu possa copiar o bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
 
 Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou instruções.`;
-      const prompt6 = `VAZIO`;
 
+      const prompt5 = `55555555555`;
 
-      document.getElementById("prompt1").textContent = prompt1;
-      document.getElementById("prompt2").textContent = prompt2;
-      document.getElementById("prompt3").textContent = prompt3;
-      document.getElementById("prompt4").textContent = prompt4;
-      document.getElementById("prompt5").textContent = prompt5;
-      document.getElementById("prompt6").textContent = prompt6;
+      const prompt6 = `66666666`;
 
-      document.getElementById("promptsGerados").style.display = "block";
-      showMessage("Prompts gerados com sucesso!", "green");
+      document.getElementById('prompt1').textContent = prompt1;
+      document.getElementById('prompt2').textContent = prompt2;
+      document.getElementById('prompt3').textContent = prompt3;
+      document.getElementById('prompt4').textContent = prompt4;
+      document.getElementById('prompt5').textContent = prompt5;
+      document.getElementById('prompt6').textContent = prompt6;
+
+      document.getElementById('promptsGerados').style.display = 'block';
+      showMessage('Prompts gerados com sucesso!', 'green');
     }
 
-    function copiarGerarTemas() {
-      const gerarTemasText = document.getElementById("gerarTemas").textContent;
-      navigator.clipboard.writeText(gerarTemasText);
+    // Observabilidade básica
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error(`Erro: ${message} em ${source} na linha ${lineno}, coluna ${colno}. Detalhes: ${error}`);
+      showMessage('Ocorreu um erro inesperado. Verifique o console para mais detalhes.', 'red');
+      return true;
+    };
+
+    function captureError(fn) {
+      try { fn(); } catch (e) {
+        console.error('Erro durante execução:', e);
+        showMessage('Houve um problema na execução de uma função. Verifique o console para mais detalhes.', 'red');
+      }
     }
 
-    function showMessage(msg, color = 'white') {
-      const notification = document.getElementById("notification");
-      notification.textContent = msg;
-      notification.style.color = color;
-    }
-	
-	
-	
-	  // Monitorando erros globalmente
-  window.onerror = function(message, source, lineno, colno, error) {
-    const errorMsg = `Erro: ${message} em ${source} na linha ${lineno}, coluna ${colno}. Detalhes: ${error}`;
-    console.error(errorMsg); // Exibe o erro no console
+    // Inicializações
+    captureError(gerarTemas);
 
-    // Notifica o usuário visualmente
-    showMessage("Ocorreu um erro inesperado. Verifique o console para mais detalhes.", "red");
-    
-    // Retorna true para evitar que o erro seja disparado novamente
-    return true;
-  };
-
-  // Função para capturar erros de execução
-  function captureError(fn) {
-    try {
-      fn();
-    } catch (e) {
-      console.error('Erro durante execução:', e);
-      showMessage("Houve um problema na execução de uma função. Verifique o console para mais detalhes.", "red");
-    }
-  }
-
-  // Função para mostrar mensagens no site
-  function showMessage(msg, color = 'white') {
-    const notification = document.getElementById("notification");
-    notification.textContent = msg;
-    notification.style.color = color;
-  }
-
-  // Exemplo de uso do captureError para garantir que o código dentro da função seja monitorado
-  captureError(() => {
-    // Coloque o código que você quer monitorar aqui
-    gerarTemas(); // Exemplo: função gerarTemas
-  });
-
-  // Exemplo de onde capturar erro ao gerar prompts
-  captureError(() => {
-    gerarPrompts();
-  });
+    // Ligações de botões
+    document.getElementById('copiarGerarTemasBtn').addEventListener('click', copiarGerarTemas);
+    document.getElementById('copiarTituloBtn').addEventListener('click', copiarTitulo);
   </script>
 </body>
 </html>
