@@ -173,7 +173,7 @@
     <textarea id="roteiro" placeholder="Digite seu roteiro aqui..."></textarea>
     
     <button onclick="gerarImagens('realista')">Pintura Realista</button>
-	<button onclick="gerarImagens('medieval')">Medieval</button>
+	<button onclick="gerarImagens('digital)">Pintura Digital</button>
     <button onclick="gerarImagens('oleo')">Óleo</button>
 	<button onclick="gerarImagens('nenhum')">Nenhum</button>
 
@@ -208,13 +208,13 @@ function gerarImagens(estilo) {
     
     // Personalizando o conteúdo baseado no estilo
     if (estilo === 'realista') {
-      textoGerado = `Create a realistic painting-style illustration, reminiscent of Renaissance or classical painting, in ultra-high-quality 8k UHD, the highest quality, and highly detailed. Focus on detailed figures with soft yet defined lines, using rich textures and shadows. The scene should convey a sense of depth, with natural lighting illuminating the figures and the environment. The background should include architectural elements or natural scenery, rendered in soft tones with a focus on realism: ${paragrafos[promptIndex].trim()}`;
+      textoGerado = `Create a realistic painting-style illustration, reminiscent of Renaissance or classical painting, in ultra-high-quality 8k UHD, the highest quality, and highly detailed. Focus on detailed figures with soft yet defined lines, using rich textures and shadows. The scene should convey a sense of depth, with natural lighting illuminating the figures and the environment. The background should include architectural elements or natural scenery, rendered in soft tones with a focus on realism. ${paragrafos[promptIndex].trim()}`;
     } else if (estilo === 'nenhum') {
       textoGerado = `${paragrafos[promptIndex].trim()}.`;
     } else if (estilo === 'oleo') {
-      textoGerado = `A realistic and detailed digital oil painting with soft lighting and rich textures. The scene emphasizes realism, depth, and a harmonious color palette: ${paragrafos[promptIndex].trim()}`;
-    } else if (estilo === 'medieval') {
-      textoGerado = `Medieval style hand-painted oil illustration: ${paragrafos[promptIndex].trim()}`;
+      textoGerado = `A realistic and detailed digital oil painting with soft lighting and rich textures. The scene emphasizes realism, depth, and a harmonious color palette. ${paragrafos[promptIndex].trim()}`;
+    } else if (estilo === 'digital') {
+      textoGerado = `A cinematic, ultra-detailed digital painting in a realistic, historical-fantasy style. ${paragrafos[promptIndex].trim()}`;
     }
 
     const divImagem = document.createElement("div");
@@ -275,6 +275,7 @@ function gerarImagens(estilo) {
   </script>
 </body>
 </html>
+
 
 
 
