@@ -42,8 +42,8 @@
         <code id="exportLine" class="block w-full whitespace-pre-wrap break-words text-sm bg-zinc-950 border border-zinc-800 rounded-xl p-3"></code>
       </div>
       <p class="text-xs text-zinc-500 mt-2">
-        Formato (5 colunas p/ Excel — Jogo, BTTS, Over 2,5, 1X2, Cantos Totais):
-        <span class="font-mono">Time A x Time B 	(—) BTTS Sim/Não 	(—) Over 2,5 Sim/Não 	(—) Time A/B/Empate 	Total esperado: X.X</span>
+        Formato (5 colunas p/ Excel — Jogo, <em>BTTS Não</em>, <em>Over 2,5 Não</em>, <em>1 (Time A)</em>, Cantos Totais):
+        <span class="font-mono">Time A x Time B 	(%) BTTS Não 	(%) Over 2,5 Não 	(%) Time A 	Total esperado: X.X</span>
       </p>
     </section>
 
@@ -502,16 +502,21 @@
           <span class="badge bg-amber-700/60 text-amber-100">Total esperado: <strong>${cornersReady?meanCornersTotal5.toFixed(1):'—'}</strong></span>
         </div>`;
 
-      // ===== Resumo em linha — NOVO FORMATO =====
+      // ===== Resumo em linha (NOVO FORMATO: (%) BTTS Não | (%) Over 2,5 Não | (%) Time A) =====
+      const pBTTS_no = isFinite(pBTTS5) ? (1 - pBTTS5) : NaN;
+      const pO25_no  = isFinite(pO25_5) ? (1 - pO25_5) : NaN;
+
       const col1 = `${teamA} x ${teamB}`;
-      const col2 = `(—) BTTS ${bttsYes ? 'Sim' : 'Não'}`;
-      const col3 = `(—) Over 2,5 ${overYes ? 'Sim' : 'Não'}`;
-      const col4 = `(—) ${topPick.key}`;
+      const col2 = `(${pct0(pBTTS_no)}) BTTS Não`;
+      const col3 = `(${pct0(pO25_no)}) Over 2,5 Não`;
+      const col4 = `(${pct0(pHome5)}) ${teamA}`;
       const col5 = `Total esperado: ${cornersReady?meanCornersTotal5.toFixed(1):'—'}`;
 
-      // Tabs para copiar (Excel) e visual com espaços na tela
+      // Linha para copiar (com TABs)
       const line = `${col1}\t${col2}\t${col3}\t${col4}\t${col5}`;
       lastSummary = line;
+
+      // Exibição amigável (com 4 espaços)
       $("exportLine").textContent = `${col1}    ${col2}    ${col3}    ${col4}    ${col5}`;
       $("export").classList.remove('hidden');
       $("btnCopy").disabled = false;
