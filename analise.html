@@ -43,7 +43,7 @@
       </div>
       <p class="text-xs text-zinc-500 mt-2">
         Formato (5 colunas p/ Excel — Jogo, BTTS, Over 2,5, 1X2, Cantos Totais):
-        <span class="font-mono">Time A x Time B 	 Sim/Não (n%) BTTS 	 Sim/Não (n%) Over 2,5 	 (n%) Casa/Empate/Fora 	 Total esperado: X.X</span>
+        <span class="font-mono">Time A x Time B 	(—) BTTS Sim/Não 	(—) Over 2,5 Sim/Não 	(—) Time A/B/Empate 	Total esperado: X.X</span>
       </p>
     </section>
 
@@ -383,7 +383,6 @@
         </div>`;
 
       // ======== ESTRATÉGIA TIPSTER (últimos 5 no mando correto) ========
-      // Agora também retornamos as contagens (x/5) para BTTS e Over 2,5
       function bttsOverFromSample(sel){
         let n = sel.length, cBTTS = 0, cO25 = 0;
         for (const o of sel){
@@ -503,13 +502,14 @@
           <span class="badge bg-amber-700/60 text-amber-100">Total esperado: <strong>${cornersReady?meanCornersTotal5.toFixed(1):'—'}</strong></span>
         </div>`;
 
-      // ===== Resumo em linha (usando Sim/Não + percentuais) =====
+      // ===== Resumo em linha — NOVO FORMATO =====
       const col1 = `${teamA} x ${teamB}`;
-      const col2 = `${bttsYes ? 'Sim' : 'Não'} (${pct0(pBTTS5)}) BTTS`;
-      const col3 = `${overYes ? 'Sim' : 'Não'} (${pct0(pO25_5)}) Over 2,5`;
-      const col4 = `(${pct0(topPick.p)}) ${topPick.key}`;
+      const col2 = `(—) BTTS ${bttsYes ? 'Sim' : 'Não'}`;
+      const col3 = `(—) Over 2,5 ${overYes ? 'Sim' : 'Não'}`;
+      const col4 = `(—) ${topPick.key}`;
       const col5 = `Total esperado: ${cornersReady?meanCornersTotal5.toFixed(1):'—'}`;
 
+      // Tabs para copiar (Excel) e visual com espaços na tela
       const line = `${col1}\t${col2}\t${col3}\t${col4}\t${col5}`;
       lastSummary = line;
       $("exportLine").textContent = `${col1}    ${col2}    ${col3}    ${col4}    ${col5}`;
