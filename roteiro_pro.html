@@ -193,7 +193,7 @@
 
         function copyTheme() {
             const theme = themes[currentThemeIndex];
-            navigator.clipboard.writeText(`Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "História Antiga para Dormir". 
+            navigator.clipboard.writeText(`Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "Cotidiano Real e Curioso em Séculos Passados".
 Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
 
 Instruções
@@ -209,36 +209,42 @@ História 2: [Título da história 2] (3 partes, 1.500 e 2.000 tokens cada) - to
 
 Siga as instruções:
 Comece com a História 1, Parte 1 (1.500 e 2.000 tokens).
-Concentre-se no tópico principal ou na figura histórica, descrevendo-os detalhadamente e com precisão histórica.
+Concentre-se no tópico principal ou na figura histórica, com ênfase em hábitos, ofícios, objetos, espaços de moradia e trabalho, descrevendo-os detalhadamente e com precisão histórica.
 Termine a Parte 1 com um pensamento ou questão não resolvida, estimulando a curiosidade pela próxima parte.
 Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2 da História 1?"
 A Parte 2 dará continuidade à Parte 1, aprofundando a narrativa, adicionando mais contexto e aproximando a história de sua resolução.
 Termine a Parte 2 com um ponto ou questão não resolvida para se preparar para a Parte 3.
 Após concluir a Parte 2, pergunte em poucas palavras: "Continuar para a Parte 3 da História 1?"
 A Parte 3 concluirá a história, focando no clímax ou resolução do evento e nos resultados finais ou lições aprendidas.
-Termine com uma reflexão instigante sobre como o evento impactou a história ou se relaciona com os tempos modernos.
+Termine com uma reflexão instigante sobre como o evento impactou o cotidiano histórico ou se relaciona com práticas e costumes contemporâneos.
 Repita esse processo para todas as outras histórias. Após concluir as 3 partes da História 1, passe para a História 2 e continue o processo.
 
 Requisitos de estilo de escrita:
-Tom: Calmo, informativo e ligeiramente imparcial, com foco em fatos históricos. Enfatize os detalhes tediosos, mas significativos, que moldaram a história, usando um estilo narrativo descritivo e rico.
+Tom: Calmo, informativo e ligeiramente imparcial, com foco em fatos históricos. Enfatize detalhes cotidianos — às vezes tediosos, mas significativos — que moldaram a vida em diferentes épocas, usando um estilo narrativo descritivo e rico.
 Voz: Dirija-se diretamente ao ouvinte ("você"), criando uma sensação de imersão na história.
-Profundidade: Inclua contexto histórico, estratégias de sobrevivência no mundo real e histórias pessoais que moldaram o curso da história. Mesmo que os detalhes sejam tediosos, apresente-os de uma forma que pareça significativa.
+Profundidade: Inclua contexto histórico, estratégias de sobrevivência e organização do dia a dia (trabalho, alimentação, higiene, mobilidade, crenças), além de relatos pessoais documentados que moldaram o curso da história.
 Linguagem: Use palavras simples e diretas, para explicar os fatos de maneira clara e fácil de entender, sem exagerar nos detalhes, mantendo um tom apropriado para a história do sono. Evite tornar o conteúdo excessivamente dramático ou fictício.
 Finais: Cada Parte deve terminar com uma pergunta aberta ou um pensamento não resolvido, incentivando a curiosidade e a reflexão com no minimo caracteres.
 
 Requisitos de conteúdo:
-Use eventos, figuras e lugares históricos reais, concentrando-se em histórias antigas — coisas como detalhes da vida cotidiana, eventos há muito esquecidos ou figuras menos conhecidas e seu impacto.
-Cada história deve destacar a resiliência humana, a sobrevivência ou os resultados inesperados de um evento ou figura histórica.
+Use eventos, personagens e lugares históricos reais, priorizando a vida cotidiana em séculos passados — hábitos, ofícios, alimentação, moradia, higiene, rotinas de trabalho, circulação e crenças populares — bem como figuras menos conhecidas e seu impacto.
+Cada história deve destacar a resiliência humana, a adaptação e os resultados inesperados presentes no cotidiano histórico.
 Evite incluir quaisquer elementos fictícios, a menos que estejam diretamente vinculados a experimentos mentais históricos documentados ou ambiguidades.
-O foco deve estar nas vidas cotidianas, nos fatos históricos ocultos e nas histórias não contadas que compõem nosso passado.
+O foco deve estar nas vidas comuns, nos fatos históricos ocultos e nas histórias não contadas que compõem nosso passado.
 
 Importante:
-- Cada Parte deve ter entre 1.500 e 2.000 tokens.
-- Certifique-se de que a história transite suavemente de uma Parte para outra.
-- Garanta que a imersão e o envolvimento sejam mantidos durante todo o processo.
-- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
-- Antes de começar com a historia me dê a estrutura de temas das 2 histórias e depois me pergunte se pode começar com a primeira história.
-- Evite interações, perguntas ou conclusões desnecessárias.
+
+Cada Parte deve ter entre 1.500 e 2.000 tokens.
+
+Certifique-se de que a história transite suavemente de uma Parte para outra.
+
+Garanta que a imersão e o envolvimento sejam mantidos durante todo o processo.
+
+A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
+
+Antes de começar com a historia me dê a estrutura de temas das 2 histórias e depois me pergunte se pode começar com a primeira história.
+
+Evite interações, perguntas ou conclusões desnecessárias.
 
 Tema: [${theme}].`)
                 .then(() => {
