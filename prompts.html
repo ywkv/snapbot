@@ -280,7 +280,26 @@
     function gerarTemas() {
       const numeroTemas = 15;
       const gerarTemasElement = document.getElementById('gerarTemas');
-      const temas = `Sua função agora é atuar como um estrategista de conteúdo experiente no YouTube. Sua única tarefa é gerar ideias inovadoras e clicáveis para temas de vídeo que combinem com um canal sobre: "Histórias reais e curiosas do cotidiano em tempos passados".\n\nO conteúdo deve ser interessante, informativo e relaxante — sem ser dramático ou emocionalmente intenso.\n\nGere ${numeroTemas} ideias únicas e criativas para vídeos nessa área. Os tópicos devem ser baseados em vida cotidiana em tempos passados. Evite tópicos excessivamente intensos ou perturbadores e garanta que cada ideia seja adequada para uma escuta relaxante na hora de dormir.\n\n- Regras:\nNumere os títulos (ex.: 1., 2., 3.)\nUse capitalização de título (cada palavra importante com inicial maiúscula), igual aos títulos do YouTube\nNão explique os títulos — apenas publique-os diretamente\nUse palavras poderosas relevantes\nCada título deve ter no máximo 80 caracteres. Não ultrapasse esse limite\n\nLógica de palavras-chave: Incorpore um ou dois substantivos otimizados para SEO em cada título, mantendo a formulação natural.\nCada título deve ter no máximo 80 caracteres. Não ultrapasse esse limite.`;
+      const temas = `Sua função agora é atuar como um estrategista de conteúdo experiente no YouTube. Sua única tarefa é gerar ideias inovadoras e clicáveis para temas de vídeo que combinem com um canal sobre: "Histórias reais e curiosas do cotidiano de outros tempos".
+
+O conteúdo deve ser interessante, informativo e relaxante — sem ser dramático ou emocionalmente intenso.
+
+Gere 15 ideias únicas e criativas para vídeos nessa área. Os tópicos devem ser baseados em vida cotidiana, costumes, hábitos, objetos e rotinas de épocas passadas, sem necessidade de definir séculos ou anos específicos. Evite tópicos excessivamente intensos ou perturbadores e garanta que cada ideia seja adequada para uma escuta relaxante na hora de dormir.
+
+Regras:
+
+Numere os títulos (ex.: 1., 2., 3.)
+
+Use capitalização de título (cada palavra importante com inicial maiúscula), igual aos títulos do YouTube
+
+Não explique os títulos — apenas publique-os diretamente
+
+Use palavras poderosas relevantes
+
+Cada título deve ter no máximo 80 caracteres. Não ultrapasse esse limite
+
+Lógica de palavras-chave: Incorpore um ou dois substantivos otimizados para SEO em cada título, mantendo a formulação natural.
+Cada título deve ter no máximo 80 caracteres. Não ultrapasse esse limite.`;
       // Guardamos o conteúdo completo no dataset para copiar
       gerarTemasElement.dataset.fullPrompt = temas;
       // Mostramos apenas uma linha "amigável"
@@ -559,6 +578,7 @@ Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou 
   </script>
 </body>
 </html>
+
 
 
 
