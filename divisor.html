@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Prompts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .prompt-block {
+            margin-bottom: 15px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: vertical;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .buttons .generate-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .buttons .clear-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .buttons .save-btn {
+            background-color: #2196F3;
+            color: white;
+        }
+        .buttons .copy-btn {
+            background-color: #9C27B0;
+            color: white;
+        }
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #contador-blocos {
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Gerador de Prompts</h2>
+            <p>Adicione seus prompts e gere o conteúdo final.</p>
+        </div>
+
+        <div id="prompts-container">
+            <div class="prompt-block">
+                <textarea id="prompts-textarea" placeholder="Cole seus prompts aqui..."></textarea>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="generate-btn" onclick="gerarConteudo()">Gerar</button>
+            <button class="clear-btn" onclick="limparCampos()">Limpar</button>
+            <button class="save-btn" onclick="salvarConteudo()">Salvar</button>
+            <button class="copy-btn" onclick="copiarConteudo()">Copiar</button>
+        </div>
+
+        <div id="output">
+            <h3>Conteúdo Gerado:</h3>
+            <div id="contador-blocos"></div> <!-- 🔹 Contador no topo -->
+            <div id="conteudo-gerado"></div>
+        </div>
+    </div>
+
+    <script>
+        function gerarConteudo() {
+            const textarea = document.getElementById('prompts-textarea');
+            let conteudo = textarea.value.trim();
+
+            if (!conteudo) {
+                alert("Por favor, adicione alguns prompts.");
+                return;
+            }
+
+            const prefixo = "A cinematic, ultra-detailed digital painting in a realistic, historical-fantasy style.";
+
+            // Separar os prompts por linhas
+            let prompts = conteudo.split('\n').map(p => p.trim()).filter(p => p !== "");
+
+            // Dividir os prompts em blocos de 18
+            let blocos = [];
+            while (prompts.length) {
+                blocos.push(prompts.splice(0, 18));
+            }
+
+            let conteudoFinal = "";
+
+            // Criar os blocos de conteúdo
+            blocos.forEach((bloco, index) => {
+                // Gera numeração com 2 dígitos (01, 02, 03...)
+                let numero = String(index + 1).padStart(2, '0');
+                let titulo = `IMAGEM COM FUNDO VERMELHO E O TEXO NO CENTRO: ${numero}`;
+
+                // Adiciona prefixo antes de cada prompt
+                let promptsComPrefixo = bloco.map(p => `${prefixo} ${p}`);
+
+                // Monta o bloco
+                conteudoFinal += `<p>${titulo}</p><p>${promptsComPrefixo.join('</p><p>')}</p>`;
+
+                // Linha de separação entre blocos (exceto o último)
+                if (index < blocos.length - 1) {
+                    conteudoFinal += "<hr>";
+                }
+            });
+
+            // Inserir contador e conteúdo
+            document.getElementById('contador-blocos').innerText = `Total de blocos gerados: ${blocos.length}`;
+            document.getElementById('conteudo-gerado').innerHTML = conteudoFinal;
+        }
+
+        function limparCampos() {
+            document.getElementById('prompts-textarea').value = '';
+            document.getElementById('conteudo-gerado').innerHTML = '';
+            document.getElementById('contador-blocos').innerText = '';
+        }
+
+        function salvarConteudo() {
+            const conteudoGerado = document.getElementById('conteudo-gerado').innerHTML.trim();
+            if (conteudoGerado) {
+                const blob = new Blob([conteudoGerado], { type: 'text/html' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'PROMPTS.html';
+                link.click();
+            } else {
+                alert("Por favor, gere o conteúdo antes de salvar.");
+            }
+        }
+
+        function copiarConteudo() {
+            const conteudoGerado = document.getElementById('conteudo-gerado').innerText;
+            if (conteudoGerado) {
+                navigator.clipboard.writeText(conteudoGerado);
+            }
+        }
+    </script>
+</body>
+</html>
