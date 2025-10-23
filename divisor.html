@@ -114,15 +114,15 @@
                 return;
             }
 
-            const prefixo = "A cinematic, ultra-detailed digital painting in a realistic, historical-fantasy style.";
+            const prefixo = "A hand-painted oil painting.";
 
             // Separar os prompts por linhas
             let prompts = conteudo.split('\n').map(p => p.trim()).filter(p => p !== "");
 
-            // Dividir os prompts em blocos de 18
+            // Dividir os prompts em blocos de 25
             let blocos = [];
             while (prompts.length) {
-                blocos.push(prompts.splice(0, 18));
+                blocos.push(prompts.splice(0, 25));
             }
 
             let conteudoFinal = "";
@@ -178,3 +178,4 @@
     </script>
 </body>
 </html>
+
