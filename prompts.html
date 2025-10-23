@@ -194,7 +194,9 @@
     <label for="tema">Digite o tema escolhido abaixo:</label>
     <div class="button-container">
       <input type="text" id="tema" placeholder="Digite o tema aqui...">
-      <!-- Campo 'Adicione seu Roteiro' removido por solicitação -->
+      <!-- NOVO CAMPO: Roteiro (abaixo do tema) -->
+      <label for="roteiro" style="margin-top:1rem;">Cole o roteiro (será inserido em "IMAGENS PARA O ROTEIRO" &rarr; "Roteiro:")</label>
+      <textarea id="roteiro" rows="8" placeholder="Cole aqui o roteiro completo..."></textarea>
       <button onclick="gerarPrompts()"><i class="fa-solid fa-magic"></i> Gerar Prompts Personalizados</button>
     </div>
 
@@ -329,13 +331,15 @@ Quero no seguinte formato:
 
     function gerarPrompts() {
       const tema = document.getElementById('tema').value.trim();
+      const roteiro = document.getElementById('roteiro').value.trim();
       if (!tema) {
         showMessage('Digite um tema para gerar os prompts.', 'red');
         return;
       }
 
-      const prompt1 = `Crie 18 prompts de imagem para ilustrar um vídeo com o tema: [${tema}]. Os prompts devem ser escritos em inglês e projetados para capturar a essência do cotidiano real e curioso em tempos passados. Cada prompt deve gerar uma cena visual fiel e serenamente evocativa — simbólica ou literal — em que a ideia central do episódio apareça de forma clara por meio de hábitos, objetos, espaços e relações do dia a dia.
-Recomenda-se que 70% dos prompts retratem paisagens ou interiores vazios com elementos sutis de presença humana, e os outros 30% incluam personagens em ações simples e contemplativas, para compor um bom ritmo visual.
+      const prompt1 = `Crie 25 prompts de imagem para ilustrar baseado no roteiro abaixo. Os prompts devem ser escritos em inglês. NÃO copie frases do texto. Em vez disso, leia cada parágrafo, compreenda profundamente a ideia central, e então crie cenas visuais impactantes que expressem essa ideia de forma simbólica, emocional ou literal, conforme apropriado.
+
+Recomenda-se que 80% dos prompts retratem paisagens ou interiores vazios com elementos sutis de presença humana, e os outros 20% incluam personagens em ações simples e contemplativas, para compor um bom ritmo visual.
 
 Seja extremamente detalhado nas descrições de:
 
@@ -347,32 +351,15 @@ Iluminação e clima emocional: descreva a luz para refletir um tom calmo e cont
 
 As imagens devem ser visualmente ricas e expressivas, sem sensacionalismo, priorizando autenticidade histórica, detalhes do cotidiano e um tom relaxante. Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.
 
+Tema: ${tema}
+
+Roteiro:
+
+${roteiro}
+
 `;
 
-      const prompt2 = `Pensando em um vídeo do YouTube com o seguinte tema: "${tema} | História Antiga", me dê uma sugestão de thumbnail altamente chamativa e criativa que gere curiosidade extrema e incentive o clique.
-
-🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR:
-
-🎨 1. Estilo e Textura
-Ilustração digital com detalhes realistas e iluminação cinematográfica
-Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes nítidos (luz dourada do amanhecer, luz natural difusa pela janela, velas/lamparinas)
-Paleta cinematográfica equilibrada, priorizando tons terrosos e quentes (ocre, sépia, dourado, laranja suave) combinados com azul profundo e toques de escarlate para contraste, criando um clima histórico luminoso
-Personagens comuns de época com expressões autênticas e envolventes (artesãos, comerciantes, criadas, viajantes), evitando figuras lendárias
-Roupas e adereços historicamente coerentes (linho, lã, couro, chapéus, aventais, ferramentas), sem fantasia explícita
-Ambientes ricos porém cotidianos: oficinas, mercados, cozinhas, vielas, estalagens, caravanas, interiores com madeira e metal patinado; atmosfera de curiosidade e descoberta, mantendo boa luminosidade e contraste nas sombras
-
-🖼️ 2. Composição
-Posicione o personagem principal no lado direito em close-up dramático, olhando para a câmera; fundo suavizado (profundidade de campo) com elementos contextuais do período — bancas de mercado, utensílios, ferramentas, mapa antigo, janela com luz — que reforcem a cena do dia a dia sem competir com o protagonista
-
-🔥 3. Iluminação e Clima
-Iluminação suave e equilibrada (golden hour, luz de janela lateral, lamparina), evitando escuridão excessiva
-Mantenha mistério e drama discretos com boa visibilidade, sombras definidas e sensação de profundidade
-O tom emocional deve refletir a reinterpretação realista do cotidiano passado: introspectivo, revelador, nostálgico ou levemente enigmático — sempre claro e legível
-
-🧾 4. Texto
-Nenhum texto deve ser incluído na miniatura. O foco está exclusivamente na imagem, que deve ser suficientemente impactante para contar a história visualmente.
-
-Depois descreva esse conceito em prompt detalhado para geração por IA.`;
+      const prompt2 = `Crie uma thumbnail chamativa baseado na imagem em anexo de uma forma que não pareça plágio. As expressões faciais dos personagens devem ser o foco com rosto bem detalhados. Não inclua textos na imagem.`;
 
       const prompt3 = `ESPECIALISTA EM SEO UNIVERSAL
 
@@ -573,21 +560,3 @@ Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou 
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
