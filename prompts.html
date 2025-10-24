@@ -337,7 +337,34 @@ Quero no seguinte formato:
         return;
       }
 
-      const prompt1 = `Crie 25 prompts de imagem para ilustrar baseado no roteiro abaixo. Os prompts devem ser escritos em inglês. NÃO copie frases do texto. Em vez disso, leia cada parágrafo, compreenda profundamente a ideia central, e então crie cenas visuais impactantes que expressem essa ideia de forma simbólica, emocional ou literal, conforme apropriado.
+      const prompt1 = `PROMPT MESTRE — INTRO “Histórias Antigas para Dormir”
+
+Tarefa: Escreva APENAS a introdução de um vídeo do YouTube em português do Brasil, para um canal de “histórias antigas para dormir”. O tema será fornecido em [TEMA] na entrada do usuário. A resposta deve ser um único bloco de texto contínuo, sem títulos, listas, notas ou explicações do que está fazendo.
+
+Ponto de vista e tempo verbal:
+- Segunda pessoa do singular (“você”, “seu”), tempo presente.
+
+Tamanho:
+- 70–100 palavras (~15 segundos de fala).
+
+Estrutura obrigatória (siga na ordem, como prosa contínua):
+1) GANCHO + TESE (1–2 frases): introduza [TEMA] com um contraste provocativo porém suave. 
+2) CTA SUAVE + COMUNIDADE (1–2 frases): “Antes de se acomodar, curta o vídeo e inscreva-se, mas só se você realmente gostar do que faço aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
+3) RITUAL SENSORIAL (1–2 frases): convide a “apagar as luzes”, “ligar um ventilador para um zumbido de fundo” e “entrar nessa juntos”.
+4) Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada, criando um mistério ou contexto envolvente sem entrar em muitos detalhes.
+
+Restrições finais:
+- Não use cabeçalhos, marcadores, parênteses com placeholders ou colchetes no texto final.
+- Não prometa links, fontes ou imagens.
+- Não antecipe tópicos em lista; apenas sugira a continuidade de modo tranquilo.
+
+Entrada do usuário:
+[${tema}]
+
+Saída esperada:
+Apenas a introdução em prosa contínua, seguindo exatamente as instruções acima.`;
+
+      const prompt2 = `Crie 25 prompts de imagem para ilustrar baseado no roteiro abaixo. Os prompts devem ser escritos em inglês. NÃO copie frases do texto. Em vez disso, leia cada parágrafo, compreenda profundamente a ideia central, e então crie cenas visuais impactantes que expressem essa ideia de forma simbólica, emocional ou literal, conforme apropriado.
 
 Recomenda-se que 80% dos prompts incluam personagens em ações simples e contemplativas, e os outros 20% retratem paisagens ou interiores vazios com elementos sutis de presença humana, para compor um bom ritmo visual. 
 
@@ -359,9 +386,11 @@ ${roteiro}
 
 `;
 
-      const prompt2 = `Crie uma thumbnail chamativa baseado na imagem em anexo de uma forma que não pareça plágio. As expressões faciais dos personagens devem ser o foco com rosto bem detalhados. Não inclua textos na imagem.`;
+      const prompt3 = `Crie uma thumbnail chamativa baseado na imagem em anexo de uma forma que não pareça plágio. As expressões faciais dos personagens devem ser o foco com rosto bem detalhados. Não inclua textos na imagem.`;
 
-      const prompt3 = `ESPECIALISTA EM SEO UNIVERSAL
+      const prompt4 = `Me de os títulos abaixo em português, espanhol e francês`;
+
+      const prompt5 = `ESPECIALISTA EM SEO UNIVERSAL
 
 Você é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de "histórias antigas para dormir sobre a vida cotidiana em tempos passados". Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO.
 
@@ -513,7 +542,7 @@ INÍCIO DO PROCESSO
 
 MODO ATIVADO: SEO Universal Adaptativo v1.0 🚀`;
 
-      const prompt4 = `Me entregue o contéudo em um idioma e pais por vez, sempre perguntando se pode seguir para o proximo idioma.
+      const prompt6 = `Me entregue o contéudo em um idioma e pais por vez, sempre perguntando se pode seguir para o proximo idioma.
 PAIS: Brasil, Espanha e França
 IDIOMA: Português, Espanhol e Francês
 TEMA: [${tema}]
@@ -521,10 +550,6 @@ TEMA: [${tema}]
 Você criará e entregará um uníco BLOCO DE CÓDIGO, dentro de plaintext, para que eu possa copiar o bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
 
 Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou instruções.`;
-
-      const prompt5 = `55555555555`;
-
-      const prompt6 = `66666666`;
 
       document.getElementById('prompt1').textContent = prompt1;
       document.getElementById('prompt2').textContent = prompt2;
@@ -560,4 +585,5 @@ Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou 
   </script>
 </body>
 </html>
+
 
