@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -383,7 +382,7 @@ Você criará e entregará todo o conteúdo dentro de um bloco de código em pla
             navigator.clipboard.writeText(`Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.`);
         }
 
-        /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" ====== */
+        /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
         function clearContent() {
             // limpa somente o textarea principal do roteiro e sua prévia/estado
             document.getElementById('themeInput').value = '';
@@ -391,7 +390,10 @@ Você criará e entregará todo o conteúdo dentro de um bloco de código em pla
             document.getElementById('themeName').innerText = '';
             document.getElementById('copyButton').style.display = 'none';
 
-            // mantém todo o restante intocado (boxes, newTextBox e arquivos anexados)
+            // limpa APENAS os boxes coloridos do final da página
+            document.querySelectorAll('.box textarea').forEach(t => { t.value = ''; });
+
+            // mantém todo o restante intocado (newTextBox e arquivos anexados)
             const msg = document.getElementById('completionMessage');
             msg.style.display = 'none';
             msg.innerText = '';
@@ -517,4 +519,3 @@ Você criará e entregará todo o conteúdo dentro de um bloco de código em pla
     </script>
 </body>
 </html>
-
