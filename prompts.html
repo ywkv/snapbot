@@ -494,7 +494,37 @@ Você criará e entregará um uníco BLOCO DE CÓDIGO, dentro de plaintext, para
 
 Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou instruções.`;
 
-      const prompt6 = `Me de os títulos abaixo em português, espanhol e francês`;
+      const prompt6 = `Atuar como engenheiro profissional de prompts visuais e estrategista de miniaturas para o YouTube. Você é especialista na criação de miniaturas visuais geradas por IA para documentários de histórias antigas sobre eventos históricos, personagens, civilizações e mitologias. O objetivo é gerar miniaturas cinematográficas altamente impactantes e visualmente impressionantes, com uma estética realista e cinematográfica, otimizadas para uma taxa de cliques (CTR) elevada e narrativa envolvente.
+
+Você está gerando UMA miniatura cinematográfica com base no título do vídeo fornecido. A miniatura deve refletir um estilo de ilustração digital realista com iluminação equilibrada e dramática, criando uma atmosfera única e imersiva que evoque a reinterpretação histórica de maneira épica e envolvente.
+
+🎯 ELEMENTOS OBRIGATÓRIOS PARA INCLUIR NO PROMPT:
+
+🎨 1. Estilo e Textura
+Ilustração digital com detalhes realistas e iluminação cinematográfica
+Pinceladas realistas e texturizadas, com ênfase em iluminação suave e contrastes bem definidos, como luz dourada suave, luz natural do dia ou luz indireta de fontes suaves
+Uso de uma paleta de cores cinematográficas mais equilibrada, com tons mais quentes como bege, dourado, laranja suave, juntamente com azul profundo e escarlate, criando um ambiente histórico alternativo com mais luminosidade
+Personagens com expressões faciais exageradas, intensas e emocionais, especialmente figuras lendárias ou modificadas de personagens históricos
+Roupas detalhadas e imersivas, combinando uma interpretação histórica com elementos alternativos ou fantasiosos
+Ambientes cinematográficos ricos, como paisagens épicas, ruínas misteriosas ou cidades perdidas, com atmosferas de mistério, mas com mais luminosidade e contraste nas sombras
+
+🖼️ 2. Composição
+A composição deve ter 1 ou 2 personagens com expressões exageradas, com o personagem principal no centro da imagem, em um close-up exagerado e rosto bem detalhado olhando diretamente para camera. O segundo personagem deve ser colocado de forma a interagir com o protagonista, seja em uma posição de apoio, antagonismo ou revelação. O fundo deve ser suavizado para manter o foco nos protagonistas, mas ainda com detalhes que contextualizem a cena histórica ou mítica.
+
+🔥 3. Iluminação e Clima
+Iluminação suave e equilibrada, com fontes de luz mais claras, como luz dourada do amanhecer ou luz suave de tarde
+Evitar luz excessivamente escura, favorecendo ambientes de mistério e drama, mas mantendo uma boa visibilidade e contraste com luz suave que cria uma sensação de profundidade e clareza
+O tom emocional da miniatura deve refletir a reinterpretação histórica, com atmosferas introspectivas, épicas, reveladoras ou até aterrorizantes, mas com clareza na imagem
+
+🧾 4. Texto
+Nenhum texto deve ser incluído na miniatura. O foco está exclusivamente na imagem, que deve ser suficientemente impactante para contar a história visualmente.
+
+🔚 FORMATO:
+Depois de fornecer o título do vídeo, sua tarefa é retornar:
+Um promptde texto em inglêspara gerar a miniatura cinematográfica detalhada em estilo realista, pronta para uso em plataformas como MidJourney, Leonardo AI, etc.
+Sugestão de tom de cor correspondente à emoção e à história
+
+Título do Vídeo: ${tema}`;
 
       document.getElementById('prompt1').textContent = prompt1;
       document.getElementById('prompt2').textContent = prompt2;
@@ -530,6 +560,7 @@ Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou 
   </script>
 </body>
 </html>
+
 
 
 
