@@ -385,7 +385,9 @@ Roteiro:
         }
         
         function copyTexto() {
-            navigator.clipboard.writeText(`Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.`);
+            navigator.clipboard.writeText(`Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos, subtítulos e quantidade de tokens da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.
+
+IMPORTANTE: No final de cada bloco forneça a quantidade de tokens para garantir que cada parte tenha (entre 1.500 e 2.000 tokens).`);
         }
 
         /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
@@ -526,3 +528,4 @@ Roteiro:
     </script>
 </body>
 </html>
+
