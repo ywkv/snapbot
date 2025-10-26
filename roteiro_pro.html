@@ -322,18 +322,20 @@
 
         function copyTheme() {
             if (!roteiroText) return;
-            const textoParaCopiar = `Reescreva o texto abaixo de forma a deixá-lo mais simples e acessível, mas também com uma estrutura mais original, usando palavras diferentes, e mantendo o mesmo conteúdo, para que o texto seja único e sem risco de plágio. Evite repetir frases e ideias exatamente como no original com uma expressão narrativa. Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+            const textoParaCopiar = `Reescreva o texto abaixo de forma a deixá-lo mais simples e acessível, mas também com uma estrutura mais original, usando palavras diferentes, e mantendo o mesmo conteúdo, para que o texto seja único e sem risco de plágio. Evite repetir frases e ideias exatamente como no original com uma expressão narrativa. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
 
 Instruções
 Depois de fornecer o roteiro para reescrever, o assistente irá analisar quantas partes tem o roteiro completo. O assistente então gerará a Parte 1 e continuará com o processo até que todas as partes da história sejam concluídas.
 
 Estrutura:
-Divida em 3 partes e Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+Divida em 5 partes e Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
 
 Por exemplo:
 Parte 1:  (1.500 e 2.000 tokens cada)
 Parte 2:  (1.500 e 2.000 tokens cada)
 Parte 3:  (1.500 e 2.000 tokens cada)
+Parte 4:  (1.500 e 2.000 tokens cada)
+Parte 5:  (1.500 e 2.000 tokens cada)
 
 Siga as instruções:
 Comece com a Parte 1 (1.500 e 2.000 tokens).
@@ -364,17 +366,20 @@ Roteiro:
             });
         }
 
+        /* ====== ALTERAÇÃO SOLICITADA: mover o texto "[texto...]" (ou o conteúdo do box) para o MEIO da mensagem fixa ====== */
         function copyIntro() {
-            const fixedIntro = `Organize toda a transcrição abaixo em parágrafos com um limite padrão de 600 caracteres para cada parágrafo, tradução para o português e faça a correção ortográfica.
+            const header = `Organize toda a transcrição abaixo em parágrafos com um limite padrão de 600 caracteres para cada parágrafo, tradução para o português e faça a correção ortográfica.`;
 
-Você criará e entregará todo o conteúdo dentro de um bloco de código em plaintext, mas somente o conteúdo da transcrição deve estar dentro do bloco. Os títulos e subtítulos devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. Não me entregue o (timecode).`;
+            const footer = `IMPORTANTE: Você criará e entregará todo o conteúdo dentro de um bloco de código em plaintext SEM FALTAR NADA, mas somente o conteúdo da transcrição deve estar dentro do bloco. Os títulos e subtítulos devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. Não me entregue o (timecode).`;
 
             const extraFromBox = document.getElementById('newTextBox').value.trim();
-            const toClipboard = extraFromBox ? `${fixedIntro}\n\n${extraFromBox}` : fixedIntro;
+            const payload = extraFromBox ? extraFromBox : '[texto...]';
+
+            const toClipboard = `${header}\n\n${payload}\n\n${footer}`;
 
             navigator.clipboard.writeText(toClipboard).then(() => {
                 const msg = document.getElementById('completionMessage');
-                msg.innerText = 'Intro + conteúdo do box copiados!';
+                msg.innerText = 'Mensagem (intro + texto + regras) copiada!';
                 msg.style.display = 'block';
             });
         }
@@ -438,6 +443,7 @@ Você criará e entregará todo o conteúdo dentro de um bloco de código em pla
         function setMsg(text) {
             const msg = document.getElementById('completionMessage');
             msg.innerText = text;
+            msg.display = 'block';
             msg.style.display = 'block';
         }
 
@@ -520,5 +526,3 @@ Você criará e entregará todo o conteúdo dentro de um bloco de código em pla
     </script>
 </body>
 </html>
-
-
