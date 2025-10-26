@@ -370,7 +370,7 @@ Roteiro:
         function copyIntro() {
             const header = `Organize toda o roteiro abaixo em parágrafos com um limite padrão de 600 caracteres para cada parágrafo, tradução para o português e faça a correção ortográfica.`;
 
-            const footer = `IMPORTANTE: Você criará e entregará todo o conteúdo dentro de um bloco de código em plaintext SEM FALTAR NADA, mas somente o conteúdo da transcrição deve estar dentro do bloco. Os títulos e subtítulos devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. Não me entregue o (timecode).
+            const footer = `IMPORTANTE: Você criará e entregará cada Parte dentro de um único bloco de código em plaintext. Apenas o conteúdo da narrativa (todos os parágrafos) deve estar dentro desse bloco.As perguntas de transição também devem aparecer sempre fora do bloco. Não me entregue o (timecode).
             
             Agora organize....`;
 
@@ -387,9 +387,11 @@ Roteiro:
         }
         
         function copyTexto() {
-            navigator.clipboard.writeText(`Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos, subtítulos e quantidade de tokens da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.
+            navigator.clipboard.writeText(`Sim, você criará e entregará cada Parte dentro de um único bloco de código em plaintext. Apenas o conteúdo da narrativa da Parte (todos os parágrafos) deve estar dentro desse bloco.
+Os títulos, subtítulos e a quantidade de tokens da história devem ficar fora do bloco.
+As perguntas de transição também devem aparecer sempre fora do bloco.
 
-IMPORTANTE: No final de cada bloco forneça a quantidade de tokens para garantir que cada parte tenha (entre 1.500 e 2.000 tokens).`);
+IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.500 e 2.000 tokens.`);
         }
 
         /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
@@ -530,5 +532,6 @@ IMPORTANTE: No final de cada bloco forneça a quantidade de tokens para garantir
     </script>
 </body>
 </html>
+
 
 
