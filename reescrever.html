@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Roteiro</title>
+    <style>
+        :root{
+            --bg: #0f1115;
+            --card: #141821;
+            --muted: #959db3;
+            --text: #e6e9f2;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #22c55e;
+            --success-hover: #16a34a;
+            --ring: #60a5fa;
+            --border: #1f2633;
+            --warning: #f59e0b;
+        }
+
+        /* Base */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+            background: radial-gradient(1200px 1200px at 100% -10%, rgba(59,130,246,0.15), transparent 40%) ,
+                        radial-gradient(1000px 800px at -20% 10%, rgba(34,197,94,0.15), transparent 40%) ,
+                        var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .container{
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
+
+        /* Header */
+        .header{
+            display:flex;justify-content:space-between;align-items:center;
+            margin-bottom: 18px;
+        }
+        .brand{
+            display:flex;align-items:center;gap:12px;
+        }
+        .brand-badge{
+            width:38px;height:38px;border-radius:12px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            box-shadow: 0 8px 24px rgba(59,130,246,.35);
+        }
+        h1{
+            font-size: clamp(20px, 2.2vw, 28px);
+            margin:0;
+            letter-spacing: .2px;
+        }
+        .sub{
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Card utilitário */
+        .card{
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+                        var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.35);
+        }
+        .stack{ display:flex; flex-direction: column; gap: 12px; }
+
+        /* Labels e inputs */
+        label{
+            font-size: 13px;
+            color: var(--muted);
+        }
+        textarea, input[type="file"]{
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #0e131b;
+            color: var(--text);
+            padding: 12px 12px;
+            outline: none;
+            transition: border .2s, box-shadow .2s, transform .05s;
+        }
+        textarea::placeholder{ color:#75809b; }
+        textarea:focus, input[type="file"]:focus{
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(96,165,250,.25);
+        }
+
+        /* Barra de ações */
+        .actions{
+            display:flex; flex-wrap: wrap; gap: 8px;
+        }
+        .btn{
+            border: 1px solid var(--border);
+            background: #0e131b;
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform .05s ease, background .2s, border-color .2s, box-shadow .2s;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn:hover{ background:#0b0f16; border-color:#2a3547; }
+        .btn:active{ transform: translateY(1px); }
+
+        .btn-primary{
+            background: var(--primary);
+            border-color: transparent;
+            color: white;
+        }
+        .btn-primary:hover{ background: var(--primary-hover); }
+        .btn-success{
+            background: var(--success);
+            color: #052911;
+            border-color: transparent;
+        }
+        .btn-success:hover{ background: var(--success-hover); }
+        .btn-warning{
+            background: var(--warning);
+            color: #291805;
+            border-color: transparent;
+        }
+        .btn-ghost{
+            background: transparent;
+            border-color: #293142;
+        }
+        .btn:disabled{
+            opacity:.65; cursor:not-allowed; box-shadow:none;
+        }
+
+        /* Barra “Roteiro” */
+        #themeDisplay{
+            margin-top: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #0e131b;
+            display:flex; justify-content:space-between; align-items:center; gap:10px;
+        }
+        #themeText{ color:#aeb7cc; font-size: 14px; }
+        #themeName{ color: #ffffff; font-weight: 600; }
+
+        /* Mensagens */
+        .success{
+            display:none;
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(34,197,94,.12);
+            border: 1px solid rgba(34,197,94,.35);
+            color: #a8f3c1;
+            font-weight: 600;
+        }
+
+        /* NewBox (1 linha) */
+        #newBox{
+            width:100%;
+            padding: 16px;
+            margin-top: 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+                        var(--card);
+        }
+        #newBox textarea{
+            height: 36px;
+            line-height: 1.25;
+            padding: 8px 10px;
+            border: 1px dashed #2b3549;
+            background: #0b1017;
+            resize: none;
+            overflow-y: auto;
+        }
+        #txtFiles{
+            background:#0b1017;
+        }
+
+        /* Grid dos blocos coloridos — sem borda */
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 20px;
+        }
+        .box {
+            width: 100%;
+            padding: 2px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 20px;
+        }
+        .box textarea {
+            width: 100%;
+            height: 24px;
+            border: none;
+            background-color: transparent;
+            padding: 3px;
+            box-sizing: border-box;
+            font-size: 12.5px;
+            line-height: 1.1;
+            resize: none;
+        }
+
+        /* Cores dos boxes */
+        #box1 { background-color: #FF0000; }
+        #box2 { background-color: #4682b4; }
+        #box3 { background-color: #f0e68c; }
+        #box4 { background-color: #800080; }
+        #box5 { background-color: #ffa500; }
+        #box6 { background-color: #00bcd4; }
+        #box7 { background-color: #000000; }
+        #box8 { background-color: #ff1493; }
+        #box9 { background-color: #32cd32; }
+
+        /* Responsividade */
+        @media (max-width: 680px){
+            .actions{ gap:6px; }
+            .btn{ padding:9px 12px; font-size:13px; }
+            .box-container{ grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <div class="brand-badge" aria-hidden="true"></div>
+                <div>
+                    <h1>Gerar Roteiro</h1>
+                    <div class="sub">Ferramenta para organizar e reescrever conteúdos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card principal -->
+        <div class="card stack">
+            <div class="stack">
+                <label for="themeInput">Cole o seu roteiro (apenas um):</label>
+                <textarea id="themeInput" placeholder="Cole seu roteiro aqui"></textarea>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generateTheme()">Gerar</button>
+                <button class="btn btn-ghost" onclick="clearContent()">Limpar</button>
+                <button class="btn btn-warning" onclick="saveContent()">Salvar</button>
+                <button id="introButton" class="btn btn-success" onclick="copyIntro()">Organizar</button>
+                <button id="introButton2" class="btn btn-success" onclick="copyTexto()">Texto</button>
+                <button id="copyButton" class="btn btn-success" style="display:none;" onclick="copyTheme()">Copiar instrução</button>
+                <button id="organizeBtn" class="btn btn-primary">Upload</button>
+            </div>
+
+            <div id="themeDisplay">
+                <span id="themeText">Roteiro: <span id="themeName"></span></span>
+            </div>
+
+            <div id="completionMessage" class="success"></div>
+        </div>
+
+        <!-- Novo Box de Texto -->
+        <div id="newBox" class="card">
+            <div class="actions" style="margin-bottom: 10px;">
+                <input id="txtFiles" type="file" accept=".txt" multiple>
+            </div>
+            <textarea id="newTextBox" placeholder="Digite o texto para organizar."></textarea>
+        </div>
+
+        <!-- Histórias -->
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box1"></textarea></div>
+                <div class="box"><textarea id="box2"></textarea></div>
+                <div class="box"><textarea id="box3"></textarea></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box4"></textarea></div>
+                <div class="box"><textarea id="box5"></textarea></div>
+                <div class="box"><textarea id="box6"></textarea></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box7"></textarea></div>
+                <div class="box"><textarea id="box8"></textarea></div>
+                <div class="box"><textarea id="box9"></textarea></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ====== Lógica existente mantida ====== */
+        let roteiroText = '';
+
+        function generateTheme() {
+            const input = document.getElementById('themeInput').value.trim();
+            roteiroText = input;
+
+            if (!roteiroText) {
+                document.getElementById('themeText').innerHTML = '<span style="color:#fca5a5;">Por favor, adicione o roteiro!</span>';
+                return;
+            }
+            const preview = roteiroText.length > 100 ? roteiroText.substring(0, 100) + '...' : roteiroText;
+            document.getElementById('themeName').innerText = preview;
+            document.getElementById('copyButton').style.display = 'inline-flex';
+            const msg = document.getElementById('completionMessage');
+            msg.style.display = 'none';
+            msg.innerText = '';
+        }
+
+        function copyTheme() {
+            if (!roteiroText) return;
+            const textoParaCopiar = `Reescreva o texto abaixo de forma a deixá-lo mais simples e acessível, mas também com uma estrutura mais original, usando palavras diferentes, e mantendo o mesmo conteúdo, para que o texto seja único e sem risco de plágio. Evite repetir frases e ideias exatamente como no original com uma expressão narrativa. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Instruções
+Depois de fornecer o roteiro para reescrever, o assistente irá analisar quantas partes tem o roteiro completo. O assistente então gerará a Parte 1 e continuará com o processo até que todas as partes da história sejam concluídas.
+
+Estrutura:
+Divida em 5 partes e Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Por exemplo:
+Parte 1:  (1.500 e 2.000 tokens cada)
+Parte 2:  (1.500 e 2.000 tokens cada)
+Parte 3:  (1.500 e 2.000 tokens cada)
+Parte 4:  (1.500 e 2.000 tokens cada)
+Parte 5:  (1.500 e 2.000 tokens cada)
+
+Siga as instruções:
+Comece com a Parte 1 (1.500 e 2.000 tokens).
+Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
+A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
+
+Requisitos de estilo de escrita:
+Tom: Calmo
+Voz: Dirija-se diretamente ao ouvinte
+Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+
+Importante:
+- Cada Parte deve ter entre 1.500 e 2.000 tokens.
+- Certifique-se de que a história transite suavemente de uma Parte para outra.
+- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
+- Evite interações, perguntas ou conclusões desnecessárias.
+- Lembre-se: A história deve ser a mesma e os pararafos devem ser quase iguais mais sem parecer plágio.
+- Antes de começar com a historia me dê a estrutura das divisões das partes e depois me pergunte se pode começar a reescrever a primeira parte.
+
+Roteiro:
+\n\n${roteiroText}`;
+
+            navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Roteiro copiado com a instrução!';
+                msg.style.display = 'block';
+                document.getElementById('copyButton').style.display = 'none';
+            });
+        }
+
+        /* ====== ALTERAÇÃO SOLICITADA: mover o texto "[texto...]" (ou o conteúdo do box) para o MEIO da mensagem fixa ====== */
+        function copyIntro() {
+            const header = `Organize toda o roteiro abaixo em parágrafos com um limite padrão de 600 caracteres para cada parágrafo, tradução para o português e faça a correção ortográfica.`;
+
+            const footer = `IMPORTANTE: Você irá organizar tudo em um único bloco de código em plaintext. Apenas o conteúdo da narrativa (todos os parágrafos) deve estar dentro desse bloco. Não me entregue o (timecode).
+            
+            Agora organize....`;
+
+            const extraFromBox = document.getElementById('newTextBox').value.trim();
+            const payload = extraFromBox ? extraFromBox : '[texto...]';
+
+            const toClipboard = `${header}\n\n${payload}\n\n${footer}`;
+
+            navigator.clipboard.writeText(toClipboard).then(() => {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Mensagem (intro + texto + regras) copiada!';
+                msg.style.display = 'block';
+            });
+        }
+        
+        function copyTexto() {
+            navigator.clipboard.writeText(`Sim, você criará e entregará cada Parte dentro de um único bloco de código em plaintext. Apenas o conteúdo da narrativa da Parte (todos os parágrafos) deve estar dentro desse bloco.
+Os títulos, subtítulos e a quantidade de tokens da história devem ficar fora do bloco.
+As perguntas de transição também devem aparecer sempre fora do bloco.
+
+IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.500 e 2.000 tokens.`);
+        }
+
+        /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
+        function clearContent() {
+            // limpa somente o textarea principal do roteiro e sua prévia/estado
+            document.getElementById('themeInput').value = '';
+            roteiroText = '';
+            document.getElementById('themeName').innerText = '';
+            document.getElementById('copyButton').style.display = 'none';
+
+            // limpa APENAS os boxes coloridos do final da página
+            document.querySelectorAll('.box textarea').forEach(t => { t.value = ''; });
+
+            // mantém todo o restante intocado (newTextBox e arquivos anexados)
+            const msg = document.getElementById('completionMessage');
+            msg.style.display = 'none';
+            msg.innerText = '';
+        }
+
+        /* ====== AJUSTE 2: Salvar usando o nome do arquivo .txt que está "da vez" ====== */
+        function saveContent() {
+            let content = '';
+            document.querySelectorAll('.box textarea').forEach(textarea => {
+                const text = textarea.value.trim();
+                if (text) content += text + '\n\n';
+            });
+
+            if (!content) {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Não há conteúdo para salvar.';
+                msg.style.display = 'block';
+                return;
+            }
+
+            // Pega o arquivo atualmente carregado (da vez)
+            let filename = 'roteiro.txt';
+            if (txtFilesList.length > 0 && txtCurrentIndex >= 0 && txtCurrentIndex < txtFilesList.length) {
+                const currentName = txtFilesList[txtCurrentIndex].name || 'roteiro.txt';
+                // garante extensão .txt
+                const base = currentName.replace(/\.[^/.]+$/,''); 
+                filename = base + '.txt';
+            }
+
+            const blob = new Blob([content.trim()], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        /* ====== Sequência de .txt (sem alerts, feedback na barra verde) ====== */
+        let txtFilesList = [];
+        let txtCurrentIndex = -1; // -1 = nenhum carregado ainda
+
+        function setMsg(text) {
+            const msg = document.getElementById('completionMessage');
+            msg.innerText = text;
+            msg.display = 'block';
+            msg.style.display = 'block';
+        }
+
+        function updateBtnState() {
+            const organizeBtn = document.getElementById('organizeBtn');
+            const total = txtFilesList.length;
+
+            if (total === 0) {
+                organizeBtn.disabled = false;
+                organizeBtn.textContent = 'Upload';
+                return;
+            }
+
+            const remaining = total - (txtCurrentIndex + 1); // quantos faltam carregar
+
+            if (remaining <= 0) {
+                // terminou (acabou de carregar o último)
+                organizeBtn.textContent = 'Concluído';
+                organizeBtn.disabled = true;
+            } else {
+                organizeBtn.textContent = 'Upload';
+                organizeBtn.disabled = false;
+            }
+        }
+
+        function loadFileByIndex(i) {
+            if (!txtFilesList.length || i < 0 || i >= txtFilesList.length) return;
+            const file = txtFilesList[i];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('newTextBox').value = (e.target.result || '').toString();
+                setMsg(`Arquivo ${i + 1} de ${txtFilesList.length} carregado: ${file.name}`);
+                updateBtnState(); // atualiza botão após carregar
+            };
+            reader.onerror = function() {
+                setMsg('Houve um problema ao ler este arquivo.');
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function handleTxtFilesChange(ev) {
+            const files = Array.from(ev.target.files || []);
+            txtFilesList = files.filter(f => /\.txt$/i.test(f.name));
+            txtCurrentIndex = -1;
+            const total = txtFilesList.length;
+            if (total > 0) {
+                setMsg(`${total} arquivo(s) anexado(s). Clique em "Upload" para carregar o primeiro.`);
+            } else {
+                setMsg('Nenhum arquivo .txt anexado.');
+            }
+            updateBtnState();
+        }
+
+        function goToNextTxt() {
+            const total = txtFilesList.length;
+            if (total === 0) { setMsg('Nenhum arquivo .txt anexado.'); return; }
+
+            // Se já terminou, não faz nada
+            if (txtCurrentIndex >= total - 1) {
+                updateBtnState();
+                return;
+            }
+
+            // Avança e carrega
+            txtCurrentIndex++;
+            loadFileByIndex(txtCurrentIndex);
+
+            // Se acabamos de carregar o último, mensagem final (botão vira Concluído automaticamente)
+            if (txtCurrentIndex === total - 1) {
+                setMsg(`Pronto! Todos os ${total} arquivo(s) foram organizados.`);
+            }
+        }
+
+        (function initTxtLoader() {
+            const fileInput = document.getElementById('txtFiles');
+            const organizeBtn = document.getElementById('organizeBtn');
+            fileInput.addEventListener('change', handleTxtFilesChange);
+            organizeBtn.addEventListener('click', goToNextTxt);
+        })();
+    </script>
+</body>
+</html>
+
+
+

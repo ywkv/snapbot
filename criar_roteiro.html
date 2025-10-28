@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerar Roteiro</title>
+  <style>
+    :root{
+      --bg:#0f1115;--card:#141821;--muted:#959db3;--text:#e6e9f2;--primary:#3b82f6;--primary-hover:#2563eb;
+      --success:#22c55e;--success-hover:#16a34a;--ring:#60a5fa;--border:#1f2633;--warning:#f59e0b;
+    }
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      background:radial-gradient(1200px 1200px at 100% -10%, rgba(59,130,246,.15), transparent 40%),
+                 radial-gradient(1000px 800px at -20% 10%, rgba(34,197,94,.15), transparent 40%),
+                 var(--bg);
+      color:var(--text);line-height:1.5;
+    }
+    .container{max-width:980px;margin:40px auto;padding:0 16px;}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+    .brand{display:flex;align-items:center;gap:12px;}
+    .brand-badge{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#8b5cf6);box-shadow:0 8px 24px rgba(59,130,246,.35);}
+    h1{font-size:clamp(20px,2.2vw,28px);margin:0;letter-spacing:.2px;}
+    .sub{color:var(--muted);font-size:13px;}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent),var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.35);}
+    .stack{display:flex;flex-direction:column;gap:12px;}
+    label{font-size:13px;color:var(--muted);}
+    textarea{
+      width:100%;border-radius:10px;border:1px solid var(--border);background:#0e131b;color:var(--text);
+      padding:12px;outline:none;transition:border .2s,box-shadow .2s,transform .05s;
+    }
+    textarea::placeholder{color:#75809b;}
+    textarea:focus{border-color:var(--ring);box-shadow:0 0 0 3px rgba(96,165,250,.25);}
+    .actions{display:flex;flex-wrap:wrap;gap:8px;}
+    .btn{border:1px solid var(--border);background:#0e131b;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer;transition:transform .05s ease, background .2s, border-color .2s, box-shadow .2s;font-weight:600;font-size:14px;}
+    .btn:hover{background:#0b0f16;border-color:#2a3547;}
+    .btn:active{transform:translateY(1px);}
+    .btn-primary{background:var(--primary);border-color:transparent;color:#fff;}
+    .btn-primary:hover{background:var(--primary-hover);}
+    .btn-success{background:var(--success);color:#052911;border-color:transparent;}
+    .btn-success:hover{background:var(--success-hover);}
+    .btn-warning{background:var(--warning);color:#291805;border-color:transparent;}
+    .btn-ghost{background:transparent;border-color:#293142;}
+    .btn:disabled{opacity:.65;cursor:not-allowed;box-shadow:none;}
+
+    /* Barra “Instrução gerada” com preview em uma linha */
+    #themeDisplay{
+      margin-top:14px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:#0e131b;
+      display:flex;align-items:center;gap:10px;
+    }
+    #themeText{color:#aeb7cc;font-size:14px;flex:0 0 auto;}
+    #themeName{
+      color:#ffffff;font-weight:600;flex:1 1 auto;min-width:0;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis; /* preview em 1 linha */
+    }
+
+    .success{display:none;margin-top:14px;padding:10px 12px;border-radius:10px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35);color:#a8f3c1;font-weight:600;}
+
+    .box-container{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:20px;}
+    .box{width:100%;padding:2px;border:none;border-radius:5px;text-align:center;min-height:20px;}
+    .box textarea{width:100%;height:24px;border:none;background-color:transparent;padding:3px;box-sizing:border-box;font-size:12.5px;line-height:1.1;resize:none;}
+    #box1{background-color:#FF0000;} #box2{background-color:#4682b4;} #box3{background-color:#f0e68c;}
+    #box4{background-color:#800080;} #box5{background-color:#ffa500;} #box6{background-color:#00bcd4;}
+    #box7{background-color:#000000;} #box8{background-color:#ff1493;} #box9{background-color:#32cd32;}
+    @media (max-width:680px){.actions{gap:6px}.btn{padding:9px 12px;font-size:13px}.box-container{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="brand-badge" aria-hidden="true"></div>
+        <div>
+          <h1>Gerar Roteiro</h1>
+          <div class="sub">Ferramenta para gerar roteiros</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card principal -->
+    <div class="card stack">
+      <div class="stack">
+        <label for="themeInput">Cole seus temas (um por linha):</label>
+        <textarea id="themeInput" placeholder="Digite os temas..."></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="generateTheme()">Gerar</button>
+        <button class="btn btn-ghost" onclick="clearContent()">Limpar</button>
+        <button class="btn btn-warning" onclick="saveContent()">Salvar</button>
+        <button id="introButton2" class="btn btn-success" onclick="copyTexto()">Texto</button>
+        <button id="copyButton" class="btn btn-success" style="display:none;" onclick="copyTheme()">Copiar instrução</button>
+      </div>
+
+      <div id="themeDisplay">
+        <span id="themeText">Instrução gerada:</span>
+        <span id="themeName"></span>
+      </div>
+
+      <div id="completionMessage" class="success"></div>
+    </div>
+
+    <!-- Histórias -->
+    <div class="card" style="margin-top:18px;">
+      <div class="box-container">
+        <div class="box"><textarea id="box1"></textarea></div>
+        <div class="box"><textarea id="box2"></textarea></div>
+        <div class="box"><textarea id="box3"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="box-container">
+        <div class="box"><textarea id="box4"></textarea></div>
+        <div class="box"><textarea id="box5"></textarea></div>
+        <div class="box"><textarea id="box6"></textarea></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px;">
+      <div class="box-container">
+        <div class="box"><textarea id="box7"></textarea></div>
+        <div class="box"><textarea id="box8"></textarea></div>
+        <div class="box"><textarea id="box9"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ====== Temas por linha com preview em 1 linha e cópia completa ====== */
+    let temas = [];
+    let currentIndex = -1;       // índice atualmente exibido na UI
+    let lastCopiedIndex = -1;    // índice do último tema para o qual a instrução foi copiada
+    let generatedMessage = '';
+
+    function buildMessage(tema){
+      return `Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "Histórias Antigas".
+Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (1.300 e 1.800 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Instruções
+Depois de fornecer o Título Principal, o assistente gerará de 2 títulos de histórias todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
+
+Estrutura:
+Título principal: Um único título abrangente com várias histórias.
+Cada história: Cada história será dividida em 3 partes.
+
+Por exemplo:
+História 1: [Título da história 1] (3 partes, 1.300 e 1.800 tokens cada)
+História 2: [Título da história 2] (3 partes, 1.300 e 1.800 tokens cada)
+
+Siga as instruções:
+Comece com a Parte 1 (1.300 e 1.800 tokens).
+Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
+A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
+
+Requisitos de estilo de escrita:
+Tom: Calmo
+Voz: Dirija-se diretamente ao ouvinte
+Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+Finais: Cada Parte deve terminar com uma pergunta aberta ou um pensamento não resolvido, incentivando a curiosidade e a reflexão com no minimo caracteres.
+
+Importante:
+- Cada Parte deve ter entre 1.300 e 1.800 tokens.
+- Certifique-se de que a história transite suavemente de uma Parte para outra.
+- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
+- Evite interações, perguntas ou conclusões desnecessárias.
+- Lembre-se: A história deve ser a mesma e os pararafos devem ser quase iguais mais sem parecer plágio.
+- Antes de começar com a historia me dê a estrutura das histórias e depois me pergunte se pode começar a reescrever a primeira parte.
+
+Observação: escreva o roteiro com linguagem natural e fluida, evitando um tom robótico ou artificial, para que soe como algo criado por uma pessoa real.
+
+TEMA: [${tema}].`;
+    }
+
+    function setPreview(text){
+      // Mostra só uma linha com reticências via CSS; aqui apenas definimos o texto completo
+      document.getElementById('themeName').textContent = text;
+    }
+
+    function refreshUI() {
+      if(currentIndex >= 0 && currentIndex < temas.length){
+        const atual = temas[currentIndex];
+        generatedMessage = buildMessage(atual);
+        setPreview(`[${currentIndex+1}/${temas.length}] ${generatedMessage}`);
+        document.getElementById('copyButton').style.display = 'inline-flex';
+        document.getElementById('copyButton').disabled = false;
+      } else {
+        generatedMessage = '';
+        setPreview('');
+        document.getElementById('copyButton').style.display = 'none';
+      }
+    }
+
+    function generateTheme(){
+      const raw = document.getElementById('themeInput').value;
+      temas = raw.split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+
+      const msgEl = document.getElementById('completionMessage');
+      msgEl.style.display = 'none';
+      msgEl.innerText = '';
+
+      lastCopiedIndex = -1;
+
+      if(temas.length === 0){
+        setPreview('');
+        document.getElementById('themeText').innerHTML = '<span style="color:#fca5a5;">Cole pelo menos um tema (um por linha).</span>';
+        currentIndex = -1;
+        refreshUI();
+        return;
+      }
+
+      document.getElementById('themeText').textContent = 'Instrução gerada:';
+      currentIndex = 0; // começa no primeiro
+      refreshUI();
+    }
+
+    function copyTheme(){
+      // Copia a instrução do tema atual e avança
+      if(currentIndex < 0 || currentIndex >= temas.length) return;
+
+      const temaAtual = temas[currentIndex];
+      const mensagem = buildMessage(temaAtual);
+
+      navigator.clipboard.writeText(mensagem).then(() => {
+        lastCopiedIndex = currentIndex; // marca este como o tema trabalhado
+        const msg = document.getElementById('completionMessage');
+        msg.innerText = `Instrução copiada para "${temaAtual}".`;
+        msg.style.display = 'block';
+
+        // Avança para o próximo tema na UI
+        currentIndex++;
+
+        if(currentIndex >= temas.length){
+          document.getElementById('copyButton').disabled = true;
+          document.getElementById('copyButton').style.display = 'none';
+          setPreview('Concluído! Todas as instruções foram copiadas.');
+        } else {
+          refreshUI();
+        }
+      });
+    }
+
+    function copyTexto(){
+      navigator.clipboard.writeText(
+        'Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco.'
+      );
+    }
+
+    /* ====== ALTERADO: Limpar somente as caixas coloridas (box1…box9) ====== */
+    function clearContent(){
+      // Limpa apenas os textareas que estão dentro de .box (as nove caixas coloridas)
+      document.querySelectorAll('.box textarea').forEach(t => {
+        t.value = '';
+      });
+      // Mantém themeInput, preview, botões e mensagens como estão
+    }
+
+    /* Util: slug para nome de arquivo */
+    function slugify(str){
+      return (str || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // remove acentos
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,'-')                     // troca não-alfanum por hífen
+        .replace(/^-+|-+$/g,'')                         // trim hífens
+        .substring(0,80) || 'roteiro';                  // limite e fallback
+    }
+
+    /* Salvar conteúdo dos boxes em um .txt com o nome do último tema trabalhado */
+    function saveContent(){
+      let content = '';
+      document.querySelectorAll('.box textarea').forEach(t => {
+        const v = t.value.trim();
+        if(v) content += v + '\n\n';
+      });
+
+      const msg = document.getElementById('completionMessage');
+      if(!content){
+        msg.innerText = 'Não há conteúdo para salvar.';
+        msg.style.display = 'block';
+        return;
+      }
+
+      // Prioridade: último tema copiado -> tema atual visível -> primeiro tema -> fallback
+      let idxArquivo = -1;
+      if(lastCopiedIndex !== -1) {
+        idxArquivo = lastCopiedIndex;
+      } else if(currentIndex >= 0 && currentIndex < temas.length) {
+        idxArquivo = currentIndex;
+      } else if(temas.length > 0) {
+        idxArquivo = 0;
+      }
+
+      const nomeTema = idxArquivo !== -1 ? temas[idxArquivo] : 'roteiro';
+      const filename = `${slugify(nomeTema)}.txt`;
+
+      const blob = new Blob([content.trim()], {type:'text/plain'});
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+
+      msg.innerText = `Arquivo salvo como "${filename}".`;
+      msg.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
