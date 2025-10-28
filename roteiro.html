@@ -1,624 +1,537 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Roteiro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: #111827;
-      color: #F9FAFB;
-      margin: 0;
-      padding: 2rem;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Roteiro</title>
+    <style>
+        :root{
+            --bg: #0f1115;
+            --card: #141821;
+            --muted: #959db3;
+            --text: #e6e9f2;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #22c55e;
+            --success-hover: #16a34a;
+            --ring: #60a5fa;
+            --border: #1f2633;
+            --warning: #f59e0b;
+        }
 
-    .navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #1F2937;
-      padding: 10px 0;
-      z-index: 1000;
-    }
+        /* Base */
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+            background: radial-gradient(1200px 1200px at 100% -10%, rgba(59,130,246,0.15), transparent 40%) ,
+                        radial-gradient(1000px 800px at -20% 10%, rgba(34,197,94,0.15), transparent 40%) ,
+                        var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
 
-    .navbar ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
+        .container{
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 16px;
+        }
 
-    .navbar ul li {
-      display: inline;
-      margin: 0 20px;
-    }
+        /* Header */
+        .header{
+            display:flex;justify-content:space-between;align-items:center;
+            margin-bottom: 18px;
+        }
+        .brand{
+            display:flex;align-items:center;gap:12px;
+        }
+        .brand-badge{
+            width:38px;height:38px;border-radius:12px;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            box-shadow: 0 8px 24px rgba(59,130,246,.35);
+        }
+        h1{
+            font-size: clamp(20px, 2.2vw, 28px);
+            margin:0;
+            letter-spacing: .2px;
+        }
+        .sub{
+            color: var(--muted);
+            font-size: 13px;
+        }
 
-    .navbar ul li a {
-      color: #F9FAFB;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
-      text-transform: uppercase;
-    }
+        /* Card utilitário */
+        .card{
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+                        var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.35);
+        }
+        .stack{ display:flex; flex-direction: column; gap: 12px; }
 
-    .navbar ul li a:hover {
-      color: #6366F1;
-    }
+        /* Labels e inputs */
+        label{
+            font-size: 13px;
+            color: var(--muted);
+        }
+        textarea, input[type="file"]{
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #0e131b;
+            color: var(--text);
+            padding: 12px 12px;
+            outline: none;
+            transition: border .2s, box-shadow .2s, transform .05s;
+        }
+        textarea::placeholder{ color:#75809b; }
+        textarea:focus, input[type="file"]:focus{
+            border-color: var(--ring);
+            box-shadow: 0 0 0 3px rgba(96,165,250,.25);
+        }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #1F2937;
-      padding: 2rem;
-      border-radius: 12px;
-      margin-top: 60px;
-    }
+        /* Barra de ações */
+        .actions{
+            display:flex; flex-wrap: wrap; gap: 8px;
+        }
+        .btn{
+            border: 1px solid var(--border);
+            background: #0e131b;
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform .05s ease, background .2s, border-color .2s, box-shadow .2s;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn:hover{ background:#0b0f16; border-color:#2a3547; }
+        .btn:active{ transform: translateY(1px); }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
+        .btn-primary{
+            background: var(--primary);
+            border-color: transparent;
+            color: white;
+        }
+        .btn-primary:hover{ background: var(--primary-hover); }
+        .btn-success{
+            background: var(--success);
+            color: #052911;
+            border-color: transparent;
+        }
+        .btn-success:hover{ background: var(--success-hover); }
+        .btn-warning{
+            background: var(--warning);
+            color: #291805;
+            border-color: transparent;
+        }
+        .btn-ghost{
+            background: transparent;
+            border-color: #293142;
+        }
+        .btn:disabled{
+            opacity:.65; cursor:not-allowed; box-shadow:none;
+        }
 
-    footer {
-      margin-top: auto;
-      text-align: center;
-      padding: 10px;
-      background-color: #111827;
-      color: #F9FAFB;
-      font-size: 0.9em;
-    }
+        /* Barra “Roteiro” */
+        #themeDisplay{
+            margin-top: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #0e131b;
+            display:flex; justify-content:space-between; align-items:center; gap:10px;
+        }
+        #themeText{ color:#aeb7cc; font-size: 14px; }
+        #themeName{ color: #ffffff; font-weight: 600; }
 
-    textarea {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      background: #111827;
-      color: white;
-      resize: vertical;
-      height: 100px;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      overflow-y: auto;
-    }
+        /* Mensagens */
+        .success{
+            display:none;
+            margin-top: 14px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: rgba(34,197,94,.12);
+            border: 1px solid rgba(34,197,94,.35);
+            color: #a8f3c1;
+            font-weight: 600;
+        }
 
-    input {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      background: #111827;
-      color: white;
-      font-size: 1rem;
-    }
+        /* NewBox (1 linha) */
+        #newBox{
+            width:100%;
+            padding: 16px;
+            margin-top: 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent),
+                        var(--card);
+        }
+        #newBox textarea{
+            height: 36px;
+            line-height: 1.25;
+            padding: 8px 10px;
+            border: 1px dashed #2b3549;
+            background: #0b1017;
+            resize: none;
+            overflow-y: auto;
+        }
+        #txtFiles{
+            background:#0b1017;
+        }
 
-    button {
-      padding: 0.4rem 0.6rem;
-      background: #6366F1;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: bold;
-      font-size: 0.9rem;
-      margin-top: 1rem;
-      cursor: pointer;
-    }
+        /* Grid dos blocos coloridos — sem borda */
+        .box-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+            margin-top: 20px;
+        }
+        .box {
+            width: 100%;
+            padding: 2px;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            min-height: 20px;
+        }
+        .box textarea {
+            width: 100%;
+            height: 24px;
+            border: none;
+            background-color: transparent;
+            padding: 3px;
+            box-sizing: border-box;
+            font-size: 12.5px;
+            line-height: 1.1;
+            resize: none;
+        }
 
-    button:hover {
-      background: #4F46E5;
-    }
+        /* Cores dos boxes */
+        #box1 { background-color: #FF0000; }
+        #box2 { background-color: #4682b4; }
+        #box3 { background-color: #f0e68c; }
+        #box4 { background-color: #800080; }
+        #box5 { background-color: #ffa500; }
+        #box6 { background-color: #00bcd4; }
+        #box7 { background-color: #000000; }
+        #box8 { background-color: #ff1493; }
+        #box9 { background-color: #32cd32; }
 
-    #resultado {
-      white-space: pre-wrap;
-      background-color: #111827;
-      color: #F9FAFB;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 8px;
-      position: relative;
-      border: 1px solid #374151;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .button-container {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-start;
-      gap: 15px;
-    }
-
-    #mensagem {
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      border-radius: 5px;
-      display: none;
-    }
-
-    .copy-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background-color: #6366F1;
-      padding: 0.3rem 0.6rem;
-      color: white;
-      font-weight: bold;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    .copy-button:hover {
-      background-color: #4F46E5;
-    }
-
-    .copy-button.copied {
-      background-color: #28a745;
-    }
-
-    .copy-button.copied:hover {
-      background-color: #218838;
-    }
-
-    pre {
-      margin: 0;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .bloco {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background-color: #2D3748;
-      border-radius: 8px;
-      border: 1px solid #374151;
-      position: relative;
-    }
-
-    #textoFinal {
-      max-height: 300px; /* Tamanho fixo */
-      overflow: hidden; /* Impede o texto de ultrapassar o limite do box */
-      text-overflow: ellipsis; /* Adiciona os "..." ao final do texto */
-      white-space: nowrap; /* Impede que o texto quebre linha */
-      position: relative;
-    }
-
-    #juntarContainer {
-      display: none;
-    }
-  </style>
+        /* Responsividade */
+        @media (max-width: 680px){
+            .actions{ gap:6px; }
+            .btn{ padding:9px 12px; font-size:13px; }
+            .box-container{ grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="brand">
+                <div class="brand-badge" aria-hidden="true"></div>
+                <div>
+                    <h1>Gerar Roteiro</h1>
+                    <div class="sub">Ferramenta para organizar e reescrever conteúdos</div>
+                </div>
+            </div>
+        </div>
 
-<div class="navbar">
-  <ul>
-    <li><a href="index.html">Página Inicial</a></li>
-    <li><a href="roteiro.html">ROTEIRO</a></li>
-    <li><a href="prompts.html">PROMPTS</a></li>
-    <li><a href="estilos.html">ESTILOS</a></li>
-    <li><a href="legendas.html">LEGENDAS</a></li>
-	<li><a href="reescritor.html">REESCRITOR</a></li>
-  </ul>
-</div>
+        <!-- Card principal -->
+        <div class="card stack">
+            <div class="stack">
+                <label for="themeInput">Cole o seu roteiro (apenas um):</label>
+                <textarea id="themeInput" placeholder="Cole seu roteiro aqui"></textarea>
+            </div>
 
-  <div class="container">
-    <h1>ROTEIRO PERSONALIZADO</h1>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="generateTheme()">Gerar</button>
+                <button class="btn btn-ghost" onclick="clearContent()">Limpar</button>
+                <button class="btn btn-warning" onclick="saveContent()">Salvar</button>
+                <button id="introButton" class="btn btn-success" onclick="copyIntro()">Organizar</button>
+                <button id="introButton2" class="btn btn-success" onclick="copyTexto()">Texto</button>
+                <button id="copyButton" class="btn btn-success" style="display:none;" onclick="copyTheme()">Copiar instrução</button>
+                <button id="organizeBtn" class="btn btn-primary">Upload</button>
+            </div>
 
-<div id="campoIdeias" class="bloco">
-  <h3>GERAR TEMAS</h3>
-  <pre id="textoIdeias">Estou começando um canal no YouTube que foca em contar histórias relaxantes e lentas na hora de dormir, no estilo de história "chata" para dormir. Os vídeos são narrações longas e roteirizadas, com um tom suave, destinados a ajudar as pessoas a adormecer enquanto aprendem sobre história real. O conteúdo deve ser interessante, informativo e relaxante — sem ser dramático ou emocionalmente intenso. Gere 5 ideias únicas e criativas para vídeos nessa área. Os tópicos devem ser baseados em história antiga, vida medieval, impérios esquecidos, vida cotidiana em séculos passados, costumes bizarros, pestes, guerras (de forma suave), realeza e aspectos pouco conhecidos ou negligenciados da história. Evite tópicos excessivamente intensos ou perturbadores e garanta que cada ideia seja adequada para uma escuta relaxante na hora de dormir. Formate as ideias de maneira clara, com uma lista numerada. Quero no seguinte formato:  [Tema] - [Explicação].</pre>
-  <!-- Botão Copiar Texto -->
-  <button class="copy-button" onclick="copiarTextoIdeias()">COPIAR IDEIAS</button>
-</div>
+            <div id="themeDisplay">
+                <span id="themeText">Roteiro: <span id="themeName"></span></span>
+            </div>
 
+            <div id="completionMessage" class="success"></div>
+        </div>
 
+        <!-- Novo Box de Texto -->
+        <div id="newBox" class="card">
+            <div class="actions" style="margin-bottom: 10px;">
+                <input id="txtFiles" type="file" accept=".txt" multiple>
+            </div>
+            <textarea id="newTextBox" placeholder="Digite o texto para organizar."></textarea>
+        </div>
 
-    <div class="bloco">
-      <h3>Adicione um tema e roteiro...</h3>
-      <input id="temaInput" placeholder="Digite o tema aqui..." />
+        <!-- Histórias -->
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box1"></textarea></div>
+                <div class="box"><textarea id="box2"></textarea></div>
+                <div class="box"><textarea id="box3"></textarea></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box4"></textarea></div>
+                <div class="box"><textarea id="box5"></textarea></div>
+                <div class="box"><textarea id="box6"></textarea></div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+            <div class="box-container">
+                <div class="box"><textarea id="box7"></textarea></div>
+                <div class="box"><textarea id="box8"></textarea></div>
+                <div class="box"><textarea id="box9"></textarea></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Box de adicionar roteiro, agora abaixo do tema e acima do botão "CRIAR" -->
-    <div class="bloco">
-      <textarea id="roteiroInput" placeholder="Digite o roteiro aqui..."></textarea>
-    </div>
-
-    <!-- Botão Criar que gera o roteiro -->
-    <button onclick="gerarTema()">CRIAR ROTEIRO</button>
-
-    <!-- O conteúdo gerado será agora inserido aqui, dentro de um box igual aos outros -->
-    <div id="textoFinal" class="bloco" style="display: none;">
-      <!-- Botão "Copiar Conteúdo" dentro do box -->
-      <button class="copy-button" onclick="copiarConteudo()">COPIAR ESTRUTURA</button>
-      <pre id="conteudoTexto"></pre>
-    </div>
-
-    <h3>Montar Roteiro</h3>
-
-    <textarea id="paragrafosInput" placeholder="Cole seus 3 parágrafos aqui..."></textarea>
-
-    <div class="gerar-partes-container">
-      <button onclick="gerarPartes()">GERAR PARTES</button>
-    </div>
-
-    <div id="blocos"></div>
-
-    <div id="mensagem">Todos as partes foram copiados com sucesso!</div>
-
-<div id="juntarContainer">
-  <h2>Juntar as Partes</h2>
-
-  <div class="titulo-token">
-    <h3>Início</h3>
-  </div>
-  <textarea id="inicio" placeholder="Cole a parte de Início aqui..." oninput="contarTokens('inicio')"></textarea>
-  <span id="contadorInicio">Tokens: 0</span> <!-- Contador de tokens aqui -->
-  <hr>
-
-  <div class="titulo-token">
-    <h3>Meio</h3>
-  </div>
-  <textarea id="meio" placeholder="Cole a parte de Meio aqui..." oninput="contarTokens('meio')"></textarea>
-  <span id="contadorMeio">Tokens: 0</span> <!-- Contador de tokens aqui -->
-  <br> 
-  <button class="botao-copiar" onclick="copiarTextoMeio()">CONTINUAR HISTÓRIA</button>
-  <hr>
-
-  <div class="titulo-token">
-    <h3>Fim</h3>
-  </div>
-  <textarea id="fim" placeholder="Cole a parte de Fim aqui..." oninput="contarTokens('fim')"></textarea>
-  <span id="contadorFim">Tokens: 0</span> <!-- Contador de tokens aqui -->
-  <hr>
-
-  <div class="bloco">
-    <h3>Colar Introdução Gerada</h3>
-    <textarea id="introducaoInput" placeholder="Cole a introdução gerada aqui..."></textarea>
-  </div>
-  
-    <div class="button-container">
-    <button onclick="criarIntroducao()">CRIAR INTRODUÇÃO</button>
-    <button onclick="juntarPartes()">CRIAR IMAGENS</button>
-    <button onclick="salvarTexto()">SALVAR</button>
-  </div>
-</div>
-
-<div id="campoCriarImagens" class="bloco" style="display: none;">
-  <h3>GERAR IMAGENS</h3>
-  <pre id="textoImagens"></pre>
-  <!-- Botão Copiar Texto -->
-  <button class="copy-button" onclick="copiarTextoImagens()">COPIAR TEXTO</button>
-</div>
-
-<div id="campoCriarThumb" class="bloco" style="display: none;">
-  <h3>GERAR THUMB</h3>
-  <pre id="textoThumb">Crie uma thumb com o "{tema}" para o vídeo</pre>
-  <!-- Botão Copiar Texto -->
-  <button class="copy-button" onclick="copiarTextoThumb()">COPIAR TEXTO</button>
-</div>
-
-<div id="campoCriarTitulos" class="bloco" style="display: none;">
-  <h3>GERAR TITULOS</h3>
-  <pre id="textoTitulos">Crie 10 títulos com o tema "{tema}"</pre>
-  <!-- Botão Copiar Texto -->
-  <button class="copy-button" onclick="copiarTextoTitulos()">COPIAR TEXTO</button>
-</div>
-
-<!-- Novo div adicionado para exibir o conteúdo gerado -->
-<div id="resultadoFinal" class="bloco" style="display: none;">
-  <h3>Resultado Final:</h3>
-  <pre id="textoFinal"></pre>
-</div>
-
-  <script>
- function copiarTextoThumb() {
-  const textoThumb = document.getElementById('textoThumb').textContent;
-  navigator.clipboard.writeText(textoThumb);
-
-  // Modificar o botão para indicar que o conteúdo foi copiado
-  const copyButton = document.querySelector('#campoCriarThumb .copy-button');
-  copyButton.classList.add('copied');
-  copyButton.textContent = 'Copiado!';
-}
- 
-function copiarTextoTitulos() {
-  const textoTitulos = document.getElementById('textoTitulos').textContent;
-  navigator.clipboard.writeText(textoTitulos);
-
-  // Modificar o botão para indicar que o conteúdo foi copiado
-  const copyButton = document.querySelector('#campoCriarTitulos .copy-button');
-  copyButton.classList.add('copied');
-  copyButton.textContent = 'Copiado!';
-}
-  
-  
-  
-  
-function copiarTextoIdeias() {
-  const textoIdeias = document.getElementById('textoIdeias').textContent;
-  navigator.clipboard.writeText(textoIdeias);
-
-  // Modificar o botão para indicar que o conteúdo foi copiado
-  const copyButton = document.querySelector('#campoIdeias .copy-button');
-  copyButton.classList.add('copied');
-  copyButton.textContent = 'Copiado!';
-}
-
-// Função para copiar os temas
-function copiarTextoTemas() {
-  const textoTemas = document.getElementById('textoTemas').textContent;
-  navigator.clipboard.writeText(textoTemas);
-
-  // Modificar o botão para indicar que o conteúdo foi copiado
-  const copyButton = document.querySelector('#textoTemas + .copy-button');
-  copyButton.classList.add('copied');
-  copyButton.textContent = 'Copiado!';
-}
-  
-  function copiarTextoImagens() {
-  const textoImagens = document.getElementById('textoImagens').textContent;
-  navigator.clipboard.writeText(textoImagens);
-
-  // Modificar o botão para indicar que o conteúdo foi copiado
-  const copyButton = document.querySelector('#campoCriarImagens .copy-button');
-  copyButton.classList.add('copied');
-  copyButton.textContent = 'Copiado!';
-}
-function gerarTema() {
-  const temaInput = document.getElementById('temaInput').value.trim();
-  const roteiroInput = document.getElementById('roteiroInput').value.trim();
-
-  if (temaInput && !roteiroInput) {
-    // Caso apenas o tema seja preenchido
-    const texto = `Escreva (3 parágrafos para um roteiro sendo início, meio e fim) detalhado e relaxante de história para o YouTube, projetado para ajudar os espectadores a adormecer. O tom deve ser calmo, suave e descritivo, semelhante ao estilo de Boring History for Sleep, com aproximadamente 600 tokens por parágrafo. O tema é: ${temaInput}. Ele deve ser escrito em um estilo de narrativa relaxante, como uma história contada de maneira suave — não como um documentário, mas como alguém narrando um conto histórico suave. Evite momentos dramáticos repentinos ou linguagem intensa. Foque na vida cotidiana, costumes interessantes, detalhes esquecidos, fatos históricos suaves e imagens pacíficas. A linguagem deve ser simples, envolvente e fácil de seguir, induzindo ao sono. Me dê os parágrafos limpos, sem títulos.`;
-    document.getElementById('textoFinal').style.display = 'block';
-    document.getElementById('conteudoTexto').textContent = texto; // Exibe o texto com tema
-  } else if (temaInput && roteiroInput) {
-    // Caso tema e roteiro sejam preenchidos
-    const roteiroGerado = `Escreva (3 parágrafos para um roteiro sendo início, meio e fim) com o tema: "${temaInput}", baseado no roteiro abaixo, com aproximadamente 600 tokens por parágrafo. com uma expressão (narrativa). Me dê os parágrafos limpos, sem títulos.\n\n${roteiroInput}`;
-    document.getElementById('textoFinal').style.display = 'block';
-    document.getElementById('conteudoTexto').textContent = roteiroGerado; // Exibe o roteiro completo
-  }
-
-  // Nova parte para criar o campo "Criar Imagens"
-  const textoImagens = `Crie 25 prompts de imagem para ilustrar um vídeo com o tema: "${temaInput}". Os prompts devem ser escritos em inglês e focar em cenas que devem combinar com o estilo lento e relaxante — pense em cores suaves, obras de arte históricas, cenários tranquilos, animações simples ou ilustrações estáticas. Certifique-se de que o visual esteja alinhado com o que os espectadores esperariam de um vídeo relaxante e relaxante para o YouTube.
-
-Seja altamente específico e detalhado ao descrever:
-– Ambiente, paisagem e cenário (incluindo hora do dia, clima, localização)
-– Personagens (incluindo gênero, idade, aparência, roupas, poses, interações – mas de forma secundária, ou seja, focando mais no cenário do que neles. Eles devem complementar o ambiente, sem serem o centro da cena)
-– Iluminação, emoções, clima/atmosfera geral da cena
-
-As imagens devem ter um forte impacto visual, mas de maneira serena, sem ser dramáticas ou excessivamente intensas. As cenas podem ser interpretativas, mas precisam manter conexão conceitual com o conteúdo do vídeo, sempre com uma abordagem visual que inspire calma, leveza e uma sensação de segurança.
-
-Importante: Não inclua títulos, divisões por parágrafos, resumos ou explicações. Entregue apenas os prompts, um após o outro, como uma lista contínua.`;
-
-  // Exibe o campo "Criar Imagens"
-  document.getElementById('campoCriarImagens').style.display = 'block';
-  document.getElementById('textoImagens').textContent = textoImagens;  // Exibe o texto gerado
-
-  // Novo campo "Criar Thumb"
-  const textoThumb = `Crie uma ilustração detalhada, desenhada à mão, com personagens cartunescos em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: "${temaInput}", usando contornos ousados e cores vivas e saturadas. O título "HISTÓRIA ANTIGA PARA DORMIR" deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. Use um fundo bege claro. Inclua símbolos temáticos relevantes. O fundo deve ser branco. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: "HISTÓRIA ANTIGA PARA DORMIR", no lado esquerdo.
-
-Crie uma ilustração detalhada, desenhada à mão, com personagens cartunescos em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: "${temaInput}", usando contornos ousados e cores vivas e saturadas. O título "HISTORIA ANTIGUA PARA DORMIR" deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. Use um fundo bege claro. Inclua símbolos temáticos relevantes. O fundo deve ser branco. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: "HISTORIA ANTIGUA PARA DORMIR", no lado esquerdo.
-
-Crie uma ilustração detalhada, desenhada à mão, com personagens cartunescos em poses dramáticas, expressando emoções e elementos simbólicos relacionados ao tema: "${temaInput}", usando contornos ousados e cores vivas e saturadas. O título "HISTOIRE ANCIENNE POUR DORMIR" deve ser escrito em negrito, na esquerda com a cor preta, usando uma fonte simples e marcante. A composição inclui de 1 a 2 figuras históricas, algumas interagindo e outras com acessórios temáticos. Use um fundo bege claro. Inclua símbolos temáticos relevantes. O fundo deve ser branco. As expressões faciais dos personagens devem ser o foco, e o estilo da ilustração deve ser simplificado, mas com considerável atenção aos detalhes nas roupas e nos elementos visuais. Certifique-se de que o texto incluído na imagem seja apenas: "HISTOIRE ANCIENNE POUR DORMIR", no lado esquerdo.`;
-
-  // Exibe o campo "Criar Thumb"
-  document.getElementById('campoCriarThumb').style.display = 'block';
-  document.getElementById('textoThumb').textContent = textoThumb;  // Exibe o texto gerado
-  
-    // Novo campo "Criar Títulos"
-  const textoTitulos = `Crie 5 sugestões de títulos chamativos para um vídeo do YouTube com os idiomas português, espanhol e francês com o tema: "${temaInput}". Os títulos devem ser curtos e claros com no máximo até 60 caracteres, utilizando gramática correta e capitalização adequada, com uso de clickbait leve e mistério, prometendo revelações inéditas. O objetivo é despertar curiosidade imediata, atrair cliques e favorecer a performance no algoritmo do YouTube. Primeiro me forneça as 5 sugestões em português e após eu te informar qual escolhi você vai traduzir para os outros idiomas.`;
-  document.getElementById('campoCriarTitulos').style.display = 'block';
-  document.getElementById('textoTitulos').textContent = textoTitulos;  // Exibe o texto gerado
-}
-
-
-    function copiarConteudo() {
-      const texto = document.getElementById('conteudoTexto').textContent;
-      navigator.clipboard.writeText(texto);
-
-      // Modificar o botão para indicar que o conteúdo foi copiado
-      const copyButton = document.querySelector('.copy-button');
-      copyButton.classList.add('copied');
-      copyButton.textContent = 'Copiado!';
-    }
-
-    function gerarPartes() {
-      const paragrafosInput = document.getElementById('paragrafosInput').value.trim();
-
-      if (!paragrafosInput) {
-        return;
-      }
-
-      const blocosContainer = document.getElementById('blocos');
-      blocosContainer.innerHTML = '';
-
-      const paragrafos = paragrafosInput.split('\n').filter(p => p.trim() !== '');
-
-      if (paragrafos.length < 3) {
-        return;
-      }
-
-      const blocoInico = `Desenvolva o início da história abaixo de forma concistente utlizando aproximadamente (1300 tokens) para o meu roteiro, projetado para ajudar os espectadores a adormecer. O tom deve ser calmo, suave e descritivo. Ele deve ser escrito em um estilo de narrativa relaxante, como uma história contada de maneira suave — não como um documentário, mas como alguém narrando um conto histórico suave. Evite momentos dramáticos repentinos ou linguagem intensa. A linguagem deve ser simples, envolvente e fácil de seguir, induzindo ao sono. Não entre no desenvolvimento ou na conclusão da história.\n${paragrafos[0]}`;
-      const blocoMeio = `Desenvolva o meio da história abaixo de forma concistente utlizando aproximadamente (1700 tokens) para desenvolver o argumento da história, projetado para ajudar os espectadores a adormecer. O tom deve ser calmo, suave e descritivo. Ele deve ser escrito em um estilo de narrativa relaxante, como uma história contada de maneira suave — não como um documentário, mas como alguém narrando um conto histórico suave. Evite momentos dramáticos repentinos ou linguagem intensa. A linguagem deve ser simples, envolvente e fácil de seguir, induzindo ao sono. Não repita o começo da história e não mencione o final ou a conclusão.\n${paragrafos[1]}`;
-      const blocoFim = `Desenvolva o fim e conclusão da história com no mínimo de (1000 tokens), projetado para ajudar os espectadores a adormecer. O tom deve ser calmo, suave e descritivo. Termine convidando o público a curtir, se inscrever no canal e ouvir outra história.\n${paragrafos[2]}`;
-
-const blocoElement = document.createElement('div');
-blocoElement.classList.add('box-container');
-blocoElement.innerHTML = `
-  <div id="resultado">
-    <button class="copy-button" onclick="copiarTexto('INICIO')">Copiar</button>
-    <pre>${blocoInico}</pre>
-  </div>
-<div id="resultado">
-  <button class="copy-button" onclick="copiarTexto('MEIO')">Copiar</button>
-  <pre>${blocoMeio}</pre>
-  <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-    <button onclick="copiarTextoMeioContado()">CONTINUAR HISTÓRIA</button>
-    <span id="contadorCopias" style="font-weight: bold;">0/5</span>
-  </div>
-</div>
-  <div id="resultado">
-    <button class="copy-button" onclick="copiarTexto('FIM')">Copiar</button>
-    <pre>${blocoFim}</pre>
-  </div>
-`;
-
-      blocosContainer.appendChild(blocoElement);
-      document.getElementById('juntarContainer').style.display = 'block';
-    }
-
-function juntarPartes() {
-  const introducao = document.getElementById('introducaoInput').value.trim();
-  const inicio = document.getElementById('inicio').value.trim();
-  const meio = document.getElementById('meio').value.trim();
-  const fim = document.getElementById('fim').value.trim();
-
-  // Verifica se todos os campos estão preenchidos
-  if (!introducao || !inicio || !meio || !fim) {
-    alert('Por favor, preencha todos os campos: Introdução, Início, Meio e Fim.');
-    return;
-  }
-
-  const textoFixo = `Crie 25 prompts de imagem para ilustrar o roteiro abaixo. Os prompts devem ser escritos em inglês e focar em cenas que devem combinar com o estilo lento e relaxante — pense em cores suaves, obras de arte históricas, cenários tranquilos, animações simples ou ilustrações estáticas. Certifique-se de que o visual esteja alinhado com o que os espectadores esperariam de um vídeo relaxante e relaxante para o YouTube.
-
-Seja altamente específico e detalhado ao descrever:
-– Ambiente, paisagem e cenário (incluindo hora do dia, clima, localização)
-– Personagens (incluindo gênero, idade, aparência, roupas, poses, interações – mas de forma secundária, ou seja, focando mais no cenário do que neles. Eles devem complementar o ambiente, sem serem o centro da cena)
-– Iluminação, emoções, clima/atmosfera geral da cena
-
-As imagens devem ter um forte impacto visual, mas de maneira serena, sem ser dramáticas ou excessivamente intensas. As cenas podem ser interpretativas, mas precisam manter conexão conceitual com o conteúdo do vídeo, sempre com uma abordagem visual que inspire calma, leveza e uma sensação de segurança.
-
-Importante: Não inclua títulos, divisões por parágrafos, resumos ou explicações. Entregue apenas os prompts, um após o outro, como uma lista contínua.
-
-Roteiro:\n`;
-
-  const textoFinal = textoFixo + introducao + '\n\n' + inicio + '\n\n' + meio + '\n\n' + fim;
-
-  // Exibe o conteúdo final no box de "Texto Final"
-  document.getElementById('textoFinal').textContent = textoFinal;
-
-  // Copia o conteúdo para a área de transferência
-  navigator.clipboard.writeText(textoFinal).then(() => {
-    // Opcional: Exibir uma mensagem de sucesso ou alterar o estilo do botão
-  }).catch(err => {
-    console.error('Erro ao copiar para a área de transferência: ', err);
-  });
-}
-
-
-async function salvarTexto() {
-  const introducao = document.getElementById('introducaoInput').value.trim();
-  const inicio = document.getElementById('inicio').value.trim();
-  const meio = document.getElementById('meio').value.trim();
-  const fim = document.getElementById('fim').value.trim();
-
-  // Verifica se todos os campos estão preenchidos
-  if (!introducao || !inicio || !meio || !fim) {
-    alert('Por favor, preencha todos os campos: Introdução, Início, Meio e Fim.');
-    return;
-  }
-
-  // Combina o conteúdo das partes, sem adicionar rótulos fixos
-  const textoFinal = `${introducao}\n\n${inicio}\n\n${meio}\n\n${fim}`;
-
-  try {
-    const temaInput = document.getElementById('temaInput').value.trim();
-    if (!temaInput) {
-      alert('Por favor, digite um tema antes de salvar.');
-      return;
-    }
-
-    const handle = await window.showSaveFilePicker({
-      suggestedName: `${temaInput}.txt`,
-      types: [{ description: 'Arquivo de Texto', accept: { 'text/plain': ['.txt'] } }]
-    });
-
-    const writable = await handle.createWritable();
-    await writable.write(textoFinal);
-    await writable.close();
-  } catch (e) {
-    console.error('Erro ao salvar:', e);
-  }
-}
-
-
-    function copiarTexto(blocoNome) {
-  const paragrafos = document.getElementById('paragrafosInput').value
-    .split('\n')
-    .map(p => p.trim())
-    .filter(p => p !== '');
-
-  let texto = '';
-
-  if (blocoNome === 'INICIO') {
-    texto = 'Desenvolva o início da história abaixo de forma concistente utlizando aproximadamente (1300 tokens) para o meu roteiro utilizando uma linguagem simples e suave. Não entre no desenvolvimento ou na conclusão da história.\n' + paragrafos[0];
-  } else if (blocoNome === 'MEIO') {
-    texto = 'Desenvolva o meio da história abaixo com no mínimo de (1700 tokens) para desenvolver o argumento deste texto. Use linguagem simples e suave. Não repita o começo da história e não mencione o final ou a conclusão.\n' + paragrafos[1];
-  } else if (blocoNome === 'FIM') {
-    texto = 'Desenvolva o fim e conclusão da história com no mínimo de (1000 tokens). Termine convidando o público a curtir, se inscrever no canal e ouvir outra história.\n' + paragrafos[2];
-  }
-
-  navigator.clipboard.writeText(texto);
-
-  const button = document.querySelector(`button[onclick="copiarTexto('${blocoNome}')"]`);
-  if (button) {
-    button.classList.add('copied');
-    button.textContent = 'Copiado!';
-  }
-}
-
-
-    function contarTokens(id) {
-      const textarea = document.getElementById(id);
-      const contador = document.getElementById(`contador${id.charAt(0).toUpperCase() + id.slice(1)}`);
-      const palavras = textarea.value.trim().split(/\s+/).filter(Boolean);
-      const numTokens = Math.ceil(palavras.length * 1.33);
-      contador.textContent = `Tokens: ${numTokens}`;
-    }
-
-let contadorMeio = 0;
-
-function copiarTextoMeioContado() {
-  const texto = "Continue a história com mais (1700 tokens), adicione mais detalhes sobre o tema. Utilize uma linguagem simples e suave. Evite repetir o começo da história e o que você já gerou e também não mencione o final ou a conclusão.";
-
-  navigator.clipboard.writeText(texto);
-
-  // Incrementa contador até 5
-  if (contadorMeio < 5) contadorMeio++;
-
-  const contadorSpan = document.getElementById('contadorCopias');
-  contadorSpan.textContent = `${contadorMeio}/5`;
-
-  if (contadorMeio === 5) {
-    contadorSpan.style.color = 'limegreen';
-  }
-}
-
-    function criarIntroducao() {
-      const introducaoTexto = "Crie uma introdução de 10 segundos de forma continua baseada no roteiro abaixo. Comece apresentando rapidamente o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente. Peça para os espectadores curtirem o vídeo e se inscreverem. Em seguida, incentive-os a comentar de onde estão assistindo e que horas são, gerando engajamento. Sugira que os espectadores criem um ambiente tranquilo para assistir. Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada, criando um mistério ou contexto envolvente sem entrar em muitos detalhes.";
-      const inicioTexto = document.getElementById('inicio').value.trim();
-      const meioTexto = document.getElementById('meio').value.trim();
-      const fimTexto = document.getElementById('fim').value.trim();
-
-      const textoFinal = `${introducaoTexto}\n\n${inicioTexto}\n\n${meioTexto}\n\n${fimTexto}`;
-      
-      navigator.clipboard.writeText(textoFinal);
-    }
-  </script>
-
+    <script>
+        /* ====== Lógica existente mantida ====== */
+        let roteiroText = '';
+
+        function generateTheme() {
+            const input = document.getElementById('themeInput').value.trim();
+            roteiroText = input;
+
+            if (!roteiroText) {
+                document.getElementById('themeText').innerHTML = '<span style="color:#fca5a5;">Por favor, adicione o roteiro!</span>';
+                return;
+            }
+            const preview = roteiroText.length > 100 ? roteiroText.substring(0, 100) + '...' : roteiroText;
+            document.getElementById('themeName').innerText = preview;
+            document.getElementById('copyButton').style.display = 'inline-flex';
+            const msg = document.getElementById('completionMessage');
+            msg.style.display = 'none';
+            msg.innerText = '';
+        }
+
+        function copyTheme() {
+            if (!roteiroText) return;
+            const textoParaCopiar = `Reescreva o texto abaixo de forma a deixá-lo mais simples e acessível, mas também com uma estrutura mais original, usando palavras diferentes, e mantendo o mesmo conteúdo, para que o texto seja único e sem risco de plágio. Evite repetir frases e ideias exatamente como no original com uma expressão narrativa. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Instruções
+Depois de fornecer o roteiro para reescrever, o assistente irá analisar quantas partes tem o roteiro completo. O assistente então gerará a Parte 1 e continuará com o processo até que todas as partes da história sejam concluídas.
+
+Estrutura:
+Divida em 5 partes e Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+
+Por exemplo:
+Parte 1:  (1.500 e 2.000 tokens cada)
+Parte 2:  (1.500 e 2.000 tokens cada)
+Parte 3:  (1.500 e 2.000 tokens cada)
+Parte 4:  (1.500 e 2.000 tokens cada)
+Parte 5:  (1.500 e 2.000 tokens cada)
+
+Siga as instruções:
+Comece com a Parte 1 (1.500 e 2.000 tokens).
+Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
+A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
+
+Requisitos de estilo de escrita:
+Tom: Calmo
+Voz: Dirija-se diretamente ao ouvinte
+Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+
+Importante:
+- Cada Parte deve ter entre 1.500 e 2.000 tokens.
+- Certifique-se de que a história transite suavemente de uma Parte para outra.
+- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
+- Evite interações, perguntas ou conclusões desnecessárias.
+- Lembre-se: A história deve ser a mesma e os pararafos devem ser quase iguais mais sem parecer plágio.
+- Antes de começar com a historia me dê a estrutura das divisões das partes e depois me pergunte se pode começar a reescrever a primeira parte.
+
+Roteiro:
+\n\n${roteiroText}`;
+
+            navigator.clipboard.writeText(textoParaCopiar).then(() => {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Roteiro copiado com a instrução!';
+                msg.style.display = 'block';
+                document.getElementById('copyButton').style.display = 'none';
+            });
+        }
+
+        /* ====== ALTERAÇÃO SOLICITADA: mover o texto "[texto...]" (ou o conteúdo do box) para o MEIO da mensagem fixa ====== */
+        function copyIntro() {
+            const header = `Organize toda o roteiro abaixo em parágrafos com um limite padrão de 600 caracteres para cada parágrafo, tradução para o português e faça a correção ortográfica.`;
+
+            const footer = `IMPORTANTE: Você irá organizar tudo em um único bloco de código em plaintext. Apenas o conteúdo da narrativa (todos os parágrafos) deve estar dentro desse bloco. Não me entregue o (timecode).
+            
+            Agora organize....`;
+
+            const extraFromBox = document.getElementById('newTextBox').value.trim();
+            const payload = extraFromBox ? extraFromBox : '[texto...]';
+
+            const toClipboard = `${header}\n\n${payload}\n\n${footer}`;
+
+            navigator.clipboard.writeText(toClipboard).then(() => {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Mensagem (intro + texto + regras) copiada!';
+                msg.style.display = 'block';
+            });
+        }
+        
+        function copyTexto() {
+            navigator.clipboard.writeText(`Sim, você criará e entregará cada Parte dentro de um único bloco de código em plaintext. Apenas o conteúdo da narrativa da Parte (todos os parágrafos) deve estar dentro desse bloco.
+Os títulos, subtítulos e a quantidade de tokens da história devem ficar fora do bloco.
+As perguntas de transição também devem aparecer sempre fora do bloco.
+
+IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.500 e 2.000 tokens.`);
+        }
+
+        /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
+        function clearContent() {
+            // limpa somente o textarea principal do roteiro e sua prévia/estado
+            document.getElementById('themeInput').value = '';
+            roteiroText = '';
+            document.getElementById('themeName').innerText = '';
+            document.getElementById('copyButton').style.display = 'none';
+
+            // limpa APENAS os boxes coloridos do final da página
+            document.querySelectorAll('.box textarea').forEach(t => { t.value = ''; });
+
+            // mantém todo o restante intocado (newTextBox e arquivos anexados)
+            const msg = document.getElementById('completionMessage');
+            msg.style.display = 'none';
+            msg.innerText = '';
+        }
+
+        /* ====== AJUSTE 2: Salvar usando o nome do arquivo .txt que está "da vez" ====== */
+        function saveContent() {
+            let content = '';
+            document.querySelectorAll('.box textarea').forEach(textarea => {
+                const text = textarea.value.trim();
+                if (text) content += text + '\n\n';
+            });
+
+            if (!content) {
+                const msg = document.getElementById('completionMessage');
+                msg.innerText = 'Não há conteúdo para salvar.';
+                msg.style.display = 'block';
+                return;
+            }
+
+            // Pega o arquivo atualmente carregado (da vez)
+            let filename = 'roteiro.txt';
+            if (txtFilesList.length > 0 && txtCurrentIndex >= 0 && txtCurrentIndex < txtFilesList.length) {
+                const currentName = txtFilesList[txtCurrentIndex].name || 'roteiro.txt';
+                // garante extensão .txt
+                const base = currentName.replace(/\.[^/.]+$/,''); 
+                filename = base + '.txt';
+            }
+
+            const blob = new Blob([content.trim()], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        /* ====== Sequência de .txt (sem alerts, feedback na barra verde) ====== */
+        let txtFilesList = [];
+        let txtCurrentIndex = -1; // -1 = nenhum carregado ainda
+
+        function setMsg(text) {
+            const msg = document.getElementById('completionMessage');
+            msg.innerText = text;
+            msg.display = 'block';
+            msg.style.display = 'block';
+        }
+
+        function updateBtnState() {
+            const organizeBtn = document.getElementById('organizeBtn');
+            const total = txtFilesList.length;
+
+            if (total === 0) {
+                organizeBtn.disabled = false;
+                organizeBtn.textContent = 'Upload';
+                return;
+            }
+
+            const remaining = total - (txtCurrentIndex + 1); // quantos faltam carregar
+
+            if (remaining <= 0) {
+                // terminou (acabou de carregar o último)
+                organizeBtn.textContent = 'Concluído';
+                organizeBtn.disabled = true;
+            } else {
+                organizeBtn.textContent = 'Upload';
+                organizeBtn.disabled = false;
+            }
+        }
+
+        function loadFileByIndex(i) {
+            if (!txtFilesList.length || i < 0 || i >= txtFilesList.length) return;
+            const file = txtFilesList[i];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('newTextBox').value = (e.target.result || '').toString();
+                setMsg(`Arquivo ${i + 1} de ${txtFilesList.length} carregado: ${file.name}`);
+                updateBtnState(); // atualiza botão após carregar
+            };
+            reader.onerror = function() {
+                setMsg('Houve um problema ao ler este arquivo.');
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+
+        function handleTxtFilesChange(ev) {
+            const files = Array.from(ev.target.files || []);
+            txtFilesList = files.filter(f => /\.txt$/i.test(f.name));
+            txtCurrentIndex = -1;
+            const total = txtFilesList.length;
+            if (total > 0) {
+                setMsg(`${total} arquivo(s) anexado(s). Clique em "Upload" para carregar o primeiro.`);
+            } else {
+                setMsg('Nenhum arquivo .txt anexado.');
+            }
+            updateBtnState();
+        }
+
+        function goToNextTxt() {
+            const total = txtFilesList.length;
+            if (total === 0) { setMsg('Nenhum arquivo .txt anexado.'); return; }
+
+            // Se já terminou, não faz nada
+            if (txtCurrentIndex >= total - 1) {
+                updateBtnState();
+                return;
+            }
+
+            // Avança e carrega
+            txtCurrentIndex++;
+            loadFileByIndex(txtCurrentIndex);
+
+            // Se acabamos de carregar o último, mensagem final (botão vira Concluído automaticamente)
+            if (txtCurrentIndex === total - 1) {
+                setMsg(`Pronto! Todos os ${total} arquivo(s) foram organizados.`);
+            }
+        }
+
+        (function initTxtLoader() {
+            const fileInput = document.getElementById('txtFiles');
+            const organizeBtn = document.getElementById('organizeBtn');
+            fileInput.addEventListener('change', handleTxtFilesChange);
+            organizeBtn.addEventListener('click', goToNextTxt);
+        })();
+    </script>
 </body>
 </html>
-
 
 
 
