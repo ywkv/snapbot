@@ -137,7 +137,7 @@
 
     function buildMessage(tema){
       return `Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "Histórias Antigas".
-Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (1.300 e 1.800 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (1.100 e 1.500 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
 
 Instruções
 Depois de fornecer o Título Principal, o assistente gerará de 2 títulos de histórias todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
@@ -147,11 +147,11 @@ Título principal: Um único título abrangente com várias histórias.
 Cada história: Cada história será dividida em 3 partes.
 
 Por exemplo:
-História 1: [Título da história 1] (3 partes, 1.300 e 1.800 tokens cada)
-História 2: [Título da história 2] (3 partes, 1.300 e 1.800 tokens cada)
+História 1: [Título da história 1] (3 partes, 1.100 e 1.500 tokens cada)
+História 2: [Título da história 2] (3 partes, 1.100 e 1.500 tokens cada)
 
 Siga as instruções:
-Comece com a Parte 1 (1.300 e 1.800 tokens).
+Comece com a Parte 1 (1.100 e 1.500 tokens).
 Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
 A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
 
@@ -162,7 +162,7 @@ Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender
 Finais: Cada Parte deve terminar com uma pergunta aberta ou um pensamento não resolvido, incentivando a curiosidade e a reflexão com no minimo caracteres.
 
 Importante:
-- Cada Parte deve ter entre 1.300 e 1.800 tokens.
+- Cada Parte deve ter entre 1.100 e 1.500 tokens.
 - Certifique-se de que a história transite suavemente de uma Parte para outra.
 - A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
 - Evite interações, perguntas ou conclusões desnecessárias.
@@ -244,7 +244,7 @@ TEMA: [${tema}].`;
 
     function copyTexto(){
       navigator.clipboard.writeText(
-        'Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.300 e 1.800 tokens.'
+        'Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.100 e 1.500 tokens.'
       );
     }
 
@@ -307,5 +307,6 @@ TEMA: [${tema}].`;
   </script>
 </body>
 </html>
+
 
 
