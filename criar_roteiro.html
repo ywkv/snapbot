@@ -136,49 +136,51 @@
     let generatedMessage = '';
 
     function buildMessage(tema){
-      return `Você é um especialista em escrever uma narrativa histórica longa para um canal sobre "Histórias Antigas".
+      return `You are a specialist in writing long historical narratives for a channel about “Ancient Stories.”
 
-Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (800 e 1000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+This project will include 2 stories, all with the same theme, but covering different aspects or moments within that theme. Each story will be divided into 3 parts. Each Part must have between 800 and 1000 tokens, and each paragraph should have on average 400 characters (to keep consistency).
 
-Instruções
-Depois de fornecer o Título Principal, o assistente gerará de 2 títulos de histórias todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema. O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
+Instructions
+After providing the Main Title, the assistant will generate 2 story titles, all with the same theme but covering different aspects or moments within that theme. The assistant will then generate Part 1 of Story 1 and continue the process until all parts of the 2 stories are completed.
 
-Estrutura:
-Título principal: Um único título abrangente com várias histórias.
-Cada história: Cada história será dividida em 3 partes.
+Structure:
+Main Title: A single overarching title for the multiple stories.
+Each story: Each story will be divided into 3 parts.
 
-Por exemplo:
-História 1: [Título da história 1] (3 partes, 800 e 1000 tokens cada)
-História 2: [Título da história 2] (3 partes, 800 e 1000 tokens cada)
+For example:
+Story 1: [Story 1 Title] (3 parts, 800–1000 tokens each)
+Story 2: [Story 2 Title] (3 parts, 800–1000 tokens each)
 
-Siga as instruções:
-Comece com a Parte 1 (800 e 1000 tokens).
-Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
-A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
+Follow these instructions:
+Start with Part 1 (800–1000 tokens).
+After Part 1 is completed, ask briefly: “Continue to Part 2?”
+Part 2 should continue directly from Part 1. Repeat this process for all parts of each story.
 
-INTRODUÇO:
-Crie uma introdução chamativa somente no primeiro paragráfo da (história 1 - parte 1).
-Estrutura obrigatória (siga na ordem, como prosa contínua):
-1) GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente. 
-2) CTA SUAVE + COMUNIDADE (1–2 frases): “Antes de se acomodar, curta o vídeo e inscreva-se, mas só se você realmente gostar do que faço aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
-3) RITUAL SENSORIAL (1–2 frases): convide a “apagar as luzes”, “ligar um ventilador para um zumbido de fundo” e “entrar nessa juntos”.
-4) Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada, criando um mistério ou contexto envolvente sem entrar em muitos detalhes...
+INTRODUCTION:
+Create a catchy introduction only in the first paragraph of (Story 1 – Part 1).
+Mandatory structure (follow this order, as continuous prose):
 
-Requisitos de estilo de escrita:
-Tom: Calmo
-Voz: Dirija-se diretamente ao ouvinte
-Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+1. HOOK: Start by quickly presenting the topic of the video in an intriguing and captivating way, keeping the tone direct and engaging.
+2. SOFT CTA + COMMUNITY (1–2 sentences): “Before you get comfortable, like the video and subscribe, but only if you really enjoy what I do here. Tell me in the comments where you’re watching from and what time it is there.”
+3. SENSORY RITUAL (1–2 sentences): invite the listener to “turn off the lights,” “turn on a fan for a soft background hum,” and “step into this together.”
+4. Finally, start the narrative of the video with an intriguing sentence that sparks curiosity and sends the viewer on a journey, creating a mystery or engaging context without going into too many details yet...
 
-Importante:
-- Cada Parte deve ter entre 800 e 1000 tokens.
-- Certifique-se de que a história transite suavemente de uma Parte para outra.
-- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
-- Evite interações, perguntas ou conclusões desnecessárias.
-- Antes de começar com a historia me dê a estrutura das histórias e depois me pergunte se pode começar com a primeira parte.
+Writing style requirements:
+Tone: Calm
+Voice: Speak directly to the listener
+Language: Use simple and direct words, in a clear and easy-to-understand way, without overloading on details.
 
-Observação: escreva o roteiro com linguagem natural e fluida, evitando um tom robótico ou artificial, para que soe como algo criado por uma pessoa real.
+Important:
 
-TEMA: [${tema}].`;
+* Each Part must have between 800 and 1000 tokens.
+* Make sure the story transitions smoothly from one Part to another.
+* The narrative should have no internal breaks or section markers, continuing with direct development.
+* Avoid unnecessary interactions, questions, or conclusions.
+* Before starting the story, give me the structure of the stories and then ask if you can start with the first part.
+
+Note: Write the script with natural, flowing language, avoiding a robotic or artificial tone, so it sounds like something created by a real person.
+
+THEME: [${tema}].`;
     }
 
     function setPreview(text){
@@ -251,7 +253,7 @@ TEMA: [${tema}].`;
 
     function copyTexto(){
       navigator.clipboard.writeText(
-        'Sim , você criará e entregará cada parte dentro de blocos de código em plaintext, mas somente o conteúdo da narrativa deve estar dentro do bloco. Os títulos e subtítulos da história devem ficar fora do bloco. As perguntas de transição também devem aparecer sempre fora do bloco. IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 800 e 1000 tokens.'
+        'Yes, you will create and deliver each part inside code blocks in plaintext, but only the narrative content should be inside the block. The story titles and subtitles must stay outside the block. The transition questions must also always appear outside the block. IMPORTANT: At the end of each block, outside the code block, provide the token count for that Part to ensure that each Part has between 800 and 1000 tokens.'
       );
     }
 
@@ -314,6 +316,7 @@ TEMA: [${tema}].`;
   </script>
 </body>
 </html>
+
 
 
 
