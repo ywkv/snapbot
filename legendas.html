@@ -6,12 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: #111827;
       color: #F9FAFB;
       margin: 0;
-      padding: 2rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .navbar {
@@ -32,16 +39,17 @@
     }
 
     .navbar ul li {
-      display: inline;
-      margin: 0 20px;
+      display: inline-block;
+      margin: 0 12px;
     }
 
     .navbar ul li a {
       color: #F9FAFB;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .navbar ul li a:hover {
@@ -49,17 +57,37 @@
     }
 
     .container {
-      max-width: 800px;
-      margin: auto;
+      width: 100%;
+      max-width: 900px;
+      margin-top: 80px;
+      margin-bottom: 40px;
       background: #1F2937;
-      padding: 2rem;
+      padding: 2rem 1.5rem;
       border-radius: 12px;
-      margin-top: 60px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
     h1 {
       text-align: center;
       margin-bottom: 1.5rem;
+      font-size: 1.6rem;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.95rem;
     }
 
     textarea {
@@ -70,55 +98,91 @@
       background: #111827;
       color: white;
       resize: vertical;
-      height: 100px;
+      min-height: 120px;
       white-space: pre-wrap;
       word-wrap: break-word;
       overflow-y: auto;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    input[type="file"] {
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
     }
 
     button {
-      padding: 0.4rem 0.6rem;
+      padding: 0.55rem 1rem;
       background: #6366F1;
       border: none;
       border-radius: 8px;
       color: white;
-      font-weight: bold;
+      font-weight: 600;
       font-size: 0.9rem;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
       cursor: pointer;
       width: auto;
+      transition: background 0.2s ease, transform 0.1s ease;
     }
 
     button:hover {
       background: #4F46E5;
+      transform: translateY(-1px);
     }
 
-    #resultado {
-      white-space: pre-wrap;
-      background-color: #fff;
-      color: #000;
-      padding: 10px;
-      margin-top: 20px;
-      border-radius: 8px;
+    button:active {
+      transform: translateY(0);
     }
 
     .botoes {
       display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
+      justify-content: center;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
     }
 
-    #downloadBtn, #limparBtn {
+    #downloadBtn,
+    #limparBtn {
       display: none;
     }
 
+    #resultado {
+      white-space: pre-wrap;
+      background-color: #F9FAFB;
+      color: #000;
+      padding: 10px;
+      margin-top: 1.25rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
     footer {
-      margin-top: auto;
+      width: 100%;
       text-align: center;
       padding: 10px;
       background-color: #111827;
       color: #F9FAFB;
       font-size: 0.9em;
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        border-radius: 0;
+        margin-top: 70px;
+      }
+
+      .navbar ul li {
+        margin: 0 6px;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
@@ -138,35 +202,67 @@
 <div class="container">
   <h1>Conversor de Texto para SRT Aprimorado</h1>
 
-  <form id="conversorForm">
-    <label for="textoInput">Cole seu texto aqui:</label><br>
-    <textarea id="textoInput" required></textarea><br>
-    <button type="submit">Converter para SRT</button>
-  </form>
+  <!-- Conversão de UM arquivo por vez (texto colado) -->
+  <div class="section">
+    <div class="section-title">Conversão individual (colando o texto)</div>
+    <form id="conversorForm">
+      <label for="textoInput">Cole seu texto aqui (um idioma por vez):</label>
+      <textarea id="textoInput" required></textarea>
+      <button type="submit">Converter para SRT</button>
+    </form>
 
-  <form id="uploadForm">
-    <label for="baseFolderInput">Selecione a pasta base:</label><br>
-    <input type="file" id="baseFolderInput" webkitdirectory mozdirectory directory multiple><br>
-    <button type="button" id="uploadBtn">Converter Arquivos</button>
-  </form>
+    <div class="botoes">
+      <button id="downloadBtn" type="button">Baixar SRT</button>
+      <button id="limparBtn" type="button">Limpar Campo</button>
+    </div>
 
-  <div class="botoes">
-    <button id="downloadBtn">Baixar ZIP com SRTs</button>
-    <button type="button" id="limparBtn">Limpar Campo</button>
+    <div id="resultado"></div>
   </div>
 
-  <div id="resultado"></div>
+  <hr style="border-color:#374151; border-width:1px 0 0 0; margin: 1.5rem 0;">
+
+  <!-- Conversão em massa (pasta com 1..5/legendas/pt-es-fr-de.txt) -->
+  <div class="section">
+    <div class="section-title">Conversão em massa (pasta com legendas)</div>
+    <form id="uploadForm" onsubmit="return false;">
+      <label for="baseFolderInput">Selecione a pasta base (com pastas 1, 2, 3, 4 e 5):</label>
+      <input type="file" id="baseFolderInput" webkitdirectory mozdirectory directory multiple>
+      <button type="button" id="uploadBtn">Converter Arquivos da Pasta</button>
+    </form>
+    <p style="font-size:0.85rem; color:#D1D5DB; margin-top:0.5rem;">
+      Estrutura esperada: <code># VIDEOS / 1 / legendas / pt.txt, es.txt, fr.txt, de.txt</code> (e assim por diante para 2, 3, 4 e 5).
+    </p>
+  </div>
 </div>
+
+<footer>
+  &copy; <span id="anoAtual"></span> Conversor de Legendas
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.8.0/dist/jszip.min.js"></script>
 <script>
   (function() {
+    // Atualiza ano do footer
+    document.getElementById('anoAtual').textContent = new Date().getFullYear();
+
+    // Constantes de configuração do SRT
     const CARACTERES_POR_BLOCO = 500;
     const PALAVRAS_MIN_BLOCO = 80;
     const PALAVRAS_MAX_BLOCO = 100;
     const DURACAO_BLOCO = 30;
     const INTERVALO_ENTRE_BLOCOS = 20;
 
+    // Elementos de interface
+    const textoInput   = document.getElementById('textoInput');
+    const resultadoDiv = document.getElementById('resultado');
+    const downloadBtn  = document.getElementById('downloadBtn');
+    const limparBtn    = document.getElementById('limparBtn');
+    const uploadBtn    = document.getElementById('uploadBtn');
+    const baseFolderInput = document.getElementById('baseFolderInput');
+
+    /**
+     * Converte texto em SRT.
+     */
     function converterParaSRT(texto) {
       let srt = '';
       let contador = 1;
@@ -188,7 +284,7 @@
             contador++;
             tempoAcumulado += DURACAO_BLOCO + INTERVALO_ENTRE_BLOCOS;
             blocoAtual = resto + palavra + ' ';
-            palavrasNoBloco = resto.split(/\s+/).length + 1;
+            palavrasNoBloco = resto.split(/\s+/).filter(Boolean).length + 1;
           } else {
             srt += formatarBlocoSRT(contador, tempoAcumulado, blocoAtual);
             contador++;
@@ -199,7 +295,7 @@
         }
       }
 
-      if (blocoAtual) {
+      if (blocoAtual.trim()) {
         srt += formatarBlocoSRT(contador, tempoAcumulado, blocoAtual);
       }
 
@@ -208,7 +304,11 @@
 
     function formatarBlocoSRT(contador, tempoInicio, texto) {
       const tempoFim = tempoInicio + DURACAO_BLOCO;
-      return `${contador}\n${formatarTempo(tempoInicio)} --> ${formatarTempo(tempoFim)}\n${texto.trim()}\n\n`;
+      return (
+        contador + '\n' +
+        formatarTempo(tempoInicio) + ' --> ' + formatarTempo(tempoFim) + '\n' +
+        texto.trim() + '\n\n'
+      );
     }
 
     function formatarTempo(segundos) {
@@ -216,25 +316,25 @@
       const minutos = Math.floor((segundos % 3600) / 60);
       const segsRestantes = Math.floor(segundos % 60);
       const milissegundos = Math.floor((segundos % 1) * 1000);
-
-      return `${pad(horas)}:${pad(minutos)}:${pad(segsRestantes)},${pad(milissegundos, 3)}`;
+      return pad(horas) + ':' + pad(minutos) + ':' + pad(segsRestantes) + ',' + pad(milissegundos, 3);
     }
 
     function pad(numero, tamanho = 2) {
       return numero.toString().padStart(tamanho, '0');
     }
 
+    /**
+     * Gera ZIP com as pastas 1..5 e subpasta "legendas"
+     */
     function gerarZIP(pastasSRT) {
       const zip = new JSZip();
       const pastaBase = zip.folder("# VIDEOS");
 
-      // Criando pastas 1 a 5 e pastas "legendas" dentro delas
       for (let i = 1; i <= 5; i++) {
-        const pasta = pastaBase.folder(i.toString()).folder("legendas");
-
+        const pastaNumero = pastaBase.folder(i.toString()).folder("legendas");
         if (pastasSRT[i]) {
-          pastasSRT[i].forEach(file => {
-            pasta.file(file.nome, file.conteudo);
+          pastasSRT[i].forEach(function(file) {
+            pastaNumero.file(file.nome, file.conteudo);
           });
         }
       }
@@ -246,47 +346,119 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
       });
     }
 
-    function processarArquivos() {
-      const arquivos = document.getElementById('baseFolderInput').files;
-      const pastasSRT = {};
+    /**
+     * Lê um arquivo de texto e retorna Promise com o conteúdo.
+     */
+    function lerArquivoComoTexto(arquivo) {
+      return new Promise(function(resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          resolve(e.target.result);
+        };
+        reader.onerror = function(err) {
+          reject(err);
+        };
+        reader.readAsText(arquivo);
+      });
+    }
 
-      Array.from(arquivos).forEach((arquivo) => {
+    /**
+     * Processa arquivos da pasta base (# VIDEOS) e cria SRTs
+     * pt, es, fr e de.
+     */
+    async function processarArquivos() {
+      const arquivos = baseFolderInput.files;
+
+      if (!arquivos || arquivos.length === 0) {
+        alert("Selecione a pasta base com as legendas antes de converter.");
+        return;
+      }
+
+      const pastasSRT = {};
+      const nomesValidos = ["pt.txt", "es.txt", "fr.txt", "de.txt"]; // AGORA INCLUI DE.TXT
+
+      const promessas = Array.from(arquivos).map(async function(arquivo) {
         const caminhoArquivo = arquivo.webkitRelativePath.split('/');
-        const nomePasta = caminhoArquivo[1]; // Pasta 1, 2, 3, 4, 5
+        // Esperado: [ "# VIDEOS", "1", "legendas", "pt.txt" ]
+        const nomePasta = caminhoArquivo[1]; // 1, 2, 3, 4, 5...
         const nomeArquivo = arquivo.name;
 
-        if (caminhoArquivo[2] === "legendas" && (nomeArquivo === "pt.txt" || nomeArquivo === "es.txt" || nomeArquivo === "fr.txt")) {
-          const idioma = nomeArquivo.split('.')[0]; // pt, es, fr
-          const reader = new FileReader();
-
-          reader.onload = function(e) {
-            const texto = e.target.result;
+        if (caminhoArquivo[2] === "legendas" && nomesValidos.includes(nomeArquivo)) {
+          const idioma = nomeArquivo.split('.')[0]; // pt, es, fr, de
+          try {
+            const texto = await lerArquivoComoTexto(arquivo);
             const srt = converterParaSRT(texto);
 
             if (!pastasSRT[nomePasta]) {
               pastasSRT[nomePasta] = [];
             }
 
-            pastasSRT[nomePasta].push({ nome: `${idioma}.srt`, conteudo: srt });
-          };
-          reader.readAsText(arquivo);
+            pastasSRT[nomePasta].push({
+              nome: idioma + ".srt",
+              conteudo: srt
+            });
+          } catch (e) {
+            console.error("Erro ao ler arquivo:", nomeArquivo, e);
+          }
         }
       });
 
-      // Após processar todos os arquivos, gera o ZIP
-      setTimeout(() => gerarZIP(pastasSRT), 2000); // Aguarda o processamento dos arquivos
+      await Promise.all(promessas);
+      gerarZIP(pastasSRT);
     }
 
-    document.getElementById('uploadBtn').addEventListener('click', processarArquivos);
+    /**
+     * EVENTOS
+     */
 
-    document.getElementById('limparBtn').addEventListener('click', function() {
-      document.getElementById('resultado').textContent = '';
-      document.getElementById('downloadBtn').style.display = 'none';
-      document.getElementById('limparBtn').style.display = 'none';
+    // Conversão individual pelo campo de texto (UM arquivo por vez)
+    document.getElementById('conversorForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const texto = textoInput.value.trim();
+
+      if (!texto) {
+        alert("Cole o texto que deseja converter.");
+        return;
+      }
+
+      const srt = converterParaSRT(texto);
+      resultadoDiv.textContent = srt;
+      downloadBtn.style.display = 'inline-block';
+      limparBtn.style.display = 'inline-block';
     });
+
+    // Download do SRT convertido individualmente
+    downloadBtn.addEventListener('click', function() {
+      const srt = resultadoDiv.textContent || "";
+      if (!srt.trim()) {
+        alert("Não há conteúdo para baixar. Converta um texto primeiro.");
+        return;
+      }
+
+      const blob = new Blob([srt], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "legenda.srt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Limpa campo e resultado
+    limparBtn.addEventListener('click', function() {
+      textoInput.value = '';
+      resultadoDiv.textContent = '';
+      downloadBtn.style.display = 'none';
+      limparBtn.style.display = 'none';
+    });
+
+    // Conversão em massa da pasta
+    uploadBtn.addEventListener('click', processarArquivos);
   })();
 </script>
 
