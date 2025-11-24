@@ -136,47 +136,60 @@
     let generatedMessage = '';
 
     function buildMessage(tema){
-      return `Você é um especialista em escrever uma narrativa histórica longa para um canal do YouTube sobre "Histórias da Bíblia".
+      return `Você é um especialista em escrever uma narrativa histórica longa para um canal do YouTube sobre "Histórias da Bíblia", com foco exclusivamente na narrativa, destacando acontecimentos, personagens, conflitos, cenários e tramas bíblicas — sem adicionar lições espirituais ou ensinamentos, apenas contando os fatos de forma envolvente e cinematográfica.
 
-Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos, personagens ou momentos bíblicos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre (800 e 1000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos, personagens ou momentos bíblicos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre 800 e 1000 tokens, e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
 
 Instruções
-Depois de fornecer o Título Principal, o assistente gerará 2 títulos de histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema bíblico. O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
+Depois de fornecer o Título Principal, o assistente gerará 2 títulos de histórias, todas com o mesmo tema, mas abordando diferentes aspectos ou momentos dentro desse tema bíblico.
+O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
 
 Estrutura:
 Título principal: Um único título abrangente com várias histórias bíblicas.
 Cada história: Cada história será dividida em 3 partes.
 
-Por exemplo:
-História 1: [Título da história 1] (3 partes, 800 e 1000 tokens cada)
-História 2: [Título da história 2] (3 partes, 800 e 1000 tokens cada)
+Exemplo de estrutura:
+História 1: [Título da história 1] (3 partes, 800 a 1000 tokens cada)
+História 2: [Título da história 2] (3 partes, 800 a 1000 tokens cada)
 
 Siga as instruções:
-Comece com a Parte 1 (800 e 1000 tokens).
-Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
-A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história.
+Comece com a Parte 1 (800 a 1000 tokens).
+Depois que a Parte 1 estiver concluída, pergunte em poucas palavras:
+"Continuar para a Parte 2?"
+A Parte 2 dará continuidade direta à Parte 1.
+Repita esse processo para todas as partes da história.
 
 INTRODUÇÃO:
 Crie uma introdução chamativa somente no primeiro parágrafo da (História 1 – Parte 1).
-Estrutura obrigatória (siga na ordem, como prosa contínua):
-GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente, conectando o ouvinte ao contexto bíblico.
+Estrutura obrigatória (siga exatamente nesta ordem, como prosa contínua):
+
+GANCHO:
+Apresente rapidamente o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente, conectando o ouvinte ao contexto bíblico.
+(Lembre-se: foca na narrativa, no drama, no clima histórico, e não em lições.)
+
 CTA SUAVE + COMUNIDADE (1–2 frases):
 “Antes de se acomodar, curta o vídeo e inscreva-se, mas só se você realmente gostar do que faço aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
-RITUAL SENSORIAL (1–2 frases): convide a “apagar as luzes”, “ligar um ventilador para um zumbido de fundo” e “entrar nessa juntos”.
-Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada pela história bíblica, criando um mistério ou contexto envolvente sem entrar em muitos detalhes...
+
+RITUAL SENSORIAL (1–2 frases):
+Convide o ouvinte a “apagar as luzes”, “ligar um ventilador para um zumbido de fundo” e “entrar nessa juntos”.
+
+TRANSIÇÃO PARA A HISTÓRIA:
+Inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada pela história bíblica, criando um mistério ou ambiente envolvente sem moralizar, apenas abrindo caminho para o enredo.
 
 Requisitos de estilo de escrita:
 Tom: Calmo
 Voz: Dirija-se diretamente ao ouvinte
-Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+Linguagem: Use palavras simples, diretas e fáceis de entender
+Sem exagerar nos detalhes, sem floreios desnecessários
+Sem dar lições espirituais — foco 100% narrativo
+Narrativa contínua, sem divisões internas
+Sem interações, perguntas ou conclusões extras
+A transição entre cada Parte deve ser suave
+Linguagem natural, humana, nada robótica
 
 Importante:
 Cada Parte deve ter entre 800 e 1000 tokens.
-Certifique-se de que a história transite suavemente de uma Parte para outra.
-A narrativa deve ser sem divisões internas, seguindo com o desenvolvimento direto.
-Evite interações, perguntas ou conclusões desnecessárias.
-Antes de começar com a história, me dê a estrutura das histórias e depois me pergunte se pode começar com a primeira parte.
-Observação: escreva o roteiro com linguagem natural e fluida, evitando um tom robótico ou artificial, para que soe como algo criado por uma pessoa real.
+Antes de começar com a história, me dê a estrutura das histórias e depois pergunte se pode começar com a primeira parte.
 
 TEMA: [${tema}].`;
     }
@@ -314,6 +327,7 @@ TEMA: [${tema}].`;
   </script>
 </body>
 </html>
+
 
 
 
