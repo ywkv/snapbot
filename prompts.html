@@ -283,29 +283,29 @@
     function gerarTemas() {
       const numeroTemas = 15;
       const gerarTemasElement = document.getElementById('gerarTemas');
-      const temas = `Gere 15 temas de vídeos no estilo de um canal de histórias da Bíblia, com foco exclusivamente em narrativas envolventes, cheias de emoção, contexto histórico, acontecimentos surpreendentes, conflitos, reviravoltas, fé, quedas e redenção — mas sem destacar lições espirituais. Apenas conte a história de forma épica e cativante.
+      const temas = `Gere 15 temas de vídeos no estilo de um canal de histórias reais do mundo antigo, com foco exclusivamente em narrativas envolventes, cheias de emoção, contexto histórico, acontecimentos surpreendentes, conflitos, reviravoltas, sofrimento, sobrevivência, ascensão, queda e destino — mas sem destacar lições morais ou análises modernas. Apenas conte a história de forma épica, sombria e cativante.
 
 Estrutura que os temas devem seguir:
-Basear-se em histórias, épocas ou contextos bíblicos (Patriarcas, Êxodo, Reis de Israel, Profetas, Período dos Juízes, Tempo de Jesus, Igreja Primitiva, etc.).
-Incluir personagens, grupos ou papéis bíblicos (reis, profetas, sacerdotes, juízes, apóstolos, discípulos, fariseus, romanos, multidões, famílias).
-Explorar elementos puramente narrativos: acontecimentos marcantes, escolhas dramáticas, rivalidades, traições, batalhas, segredos, alianças, disputas políticas, intervenções divinas, milagres como parte da história, jornadas pessoais, tensões internas, fugas, perseguições, missões e momentos decisivos.
-O tom deve ser envolvente, emocional e reflexivo, com um gancho de curiosidade que desperte interesse na profundidade da história bíblica — sem ensinar lições, apenas contando a trama.
+Basear-se em histórias, épocas ou contextos reais do mundo antigo (Roma Antiga, Egito Antigo, Grécia Antiga, Mesopotâmia, Pérsia, civilizações antigas, vida urbana, escravidão, impérios, vilas, guerras, cotidiano, leis, costumes, trabalho, religião, punições, sobrevivência, etc.).
+Incluir personagens, grupos ou papéis históricos reais (mulheres, escravos, soldados, imperadores, servos, sacerdotes, comerciantes, plebeus, gladiadores, crianças, viúvas, nobres, camponeses, curandeiros, escribas, prisioneiros, famílias, governantes, trabalhadores, povos dominados).
+Explorar elementos puramente narrativos: acontecimentos marcantes, escolhas dramáticas, rivalidades, traições, punições, desigualdade, doenças, batalhas, segredos, alianças, costumes brutais, disputas políticas, jornadas pessoais, medo, fome, humilhação, perdas, fugas, perseguições, trabalho forçado, sobrevivência diária e momentos decisivos.
+O tom deve ser envolvente, emocional e reflexivo, com um gancho de curiosidade que desperte interesse na profundidade da história real antiga — sem ensinar lições, apenas contando a trama.
 
 O título deve ter entre 10 e 18 palavras e conter uma frase de impacto no final, como:
-"...que quase ninguém conta"
-"...que muitos cristãos esquecem"
-"...que pode mudar a sua fé hoje"
-"...que revela mais do que você imagina"
-"...que ainda fala forte aos nossos dias"
+"...que quase ninguém imagina"
+"...que a história escondeu"
+"...que revela mais do que você pensa"
+"...que poucos conseguem encarar"
+"...que mostra a verdade brutal daquele tempo"
 
 Exemplos de títulos do estilo desejado (apenas como referência de tom):
-A decisão que mudou o destino de Davi para sempre... que quase ninguém conta
-O dia em que Pedro afundou e viveu um dos momentos mais intensos da fé... que pode mudar a sua fé hoje
-Os bastidores espirituais da queda de Jerusalém... que revelam mais do que você imagina
-A história esquecida de um profeta anônimo... que muitos cristãos deixam passar
+A rotina cruel de uma mulher pobre na Roma Antiga... que quase ninguém imagina
+O destino brutal dos escravos esquecidos pelo império... que a história escondeu
+Como era sobreviver dentro de uma cidade antiga cheia de fome e medo... que revela mais do que você pensa
+A verdade sombria sobre os trabalhos mais cruéis do mundo antigo... que poucos conseguem encarar
 
 Instrução final:
-Crie os novos temas seguindo esse mesmo tom e estrutura, com títulos originais, envolventes e dignos de thumbnails de documentários de histórias bíblicas no YouTube.
+Crie os novos temas seguindo esse mesmo tom e estrutura, com títulos originais, envolventes e dignos de thumbnails de documentários sombrios no YouTube sobre histórias reais da vida no mundo antigo.
 
 Formato:
 [Título] – [Explicação curta sobre o tema].`;
@@ -356,21 +356,26 @@ Formato:
         return;
       }
 
-      const prompt1 = `Tarefa: Escreva APENAS a introdução de um vídeo do YouTube em português do Brasil, para um canal de “histórias antigas para dormir”. O tema será fornecido em [TEMA] na entrada do usuário. A resposta deve ser um único bloco de texto contínuo, sem títulos, listas, notas ou explicações do que está fazendo.
+      const prompt1 = `Tarefa: Escreva APENAS a introdução de um vídeo do YouTube em português do Brasil, para um canal de histórias reais e sombrias sobre a vida no mundo antigo. O tema será fornecido em [TEMA] na entrada do usuário. A resposta deve ser um único bloco de texto contínuo, sem títulos, listas, notas ou explicações do que está fazendo.
 
 Tamanho:
-- 70–100 palavras (~15 segundos de fala).
+
+70–100 palavras (~15 segundos de fala).
 
 Estrutura obrigatória (siga na ordem, como prosa contínua):
-1) GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante e cativante, mantendo o tom direto e envolvente. 
-2) CTA SUAVE + COMUNIDADE (1–2 frases): “Antes de se acomodar, curta o vídeo e inscreva-se, mas só se você realmente gostar do que faço aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
-3) RITUAL SENSORIAL (1–2 frases): convide a “apagar as luzes”, “ligar um ventilador para um zumbido de fundo” e “entrar nessa juntos”.
-4) Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador em uma jornada, criando um mistério ou contexto envolvente sem entrar em muitos detalhes...
+
+GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante, sombria e cativante, mantendo o tom direto e envolvente.
+CTA SUAVE + COMUNIDADE (1–2 frases): “Antes de continuar, curta o vídeo e inscreva-se, mas só se você realmente gostar desse tipo de história aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
+RITUAL SENSORIAL (1–2 frases): convide a pessoa a “diminuir as luzes”, “colocar um som ambiente baixo” e “entrar nessa viagem ao passado”.
+Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador para dentro da história, criando um mistério ou contexto envolvente sem entrar em muitos detalhes.
 
 Restrições finais:
-- Não use cabeçalhos, marcadores, parênteses com placeholders ou colchetes no texto final.
-- Não prometa links, fontes ou imagens.
-- Não antecipe tópicos em lista; apenas sugira a continuidade de modo tranquilo.
+
+Não use cabeçalhos, marcadores, parênteses com placeholders ou colchetes no texto final.
+Não prometa links, fontes ou imagens.
+Não antecipe tópicos em lista; apenas sugira a continuidade de modo natural e imersivo.
+O tom deve ser sombrio, narrativo, envolvente e levemente contemplativo.
+A introdução deve combinar com vídeos sobre costumes brutais, sofrimento, sobrevivência, desigualdade, rotina e histórias reais da Antiguidade.
 
 Entrada do usuário:
 [${tema}]
@@ -402,84 +407,109 @@ ${roteiro}
 
       const prompt3 = `Crie uma thumbnail com estilo de pintura digital realista chamativa com alta qualidade com base na imagem anexo, certificando-se de que não pareça plágio. Os rostos devem ser bem detalhados e as expressões faciais devem ser bem exageradas. Não inclua texto na imagem.`;
 
-      const prompt4 = `ESPECIALISTA EM SEO UNIVERSAL
+      const prompt4 = `Você é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de histórias reais do mundo antigo. Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO dentro do universo de história antiga narrada, vida cotidiana na Antiguidade, costumes brutais, sofrimento, sobrevivência e histórias reais.
 
-Você é um especialista em SEO para YouTube com 10 anos de experiência em crescimento viral e otimização de conteúdo multilíngue para o nicho de "histórias antigas para dormir". Sua especialidade é criar descrições e metadados ultra-otimizados que dominam os resultados de busca em QUALQUER TIPO DE CONTEÚDO.
+SISTEMA DE DETECÇÃO AUTOMÁTICA DE SUBTEMA
 
-SISTEMA DE DETECÇÃO AUTOMÁTICA DE NICHO
+Ao receber o título e a proposta do vídeo, você irá automaticamente identificar o subtipo de conteúdo dentro do nicho de histórias reais da vida no mundo antigo, como por exemplo:
 
-Ao receber o título e narração, você irá automaticamente identificar o tipo de conteúdo e aplicar as estratégias específicas para o nicho de "histórias antigas para dormir".
+vida cotidiana
+mulheres na Antiguidade
+escravidão
+soldados
+punições
+higiene
+alimentação
+trabalho
+infância
+velhice
+pobreza
+impérios e classes sociais
+costumes brutais
+sobrevivência urbana
+histórias reais de Roma, Egito, Grécia e outras civilizações antigas
+
+E então aplicará estratégias específicas de SEO para esse subtipo.
 
 PROCESSO DE TRABALHO
 
 ETAPA 1: AGUARDANDO INPUT
+
 Quando este prompt for ativado, você deve PRIMEIRO solicitar as informações necessárias:
 
 SEO YouTube Universal Ativado! Por favor, forneça:
 
 [TÍTULO]:
+
 ETAPA 2: PROCESSAMENTO E ENTREGA
-Após receber o input, você criará e entregará um único BLOCO DE CÓDIGO, cada um dentro de plaintext, separados, para que eu possa copiar cada bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
+
+Após receber o input, você criará e entregará um único BLOCO DE CÓDIGO, dentro de plaintext, para que eu possa copiar o bloco inteiro com um clique. Use bloco de código markdown com plaintext no início e no final.
 
 PARTE 1: DESCRIÇÃO DO VÍDEO
+
 [Título no idioma mencionado]
 
-HOOK INICIAL ADAPTATIVO (200 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-Pergunta ou afirmação provocativa específica do nicho identificado
-Deve aparecer no preview
-Gerar curiosidade imediata usando gatilhos do nicho
-Incluir palavras-chave principais do tema
+HOOK INICIAL ADAPTATIVO (200 caracteres) - [NÃO ME FORNEÇA ESSE TÍTULO]
+Pergunta ou afirmação provocativa específica do subtipo identificado dentro do nicho de história antiga real.
+Deve aparecer no preview.
+Gerar curiosidade imediata usando gatilhos como sofrimento, rotina brutal, desigualdade, sobrevivência, segredos históricos, realidade chocante e cotidiano esquecido.
+Incluir palavras-chave principais do tema.
 
-CORPO PRINCIPAL OTIMIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-Listar benefícios/promessas adequados ao tipo de conteúdo
-Repetir palavras-chave naturalmente no contexto
-Incluir variações de termos de busca populares no nicho
-Criar conexão emocional apropriada ao público
-Usar power words específicas da categoria
+CORPO PRINCIPAL OTIMIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TÍTULO]
+Listar benefícios e promessas adequados ao tipo de conteúdo.
+Repetir palavras-chave naturalmente no contexto.
+Incluir variações de termos de busca populares no nicho.
+Criar conexão emocional apropriada ao público.
+Usar power words específicas da categoria, como: brutal, real, sombrio, esquecido, chocante, oculto, cotidiano, sobrevivência, cruel, antigo.
 
-PARÁGRAFO DE ENGAJAMENTO PERSONALIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TITULO]
-Call-to-action adaptado ao nicho
-Criar senso de comunidade usando linguagem do grupo
-Agradecer de forma contextualizada
-Incentivar interação relevante ao tipo de conteúdo
+PARÁGRAFO DE ENGAJAMENTO PERSONALIZADO (150 caracteres) - [NÃO ME FORNEÇA ESSE TÍTULO]
+Call-to-action adaptado ao nicho.
+Criar senso de comunidade usando linguagem de quem gosta de história narrada, mistérios do passado e curiosidades sombrias.
+Agradecer de forma contextualizada.
+Incentivar interação relevante ao tema, como comentar qual civilização, época ou aspecto da vida antiga mais impressionou.
 
-REQUISITO RÍGIDO: A soma dos 4 elementos acima = ~ 600 caracteres no máximo.
+REQUISITO RÍGIDO: A soma dos 4 elementos acima = ~600 caracteres no máximo.
 
 SEÇÃO DE HASHTAGS (15-20 hashtags)
+
 #Hashtag1 #Hashtag2 #Hashtag3
 
 Distribuição adaptada ao nicho:
 
-5 hashtags ultra-populares da categoria
+5 hashtags ultra-populares da categoria história
 5 hashtags de nicho específico do tema
 5 hashtags long-tail relacionadas
-5 hashtags emergentes/trending do setor
-
+5 hashtags emergentes/trending do setor de história narrada, curiosidades históricas e mundo antigo
 TAGS PARA O YOUTUBE
+
 Formato: tag1, tag2, tag3, tag longa quatro
-10-20 tags estratégicas do nicho identificado
+
+10-20 tags estratégicas do subtipo identificado
 Mix de cauda curta e longa relevantes ao tema
-Baseadas no comportamento de busca do público-alvo
+Baseadas no comportamento de busca do público-alvo interessado em história antiga, Roma Antiga, Egito Antigo, Grécia Antiga, vida cotidiana, história sombria e fatos históricos reais
 
 LIMITE: 350 caracteres do campo de tags do YouTube
 
 REGRAS DE OTIMIZAÇÃO ADAPTATIVAS
+
 Repetição Estratégica:
-Palavra-chave principal: 15-20x (contextualizada ao nicho)
-Palavras-chave secundárias: 8-12x cada (naturais ao tema)
+Palavra-chave principal: 15-20x contextualizada ao nicho
+Palavras-chave secundárias: 8-12x cada, naturais ao tema
+
 Localização Cultural:
-Usar expressões e gírias do país-alvo + nicho
+Usar expressões e linguagem do país-alvo
 Adaptar completamente ao SEO local e cultural
-Incluir trending topics da categoria no país
+Incluir termos populares de busca relacionados a história, curiosidades históricas, fatos reais, história antiga e documentários narrados
 
 PESQUISA SIMULADA ADAPTATIVA
-Antes de criar, você deve simular uma pesquisa específica do nicho identificado:
-Top 10 vídeos similares da categoria “cotidiano histórico” no idioma/país
+
+Antes de criar, você deve simular uma pesquisa específica do subtipo identificado:
+
+Top 10 vídeos similares da categoria histórias reais do mundo antigo no idioma/país
 Trending hashtags e tags do nicho específico
 Perguntas mais buscadas sobre o tema
 Competidores diretos da área e suas estratégias
 Gaps de palavras-chave não exploradas no setor
-
 FORMATO DE ENTREGA OBRIGATÓRIO
 
 BLOCO:
@@ -489,15 +519,30 @@ BLOCO:
 [aqui vai as hashtags]
 
 [Aqui vai a lista de tags separadas por vírgulas,
-específicas do nicho identificado]
-
+específicas do subtipo identificado]
 INSTRUÇÕES ESPECIAIS
 Se o título mencionar números, SEMPRE incluir variações escritas
 Incluir termos de voice search apropriados ao nicho
 Adaptar completamente ao SEO local e do setor
 Manter estrutura e tamanhos EXATAMENTE como especificado
-
+Priorizar termos com forte apelo de clique dentro do nicho, como:
+história antiga
+mundo antigo
+Roma Antiga
+Egito Antigo
+Grécia Antiga
+histórias reais
+vida cotidiana na Antiguidade
+costumes brutais
+fatos históricos
+verdade brutal
+história sombria
+sobrevivência no passado
+curiosidades históricas
+como era viver
+canal dark de história
 INÍCIO DO PROCESSO
+
 MODO ATIVADO: SEO Universal Adaptativo v1.0 🚀`;
 
       const prompt5 = `Me entregue o contéudo em um idioma e pais por vez, sempre perguntando se pode seguir para o proximo idioma.
@@ -509,30 +554,35 @@ Você criará e entregará um uníco BLOCO DE CÓDIGO, dentro de plaintext, para
 
 Entregar apenas Título, descrição, hashtags e tags, sem rótulos internos ou instruções.`;
 
-      const prompt6 = `Gere uma descrição detalhada de thumbnail para um vídeo de história sombria com o tema: [${tema}].
+      const prompt6 = `Gere uma descrição detalhada de thumbnail para um vídeo de histórias reais do mundo antigo com o tema: [${tema}].
 
-A thumbnail deve seguir o estilo visual de cenas históricas com foco dramático em personagens, inspiradas em pinturas realistas.
+A thumbnail deve seguir o estilo visual de cenas históricas realistas, com foco dramático em personagens e situações do cotidiano antigo, inspiradas em pinturas realistas e em cenas de filmes históricos intensos.
 
 Instruções de estilo e composição:
-O foco deve estar nos personagens e em suas expressões faciais (exageradas, dramáticas e emocionais).
-As expressões devem transmitir algo haver com o tema (medo, desespero, raiva, choque, felicidade ou autoridade.)
-Mostrar 1 a 4 personagens próximos da câmera, com iluminação intensa e contraste forte.
+O foco deve estar nos personagens e em suas expressões faciais, sempre fortes, dramáticas e emocionais.
+As expressões devem transmitir algo diretamente ligado ao tema, como medo, exaustão, dor, desespero, humilhação, raiva, choque, sofrimento, submissão, tensão ou autoridade.
+Mostrar de 1 a 4 personagens próximos da câmera, com iluminação intensa e contraste forte.
 O fundo deve ser desfocado ou simplificado, apenas sugerindo o ambiente histórico de acordo com o tema, para não competir com o foco principal.
-Roupas e objetos devem ser históricos e realistas de acordo com o tema.
-Cores dominantes: tons quentes e terrosos (bronze, areia, dourado, vermelho).
-A cena deve parecer uma fotografia de um filme histórico intenso, com textura, suor, poeira e emoção visível.
+Roupas, objetos e aparência devem ser historicamente plausíveis e realistas de acordo com o contexto do tema.
+Cores dominantes: tons quentes e terrosos, como bronze, areia, dourado envelhecido, vermelho escuro, marrom, cobre e tons de poeira.
+A cena deve parecer uma fotografia de um filme histórico intenso, com textura visível na pele, suor, poeira, tecido gasto, marcas de sofrimento e emoção evidente.
 
 Inclua na descrição:
-Quem aparece e o que estão fazendo.
-A emoção principal.
+
+Quem aparece e o que está acontecendo na cena.
+A emoção principal transmitida.
 Iluminação e ângulo da câmera.
-Elementos históricos relevantes (armaduras, colunas, símbolos, instrumentos, etc.).
-Indique se a cena é mais “moderada”, “tensa”, “trágica”, “escandalosa”, “ritualística” ou “brutal”.
+Elementos históricos relevantes de acordo com o tema, como túnicas, sandálias, colunas, ferramentas, correntes, armaduras, vasos, tochas, mercados, casas antigas, instrumentos de trabalho, símbolos religiosos, ruas de pedra, celas, pergaminhos, carroças, estandartes, mesas de madeira, utensílios e arquitetura da época.
+Indique se a cena é mais “moderada”, “tensa”, “trágica”, “escandalosa”, “ritualística”, “opressiva”, “dolorosa” ou “brutal”.
+
+Direção visual do canal:
+A thumbnail deve combinar com vídeos sobre vida cotidiana na Antiguidade, costumes brutais, sofrimento, desigualdade, punições, escravidão, pobreza, trabalho duro, sobrevivência e histórias reais de Roma Antiga, Egito Antigo, Grécia Antiga e outras civilizações antigas.
+Evite visual fantasioso, mágico ou exageradamente épico. O objetivo é transmitir realismo histórico, impacto emocional e curiosidade imediata.
 
 No final, gere um prompt em inglês pronto para o gerador de imagens (Midjourney, Leonardo, Pika, etc.), com base na estrutura abaixo:
 
 🎯 ESTRUTURA DO PROMPT EM INGLÊS (FINAL PARA GERAÇÃO DE IMAGEM)
-“Realistic digital painting focused on expressive human faces, depicting [short summary of the scene based on the theme], with exaggerated emotional expressions (fear, shock, anger, despair, authority), detailed skin texture, sweat and tears visible, realistic ancient clothing and props, shallow depth of field with blurred background, warm dramatic lighting, golden tones, ultra-detailed, 8K, aspect ratio 16:9.”`;
+“Realistic digital painting focused on expressive human faces, depicting [short summary of the scene based on the theme], with exaggerated emotional expressions (fear, shock, anger, despair, exhaustion, humiliation, authority), detailed skin texture, sweat, dust and tears visible, historically accurate ancient clothing and props, shallow depth of field with blurred background, warm dramatic lighting, golden and earthy tones, cinematic realism, ultra-detailed, 8K, aspect ratio 16:9.”`;
 
       document.getElementById('prompt1').textContent = prompt1;
       document.getElementById('prompt2').textContent = prompt2;
