@@ -322,7 +322,7 @@
 
         function copyTheme() {
             if (!roteiroText) return;
-            const textoParaCopiar = `Reescreva o texto abaixo mantendo exatamente a mesma história, os mesmos fatos, acontecimentos, personagens, sequência lógica e informações principais, mas usando uma linguagem mais simples, natural, envolvente e original, para que o resultado fique único e sem risco de plágio. Não copie frases do original. Reestruture os períodos, troque palavras, varie a construção das ideias e melhore a fluidez, sem alterar o conteúdo central. O texto final deve soar como uma nova narração, com ritmo mais humano, sombrio, curioso e imersivo, no estilo de um canal de YouTube sobre histórias reais, curiosas e chocantes do passado. Cada Parte deve ter entre 1.500 e 2.000 tokens, e cada parágrafo deve ter em média 400 caracteres, para manter a uniformidade.
+            const textoParaCopiar = `Reescreva o texto abaixo mantendo exatamente a mesma história, os mesmos fatos, acontecimentos, personagens, sequência lógica e informações principais, mas usando uma linguagem mais simples, natural, envolvente e original, para que o resultado fique único e sem risco de plágio. Não copie frases do original. Reestruture os períodos, troque palavras, varie a construção das ideias e melhore a fluidez, sem alterar o conteúdo central. O texto final deve soar como uma nova narração, com ritmo mais humano, sombrio, curioso e imersivo, no estilo de um canal de YouTube sobre histórias reais, curiosas e chocantes do passado. Cada Parte deve ter entre 800 a 1.200 tokens, e cada parágrafo deve ter em média 400 caracteres, para manter a uniformidade.
 
 Instruções
 Depois de receber o roteiro para reescrever, analise o material completo e siga a divisão em 3 partes: início, meio e fim.
@@ -331,13 +331,13 @@ Depois disso, continue o processo até concluir toda a reescrita.
 
 Estrutura:
 Divida o conteúdo em 3 partes.
-Cada Parte deve ter entre 1.500 e 2.000 tokens.
+Cada Parte deve ter entre 800 a 1.200 tokens.
 Cada parágrafo deve ter em média 400 caracteres.
 
 Exemplo de estrutura:
-Parte 1 – Início: (1.500 a 2.000 tokens)
-Parte 2 – Meio: (1.500 a 2.000 tokens)
-Parte 3 – Fim: (1.500 a 2.000 tokens)
+Parte 1 – Início: (800 a 1.200 tokens)
+Parte 2 – Meio: (800 a 1.200 tokens)
+Parte 3 – Fim: (800 a 1.200 tokens)
 
 Fluxo obrigatório:
 
@@ -361,7 +361,7 @@ Faça a reescrita soar como uma nova versão narrada, original e mais agradável
 
 Importante:
 
-Cada Parte deve ter entre 1.500 e 2.000 tokens
+Cada Parte deve ter entre 800 a 1.200 tokens
 A transição entre as Partes deve ser suave
 A narrativa deve ser contínua, sem subdivisões internas
 Evite interações, perguntas ou conclusões desnecessárias dentro do texto
@@ -370,7 +370,7 @@ O objetivo é reduzir ao máximo qualquer sensação de cópia, mantendo total f
 Antes de começar a reescrever, mostre a estrutura das partes e pergunte se pode iniciar a Parte 1
 
 Roteiro:
-\n\n${roteiroText};
+\n\n${roteiroText}`;
 
             navigator.clipboard.writeText(textoParaCopiar).then(() => {
                 const msg = document.getElementById('completionMessage');
@@ -405,7 +405,7 @@ Roteiro:
 Os títulos, subtítulos e a quantidade de tokens da história devem ficar fora do bloco.
 As perguntas de transição também devem aparecer sempre fora do bloco.
 
-IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 1.500 e 2.000 tokens.`);
+IMPORTANTE: Ao final de cada bloco, fora do bloco de código, forneça a quantidade de tokens da Parte para garantir que cada Parte tenha entre 800 a 1.200 tokens.`);
         }
 
         /* ====== AJUSTE 1: Limpar apenas o campo "Cole seu roteiro aqui" E OS BOXES COLORIDOS ====== */
