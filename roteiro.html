@@ -139,19 +139,18 @@
       return `Você é um especialista em escrever uma narrativa histórica longa para um canal do YouTube chamado Vidas Antigas, com foco em histórias reais, curiosas e chocantes do passado, explorando acontecimentos, costumes, personagens, escândalos, conflitos, práticas brutais, relações proibidas, episódios estranhos, tensões sociais, jogos de poder, traições, punições, guerras, desejos, sobrevivência e acontecimentos que parecem invenção — mas realmente aconteceram.
 Não adicione lições morais, análises modernas ou ensinamentos. Apenas conte os fatos de forma envolvente, sombria, imersiva, dramática e cinematográfica.
 
-Este projeto incluirá 2 histórias, todas com o mesmo tema, mas abordando diferentes aspectos, personagens, costumes, episódios ou momentos históricos dentro desse tema. Cada história será dividida em 3 partes. Cada Parte deve ter entre 800 e 1000 tokens, e cada parágrafo terá em média 400 caracteres, para manter a uniformidade.
+Este projeto incluirá uma história. A história será dividida em 3 partes. Cada Parte deve ter entre 800 e 1000 tokens, e cada parágrafo terá em média 400 caracteres, para manter a uniformidade.
 
 Instruções
-Depois de fornecer o Título Principal, o assistente gerará 2 títulos de histórias, todas com o mesmo tema, mas abordando diferentes aspectos, recortes ou acontecimentos reais dentro desse tema histórico.
-O assistente então gerará a Parte 1 da História 1 e continuará com o processo até que todas as partes das 2 histórias sejam concluídas.
+Depois de fornecer o Título Principal, o assistente gerará o título da história, abordando aspectos, recortes ou acontecimentos reais dentro desse tema histórico.
+O assistente então gerará a Parte 1 da História e continuará com o processo até que todas as partes da história seja concluída.
 
 Estrutura:
-Título principal: Um único título abrangente com várias histórias reais, curiosas e chocantes do passado.
+Título principal: Um único título abrangente com histórias reais, curiosas e chocantes do passado.
 Cada história: Cada história será dividida em 3 partes.
 
 Exemplo de estrutura:
-História 1: [Título da história 1] (3 partes, 800 a 1000 tokens cada)
-História 2: [Título da história 2] (3 partes, 800 a 1000 tokens cada)
+História: [Título da história] (3 partes, 800 a 1000 tokens cada)
 
 Siga as instruções:
 Comece com a Parte 1 (800 a 1000 tokens).
@@ -161,7 +160,7 @@ A Parte 2 dará continuidade direta à Parte 1.
 Repita esse processo para todas as partes da história.
 
 INTRODUÇÃO:
-Crie uma introdução chamativa somente no primeiro parágrafo da História 1 – Parte 1.
+Crie uma introdução chamativa somente no primeiro parágrafo da História – Parte 1.
 Estrutura obrigatória (siga exatamente nesta ordem, como prosa contínua):
 
 GANCHO:
@@ -192,9 +191,9 @@ Evite soar como aula de história — deve soar como uma história real absurda,
 
 Importante:
 Cada Parte deve ter entre 800 e 1000 tokens.
-Antes de começar com a história, me dê a estrutura das histórias e depois pergunte se pode começar com a primeira parte.
+Antes de começar com a história, me dê a estrutura da história e depois pergunte se pode começar com a primeira parte.
 
-TEMA: [${tema}].`;
+TEMA: [${tema}]`;
     }
 
     function setPreview(text){
