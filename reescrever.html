@@ -322,41 +322,55 @@
 
         function copyTheme() {
             if (!roteiroText) return;
-            const textoParaCopiar = `Reescreva o texto abaixo de forma a deixá-lo mais simples e acessível, mas também com uma estrutura mais original, usando palavras diferentes, e mantendo o mesmo conteúdo, para que o texto seja único e sem risco de plágio. Evite repetir frases e ideias exatamente como no original com uma expressão narrativa. Cada Parte deve ter entre (1.500 e 2.000 tokens) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+            const textoParaCopiar = `Reescreva o texto abaixo mantendo exatamente a mesma história, os mesmos fatos, acontecimentos, personagens, sequência lógica e informações principais, mas usando uma linguagem mais simples, natural, envolvente e original, para que o resultado fique único e sem risco de plágio. Não copie frases do original. Reestruture os períodos, troque palavras, varie a construção das ideias e melhore a fluidez, sem alterar o conteúdo central. O texto final deve soar como uma nova narração, com ritmo mais humano, sombrio, curioso e imersivo, no estilo de um canal de YouTube sobre histórias reais, curiosas e chocantes do passado. Cada Parte deve ter entre 1.500 e 2.000 tokens, e cada parágrafo deve ter em média 400 caracteres, para manter a uniformidade.
 
 Instruções
-Depois de fornecer o roteiro para reescrever, o assistente irá analisar quantas partes tem o roteiro completo. O assistente então gerará a Parte 1 e continuará com o processo até que todas as partes da história sejam concluídas.
+Depois de receber o roteiro para reescrever, analise o material completo e siga a divisão em 3 partes: início, meio e fim.
+Em seguida, apresente a estrutura das 3 partes e pergunte se pode começar a reescrever a Parte 1.
+Depois disso, continue o processo até concluir toda a reescrita.
 
 Estrutura:
-Divida em 5 partes e Cada Parte deve ter entre (1.500 e 2.000 tokens cada) e cada parágrafo terá em média 400 caracteres (para manter a uniformidade).
+Divida o conteúdo em 3 partes.
+Cada Parte deve ter entre 1.500 e 2.000 tokens.
+Cada parágrafo deve ter em média 400 caracteres.
 
-Por exemplo:
-Parte 1:  (1.500 e 2.000 tokens cada)
-Parte 2:  (1.500 e 2.000 tokens cada)
-Parte 3:  (1.500 e 2.000 tokens cada)
-Parte 4:  (1.500 e 2.000 tokens cada)
-Parte 5:  (1.500 e 2.000 tokens cada)
+Exemplo de estrutura:
+Parte 1 – Início: (1.500 a 2.000 tokens)
+Parte 2 – Meio: (1.500 a 2.000 tokens)
+Parte 3 – Fim: (1.500 a 2.000 tokens)
 
-Siga as instruções:
-Comece com a Parte 1 (1.500 e 2.000 tokens).
-Depois que a Parte 1 estiver concluída, pergunte em poucas palavras: "Continuar para a Parte 2?"
-A Parte 2 dará continuidade à Parte 1. Repita esse processo para todas as partes da história. 
+Fluxo obrigatório:
+
+Primeiro, mostre a estrutura das 3 partes
+Depois pergunte: “Posso começar a reescrever a Parte 1?”
+Ao terminar cada Parte, pergunte apenas: “Continuar para a Parte 2?” e “Continuar para a Parte 3?”
+Cada nova Parte deve continuar naturalmente a anterior
 
 Requisitos de estilo de escrita:
-Tom: Calmo
-Voz: Dirija-se diretamente ao ouvinte
-Linguagem: Use palavras simples e diretas, de maneira clara e fácil de entender, sem exagerar nos detalhes.
+
+Tom sombrio, fluido, humano e envolvente
+Linguagem simples, clara e direta
+Narração natural, sem parecer artificial
+Evite tom acadêmico, enciclopédico ou didático
+Evite frases excessivamente parecidas com o original
+Preserve o conteúdo integral, sem cortar fatos importantes
+Não invente informações novas
+Não mude a essência da narrativa
+Não transforme a história em resumo, comentário ou análise
+Faça a reescrita soar como uma nova versão narrada, original e mais agradável de ouvir
 
 Importante:
-- Cada Parte deve ter entre 1.500 e 2.000 tokens.
-- Certifique-se de que a história transite suavemente de uma Parte para outra.
-- A narrativa deve ser sem divisões, seguindo com o desenvolvimento direto.
-- Evite interações, perguntas ou conclusões desnecessárias.
-- Lembre-se: A história deve ser a mesma e os pararafos devem ser quase iguais mais sem parecer plágio.
-- Antes de começar com a historia me dê a estrutura das divisões das partes e depois me pergunte se pode começar a reescrever a primeira parte.
+
+Cada Parte deve ter entre 1.500 e 2.000 tokens
+A transição entre as Partes deve ser suave
+A narrativa deve ser contínua, sem subdivisões internas
+Evite interações, perguntas ou conclusões desnecessárias dentro do texto
+O resultado deve manter a mesma história, mas com outra forma de contar
+O objetivo é reduzir ao máximo qualquer sensação de cópia, mantendo total fidelidade ao conteúdo
+Antes de começar a reescrever, mostre a estrutura das partes e pergunte se pode iniciar a Parte 1
 
 Roteiro:
-\n\n${roteiroText}`;
+\n\n${roteiroText};
 
             navigator.clipboard.writeText(textoParaCopiar).then(() => {
                 const msg = document.getElementById('completionMessage');
