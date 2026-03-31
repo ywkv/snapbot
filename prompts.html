@@ -283,29 +283,29 @@
     function gerarTemas() {
       const numeroTemas = 15;
       const gerarTemasElement = document.getElementById('gerarTemas');
-      const temas = `Gere 15 temas de vídeos no estilo de um canal de histórias reais do mundo antigo, com foco exclusivamente em narrativas envolventes, cheias de emoção, contexto histórico, acontecimentos surpreendentes, conflitos, reviravoltas, sofrimento, sobrevivência, ascensão, queda e destino — mas sem destacar lições morais ou análises modernas. Apenas conte a história de forma épica, sombria e cativante.
+      const temas = `Gere 15 temas de vídeos no estilo de um canal de histórias reais, curiosas e chocantes do passado, com foco em narrativas envolventes, sombrias e altamente cativantes, explorando acontecimentos absurdos, costumes estranhos, relações proibidas, escândalos, guerras, punições, traições, obsessões, práticas brutais, conflitos e episódios históricos que parecem inacreditáveis — mas que realmente aconteceram. Não transforme os temas em aulas nem em análises modernas. O objetivo é apenas contar a história de forma intrigante, humana, intensa e viciante.
 
 Estrutura que os temas devem seguir:
-Basear-se em histórias, épocas ou contextos reais do mundo antigo (Roma Antiga, Egito Antigo, Grécia Antiga, Mesopotâmia, Pérsia, civilizações antigas, vida urbana, escravidão, impérios, vilas, guerras, cotidiano, leis, costumes, trabalho, religião, punições, sobrevivência, etc.).
-Incluir personagens, grupos ou papéis históricos reais (mulheres, escravos, soldados, imperadores, servos, sacerdotes, comerciantes, plebeus, gladiadores, crianças, viúvas, nobres, camponeses, curandeiros, escribas, prisioneiros, famílias, governantes, trabalhadores, povos dominados).
-Explorar elementos puramente narrativos: acontecimentos marcantes, escolhas dramáticas, rivalidades, traições, punições, desigualdade, doenças, batalhas, segredos, alianças, costumes brutais, disputas políticas, jornadas pessoais, medo, fome, humilhação, perdas, fugas, perseguições, trabalho forçado, sobrevivência diária e momentos decisivos.
-O tom deve ser envolvente, emocional e reflexivo, com um gancho de curiosidade que desperte interesse na profundidade da história real antiga — sem ensinar lições, apenas contando a trama.
+Basear-se em histórias, costumes, episódios, práticas ou contextos reais do passado, principalmente da Antiguidade e de outras épocas históricas marcadas por poder, guerra, desejo, crueldade, religião, controle, desigualdade, escândalos, punições e sobrevivência (Roma Antiga, Egito Antigo, Grécia Antiga, Mesopotâmia, Pérsia, Idade Média, povos antigos, impérios, cortes, vilas, cidades, castigos, tradições, rituais, casamentos, leis, traições, guerras, relações sociais, vida cotidiana, etc.).
+Incluir, quando fizer sentido, personagens, grupos, povos, costumes ou papéis históricos reais (rainhas, reis, imperadores, guerreiras, escravos, soldados, nobres, sacerdotes, amantes, camponeses, plebeus, famílias, prisioneiros, povos dominados, mulheres, viúvas, governantes, curandeiros, comerciantes, crianças, servos, líderes militares, cortesãs, traidores, comunidades e cidades inteiras).
+Explorar elementos puramente narrativos e altamente curiosos: desejo, poder, relações proibidas, manipulação, escândalos, traições, práticas bizarras, punições cruéis, costumes chocantes, guerras motivadas por paixões ou interesses, humilhações públicas, rivalidades, obsessões, segredos, decadência, disputas políticas, violência, fugas, perseguições, sobrevivência, quedas dramáticas e acontecimentos tão estranhos que parecem invenção.
+O tom deve ser envolvente, provocativo, sombrio e curioso, com forte gancho de clique e fascínio humano, fazendo o público sentir que está prestes a descobrir uma história real do passado que parece absurda demais para ser verdade.
 
 O título deve ter entre 10 e 18 palavras e conter uma frase de impacto no final, como:
 "...que quase ninguém imagina"
 "...que a história escondeu"
-"...que revela mais do que você pensa"
-"...que poucos conseguem encarar"
-"...que mostra a verdade brutal daquele tempo"
+"...que revela o lado mais sombrio daquele tempo"
+"...que parece invenção, mas aconteceu"
+"...que poucos teriam coragem de viver"
 
 Exemplos de títulos do estilo desejado (apenas como referência de tom):
-A rotina cruel de uma mulher pobre na Roma Antiga... que quase ninguém imagina
-O destino brutal dos escravos esquecidos pelo império... que a história escondeu
-Como era sobreviver dentro de uma cidade antiga cheia de fome e medo... que revela mais do que você pensa
-A verdade sombria sobre os trabalhos mais cruéis do mundo antigo... que poucos conseguem encarar
+A guerreira que se deitou com o inimigo em plena guerra... que a história escondeu
+O costume antigo tão estranho que hoje pareceria invenção... que quase ninguém imagina
+A rainha que transformou desejo em arma de poder... que revela o lado mais sombrio daquele tempo
+A prática brutal usada para punir traições no passado... que poucos teriam coragem de viver
 
 Instrução final:
-Crie os novos temas seguindo esse mesmo tom e estrutura, com títulos originais, envolventes e dignos de thumbnails de documentários sombrios no YouTube sobre histórias reais da vida no mundo antigo.
+Crie os novos temas seguindo esse mesmo tom e estrutura, com títulos originais, curiosos, chocantes e altamente clicáveis, dignos de thumbnails sombrias e intrigantes no YouTube, para um canal chamado Vidas Antigas, focado em histórias reais, curiosas e chocantes do passado.
 
 Formato:
 [Título] – [Explicação curta sobre o tema].`;
@@ -356,7 +356,7 @@ Formato:
         return;
       }
 
-      const prompt1 = `Tarefa: Escreva APENAS a introdução de um vídeo do YouTube em português do Brasil, para um canal de histórias reais e sombrias sobre a vida no mundo antigo. O tema será fornecido em [TEMA] na entrada do usuário. A resposta deve ser um único bloco de texto contínuo, sem títulos, listas, notas ou explicações do que está fazendo.
+      const prompt1 = `Tarefa: Escreva APENAS a introdução de um vídeo do YouTube em português do Brasil, para um canal de histórias reais, curiosas e chocantes do passado. O tema será fornecido em [TEMA] na entrada do usuário. A resposta deve ser um único bloco de texto contínuo, sem títulos, listas, notas ou explicações do que está fazendo.
 
 Tamanho:
 
@@ -364,18 +364,19 @@ Tamanho:
 
 Estrutura obrigatória (siga na ordem, como prosa contínua):
 
-GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante, sombria e cativante, mantendo o tom direto e envolvente.
+GANCHO: Comece apresentando rapidamente o tema do vídeo de maneira intrigante, sombria, curiosa e altamente cativante, com sensação de segredo histórico ou acontecimento absurdo que parece invenção, mas foi real.
 CTA SUAVE + COMUNIDADE (1–2 frases): “Antes de continuar, curta o vídeo e inscreva-se, mas só se você realmente gostar desse tipo de história aqui. Me conta nos comentários de onde você está assistindo e que horas são aí.”
 RITUAL SENSORIAL (1–2 frases): convide a pessoa a “diminuir as luzes”, “colocar um som ambiente baixo” e “entrar nessa viagem ao passado”.
-Por fim, inicie a narrativa do vídeo com uma frase instigante que desperte o interesse e envie o espectador para dentro da história, criando um mistério ou contexto envolvente sem entrar em muitos detalhes.
+Por fim, inicie a narrativa do vídeo com uma frase instigante que coloque o espectador imediatamente dentro da história, criando mistério, tensão ou fascínio, sem explicar demais.
 
 Restrições finais:
 
 Não use cabeçalhos, marcadores, parênteses com placeholders ou colchetes no texto final.
 Não prometa links, fontes ou imagens.
 Não antecipe tópicos em lista; apenas sugira a continuidade de modo natural e imersivo.
-O tom deve ser sombrio, narrativo, envolvente e levemente contemplativo.
-A introdução deve combinar com vídeos sobre costumes brutais, sofrimento, sobrevivência, desigualdade, rotina e histórias reais da Antiguidade.
+O tom deve ser sombrio, narrativo, provocativo, envolvente e levemente contemplativo.
+A introdução deve combinar com vídeos sobre histórias reais, escândalos, costumes estranhos, relações proibidas, poder, desejo, traição, guerras, punições brutais, práticas bizarras e acontecimentos chocantes do passado.
+Evite soar como aula de história; deve soar como o início de uma história real absurda e fascinante.
 
 Entrada do usuário:
 [${tema}]
@@ -383,19 +384,21 @@ Entrada do usuário:
 Saída esperada:
 Apenas a introdução em prosa contínua, seguindo exatamente as instruções acima.`;
 
-      const prompt2 = `Você é um especialista em criar prompts de imagens para um canal do YouTube sobre "Histórias da Bíblia". Crie 25 prompts de imagem para ilustrar baseado no roteiro abaixo. Os prompts devem ser escritos em inglês. NÃO copie frases do texto. Em vez disso, leia cada parágrafo, compreenda profundamente a ideia central, e então crie cenas visuais impactantes que expressem essa ideia de forma simbólica, emocional ou literal, conforme apropriado.
+      const prompt2 = `Você é um especialista em criar prompts de imagens para um canal do YouTube chamado Vidas Antigas, focado em histórias reais, curiosas e chocantes do passado. Crie 25 prompts de imagem para ilustrar com base no roteiro abaixo. Os prompts devem ser escritos em inglês. NÃO copie frases do texto. Em vez disso, leia cada parágrafo, compreenda profundamente a ideia central, e então crie cenas visuais impactantes que expressem essa ideia de forma simbólica, emocional ou literal, conforme apropriado.
 
-Recomenda-se que 80% dos prompts incluam personagens em ações simples e contemplativas, e os outros 20% retratem paisagens ou interiores vazios com elementos sutis de presença humana, para compor um bom ritmo visual. 
+Recomenda-se que 80% dos prompts incluam personagens em ações simples, tensas ou contemplativas, e os outros 20% retratem paisagens, ruas, interiores ou cenários vazios com sinais sutis de presença humana, para criar um bom ritmo visual.
 
 Seja extremamente detalhado nas descrições de:
 
-Ambiente e cenário: descreva com precisão o período e a cultura (século/era e local), a hora do dia, clima e estação do ano; detalhe arquitetura, interiores, utensílios e texturas típicas do período; destaque elementos que transmitam o sentimento da cena; evite anacronismos e itens modernos.
+Ambiente e cenário: descreva com precisão o período histórico e a cultura retratada (século/era e local), a hora do dia, clima e estação do ano; detalhe arquitetura, interiores, ruas, templos, mercados, vilas, palácios, prisões, utensílios, tecidos, objetos e texturas típicas do período; destaque elementos que transmitam o sentimento da cena; evite anacronismos e itens modernos.
 
-Personagens: forneça detalhes sobre idade, gênero, origem/etnia, traços físicos (cabelo, olhos) e trajes/objetos autênticos do período; indique ocupações e posição social; descreva expressões, postura, gestos cotidianos e interações discretas (se houver) e a ação simples que executam; mantenha representações respeitosas e sem violência explícita.
+Personagens: forneça detalhes sobre idade, gênero, origem/etnia, traços físicos (cabelo, olhos, marcas do tempo, pele, postura) e trajes/objetos autênticos do período; indique ocupações, posição social ou papel histórico; descreva expressões, gestos discretos, tensão emocional, linguagem corporal e interações sutis entre os personagens, além da ação simples que executam; mantenha representações respeitosas e sem violência gráfica explícita.
 
-Iluminação e clima emocional: descreva a luz para refletir um tom calmo e contemplativo (luz suave, penumbra natural, luz dourada do pôr do sol, névoa matinal, velas, lamparinas, etc.); torne a atmosfera imersiva, transmitindo uma sensação nítida (nostalgia, tranquilidade, curiosidade, leve mistério).
+Iluminação e clima emocional: descreva a luz para refletir um tom sombrio, intrigante, contemplativo e imersivo (luz suave atravessando cortinas de linho, penumbra natural, fogo de tochas, velas, lamparinas, neblina da manhã, pôr do sol dourado, noite abafada, interior mal iluminado, etc.); torne a atmosfera expressiva, transmitindo sensações como mistério, tensão silenciosa, decadência, curiosidade, melancolia, fascínio ou desconforto sutil.
 
-As imagens devem ser visualmente ricas e expressivas, sem sensacionalismo, priorizando autenticidade histórica, detalhes do cotidiano e um tom relaxante. Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.
+As imagens devem ser visualmente ricas e expressivas, sem sensacionalismo exagerado, priorizando autenticidade histórica, atmosfera narrativa, detalhes do cotidiano, costumes, escândalos, poder, desejo, traição, punições, rituais, guerras, relações humanas e práticas estranhas do passado. O resultado deve parecer cinematográfico, imersivo e digno de thumbnails e cenas de vídeos dark de história no YouTube.
+
+Não inclua títulos, parágrafos ou explicações — apenas entregue os prompts, um após o outro, como uma lista contínua.
 
 Tema: ${tema}
 
