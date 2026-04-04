@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Analisador Profissional de Futebol</title>
+  <style>
+    :root {
+      --bg: #09101d;
+      --bg-soft: #111a2d;
+      --card: #151f36;
+      --card-2: #1d2945;
+      --line: rgba(255,255,255,.08);
+      --text: #eef3ff;
+      --muted: #a8b4d8;
+      --accent: #4f8cff;
+      --accent-2: #28c76f;
+      --danger: #ff5d73;
+      --shadow: 0 18px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #09101d 0%, #0d1427 100%);
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+    }
+    body { min-height: 100vh; }
+    .wrap {
+      width: min(1240px, calc(100% - 28px));
+      margin: 18px auto 32px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(79,140,255,.18), rgba(40,199,111,.14));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 40px);
+      line-height: 1.04;
+      letter-spacing: -.02em;
+    }
+    .hero-sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 13px 18px;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      background: var(--accent);
+      box-shadow: var(--shadow);
+      transition: .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    button.secondary { background: #2a3556; }
+    button.danger { background: var(--danger); }
+    button.small { padding: 10px 12px; font-size: 13px; border-radius: 10px; box-shadow: none; }
+    .primary-action {
+      background: linear-gradient(90deg, var(--accent), #5d71ff);
+      font-size: 15px;
+      min-height: 50px;
+    }
+
+    .status {
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .status.ok { border-color: rgba(40,199,111,.35); color: #c8f7d8; background: rgba(40,199,111,.08); }
+    .status.error { border-color: rgba(255,93,115,.35); color: #ffd2d9; background: rgba(255,93,115,.08); }
+
+    .grid { display: grid; gap: 18px; margin-top: 20px; }
+    .grid.two { grid-template-columns: 1.05fr .95fr; }
+    .grid.three { grid-template-columns: repeat(3, 1fr); }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .card h2, .card h3 { margin: 0 0 12px; }
+    .muted { color: var(--muted); }
+    .tiny { font-size: 12px; color: var(--muted); }
+
+    .score-box {
+      background: linear-gradient(180deg, rgba(79,140,255,.15), rgba(79,140,255,.03));
+      border: 1px solid rgba(79,140,255,.25);
+      border-radius: 18px;
+      padding: 18px;
+      min-height: 100%;
+    }
+    .score-value {
+      font-size: clamp(24px, 4vw, 38px);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      overflow-wrap: anywhere;
+    }
+    .score-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+
+    .market-list { display: grid; gap: 12px; }
+    .market {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+    }
+    .market-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .market-title { font-weight: 800; }
+    .bar {
+      height: 12px;
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.03);
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+    .market small { color: var(--muted); display: block; margin-top: 8px; line-height: 1.5; }
+
+    .team-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .team-name { font-size: 22px; font-weight: 800; }
+    .kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .kpi {
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--bg-soft);
+      border: 1px solid var(--line);
+    }
+    .kpi strong { display: block; font-size: 20px; margin-bottom: 2px; }
+    .kpi span { color: var(--muted); font-size: 12px; }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      -webkit-overflow-scrolling: touch;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+      background: rgba(8, 12, 23, .55);
+    }
+    th, td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      min-width: 28px;
+      text-align: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .badge.v { background: rgba(40,199,111,.15); color: #9ef0bf; }
+    .badge.e { background: rgba(255,176,32,.16); color: #ffd57f; }
+    .badge.d { background: rgba(255,93,115,.16); color: #ffb8c2; }
+
+    .history-item {
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--bg-soft);
+      margin-bottom: 12px;
+    }
+    .history-top {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .history-title { font-weight: 800; font-size: 16px; line-height: 1.4; }
+    .history-meta { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+    .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+    @media (max-width: 1040px) {
+      .grid.two, .grid.three { grid-template-columns: 1fr; }
+      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 700px) {
+      .wrap {
+        width: min(100% - 16px, 1240px);
+        margin: 12px auto 24px;
+      }
+      .hero, .card { border-radius: 20px; }
+      .hero { padding: 16px; }
+      .card { padding: 15px; }
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+      button {
+        width: 100%;
+        min-height: 48px;
+      }
+      .history-top, .team-head, .market-top, .hero-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .score-box { padding: 16px; }
+      .score-value { font-size: 28px; }
+      .team-name { font-size: 20px; }
+      .kpis { grid-template-columns: 1fr 1fr; }
+      th, td { padding: 10px; font-size: 13px; }
+      .history-actions { display: grid; grid-template-columns: 1fr 1fr; }
+      .history-actions button { width: 100%; }
+    }
+
+    @media (max-width: 480px) {
+      .kpis { grid-template-columns: 1fr; }
+      .score-value { font-size: 24px; }
+      .status { font-size: 13px; }
+      .hero-sub { font-size: 13px; }
+      .history-actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>Analisador Profissional de Partidas</h1>
+          <div class="hero-sub">Leitura rápida de Over 2.5 gols e Ambos Marcam.</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button id="btnAnalyzeClipboard" class="primary-action">Importar e analisar agora</button>
+        <button id="btnClearHistory" class="danger">Limpar histórico</button>
+      </div>
+      <div id="status" class="status">Pronto para analisar o próximo confronto.</div>
+    </section>
+
+    <section class="grid three" id="resultsGrid" style="display:none;">
+      <div class="card score-box">
+        <div class="score-label">Melhor mercado</div>
+        <div id="bestMarketName" class="score-value">-</div>
+        <div id="bestMarketReason" class="muted" style="margin-top: 8px; line-height: 1.5;">-</div>
+      </div>
+      <div class="card score-box">
+        <div class="score-label">Confiança estimada</div>
+        <div id="bestMarketConfidence" class="score-value">0%</div>
+        <div class="muted" style="margin-top: 8px;">Baseada nos últimos jogos encontrados.</div>
+      </div>
+      <div class="card score-box">
+        <div class="score-label">Confronto analisado</div>
+        <div id="matchupTitle" class="score-value" style="font-size:28px; line-height:1.1;">-</div>
+        <div id="analysisDate" class="muted" style="margin-top: 8px;">-</div>
+      </div>
+    </section>
+
+    <section class="card" id="marketsCard" style="display:none; margin-top: 20px;">
+      <h2>Mercados analisados</h2>
+      <div class="market-list" id="marketList"></div>
+    </section>
+
+    <section class="grid two" id="teamsGrid" style="display:none;">
+      <div class="card" id="teamABox"></div>
+      <div class="card" id="teamBBox"></div>
+    </section>
+
+    <section class="card" id="tablesCard" style="display:none; margin-top: 20px;">
+      <h2>Jogos extraídos</h2>
+      <div id="tablesWrap"></div>
+    </section>
+
+    <section class="card" style="margin-top: 20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap: wrap;">
+        <div>
+          <h2 style="margin-bottom:6px;">Histórico</h2>
+        </div>
+      </div>
+      <div id="historyList" style="margin-top: 16px;"></div>
+    </section>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'analisador_futebol_historico_v2';
+
+    const statusEl = document.getElementById('status');
+    const resultsGrid = document.getElementById('resultsGrid');
+    const marketsCard = document.getElementById('marketsCard');
+    const marketList = document.getElementById('marketList');
+    const teamsGrid = document.getElementById('teamsGrid');
+    const teamABox = document.getElementById('teamABox');
+    const teamBBox = document.getElementById('teamBBox');
+    const tablesCard = document.getElementById('tablesCard');
+    const tablesWrap = document.getElementById('tablesWrap');
+    const historyList = document.getElementById('historyList');
+
+    function setStatus(message, type = '') {
+      statusEl.className = `status ${type}`.trim();
+      statusEl.textContent = message;
+    }
+
+    function normalizeWhitespace(text) {
+      return text
+        .replace(/\uFFFC/g, '\n')
+        .replace(/[\t\r]+/g, '\n')
+        .replace(/ +/g, ' ')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function getLines(text) {
+      return normalizeWhitespace(text)
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean)
+        .filter(line => line !== '￼');
+    }
+
+    function formatPct(value) {
+      return `${Math.round(value)}%`;
+    }
+
+    function clamp(n, min, max) {
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function scoreFromRange(value, min, max) {
+      if (max === min) return 0;
+      return clamp(((value - min) / (max - min)) * 100, 0, 100);
+    }
+
+    function parseDateBR(raw) {
+      const m = raw.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+      if (!m) return raw;
+      const year = Number(m[3]) >= 70 ? `19${m[3]}` : `20${m[3]}`;
+      return `${m[1]}/${m[2]}/${year}`;
+    }
+
+    function isDateLine(line) {
+      return /^\d{2}\.\d{2}\.\d{2}$/.test(line);
+    }
+
+    function isResultLine(line) {
+      return /^(V|E|D)$/i.test(line);
+    }
+
+    function isNumericLine(line) {
+      return /^-?\d+$/.test(line);
+    }
+
+    function isCompetitionLine(line) {
+      return /^[A-ZÁÉÍÓÚÇ0-9-]{2,8}$/i.test(line) && !isResultLine(line) && !isDateLine(line) && !isNumericLine(line);
+    }
+
+    function cleanTeamName(name) {
+      return (name || '').replace(/^[-–—\s]+|[-–—\s]+$/g, '').trim();
+    }
+
+    function isHeaderLine(line) {
+      return /^[ÚU]LTIMOS JOGOS:\s*(.+)$/i.test(line);
+    }
+
+    function parseBlocks(rawText) {
+      const lines = getLines(rawText);
+      const blocks = [];
+      let i = 0;
+
+      while (i < lines.length) {
+        const headerMatch = lines[i].match(/^[ÚU]LTIMOS JOGOS:\s*(.+)$/i);
+        if (!headerMatch) {
+          i += 1;
+          continue;
+        }
+
+        const teamName = cleanTeamName(headerMatch[1]);
+        i += 1;
+        const matches = [];
+
+        while (i < lines.length && !isHeaderLine(lines[i])) {
+          if (/^Mostrar mais jogos$/i.test(lines[i])) {
+            i += 1;
+            continue;
+          }
+
+          if (!isDateLine(lines[i])) {
+            i += 1;
+            continue;
+          }
+
+          const date = lines[i++];
+          const competition = i < lines.length && isCompetitionLine(lines[i]) ? lines[i++] : '';
+          const home = cleanTeamName(lines[i++] || '');
+          const away = cleanTeamName(lines[i++] || '');
+
+          const numericScores = [];
+          while (i < lines.length && isNumericLine(lines[i])) {
+            numericScores.push(Number(lines[i]));
+            i += 1;
+          }
+
+          const result = (lines[i] || '').toUpperCase();
+          if (isResultLine(result)) {
+            i += 1;
+          }
+
+          if (!home || !away || numericScores.length < 2 || !isResultLine(result)) {
+            continue;
+          }
+
+          const scorePair = numericScores.slice(-2);
+          const homeGoals = scorePair[0];
+          const awayGoals = scorePair[1];
+          const isHome = home.toLowerCase() === teamName.toLowerCase();
+          const goalsFor = isHome ? homeGoals : awayGoals;
+          const goalsAgainst = isHome ? awayGoals : homeGoals;
+          const totalGoals = homeGoals + awayGoals;
+          const btts = homeGoals > 0 && awayGoals > 0;
+          const over25 = totalGoals >= 3;
+          const scored = goalsFor > 0;
+          const conceded = goalsAgainst > 0;
+
+          matches.push({
+            date,
+            dateLabel: parseDateBR(date),
+            competition,
+            home,
+            away,
+            rawScores: numericScores,
+            homeGoals,
+            awayGoals,
+            result,
+            isHome,
+            goalsFor,
+            goalsAgainst,
+            totalGoals,
+            btts,
+            over25,
+            scored,
+            conceded,
+            hadPenaltyScore: numericScores.length > 2
+          });
+        }
+
+        if (matches.length) {
+          blocks.push({ teamName, matches: matches.slice(0, 10) });
+        }
+      }
+
+      return blocks.slice(0, 2);
+    }
+
+    function calcTeamMetrics(block) {
+      const matches = block.matches;
+      const total = matches.length || 1;
+      const sum = (fn) => matches.reduce((acc, item) => acc + fn(item), 0);
+      const count = (fn) => matches.filter(fn).length;
+
+      return {
+        teamName: block.teamName,
+        sampleSize: matches.length,
+        wins: count(m => m.result === 'V'),
+        draws: count(m => m.result === 'E'),
+        losses: count(m => m.result === 'D'),
+        goalsForAvg: sum(m => m.goalsFor) / total,
+        goalsAgainstAvg: sum(m => m.goalsAgainst) / total,
+        totalGoalsAvg: sum(m => m.totalGoals) / total,
+        over25Pct: (count(m => m.over25) / total) * 100,
+        bttsPct: (count(m => m.btts) / total) * 100,
+        scorePct: (count(m => m.scored) / total) * 100,
+        concedePct: (count(m => m.conceded) / total) * 100,
+        penaltyAdjustedCount: count(m => m.hadPenaltyScore),
+        matches
+      };
+    }
+
+    function buildMarketAnalysis(teamA, teamB) {
+      const avgOver25 = (teamA.over25Pct + teamB.over25Pct) / 2;
+      const avgBTTS = (teamA.bttsPct + teamB.bttsPct) / 2;
+      const avgTotalGoals = (teamA.totalGoalsAvg + teamB.totalGoalsAvg) / 2;
+      const avgScore = (teamA.scorePct + teamB.scorePct) / 2;
+      const avgConcede = (teamA.concedePct + teamB.concedePct) / 2;
+
+      let over25Confidence = 0;
+      over25Confidence += avgOver25 * 0.42;
+      over25Confidence += scoreFromRange(avgTotalGoals, 1.8, 4.0) * 0.33;
+      over25Confidence += avgScore * 0.13;
+      over25Confidence += avgConcede * 0.12;
+      over25Confidence = clamp(over25Confidence, 0, 100);
+
+      let bttsConfidence = 0;
+      bttsConfidence += avgBTTS * 0.44;
+      bttsConfidence += avgScore * 0.30;
+      bttsConfidence += avgConcede * 0.26;
+      if (teamA.scorePct < 50 || teamB.scorePct < 50) bttsConfidence -= 8;
+      bttsConfidence = clamp(bttsConfidence, 0, 100);
+
+      const markets = [
+        {
+          key: 'over25',
+          name: 'Over 2.5 gols',
+          confidence: over25Confidence,
+          detail: `Média combinada de ${avgTotalGoals.toFixed(2)} gols por jogo. Frequência média de Over 2.5: ${formatPct(avgOver25)}.`
+        },
+        {
+          key: 'btts',
+          name: 'Ambos marcam',
+          confidence: bttsConfidence,
+          detail: `BTTS médio em ${formatPct(avgBTTS)}. Os times marcam em ${formatPct(avgScore)} dos jogos e sofrem gols em ${formatPct(avgConcede)}.`
+        }
+      ];
+
+      const best = [...markets].sort((a, b) => b.confidence - a.confidence)[0];
+      return { markets, bestMarket: best };
+    }
+
+    function confidenceTone(value) {
+      if (value >= 75) return 'Forte';
+      if (value >= 60) return 'Boa';
+      if (value >= 45) return 'Moderada';
+      return 'Baixa';
+    }
+
+    function renderTeamBox(container, metrics) {
+      container.innerHTML = `
+        <div class="team-head">
+          <div>
+            <div class="team-name">${metrics.teamName}</div>
+            <div class="muted">Base de ${metrics.sampleSize} jogos extraídos</div>
+          </div>
+          <div>
+            <span class="badge v">V ${metrics.wins}</span>
+            <span class="badge e">E ${metrics.draws}</span>
+            <span class="badge d">D ${metrics.losses}</span>
+          </div>
+        </div>
+        <div class="kpis">
+          <div class="kpi"><strong>${metrics.goalsForAvg.toFixed(2)}</strong><span>média gols marcados</span></div>
+          <div class="kpi"><strong>${metrics.goalsAgainstAvg.toFixed(2)}</strong><span>média gols sofridos</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.over25Pct)}</strong><span>jogos com over 2.5</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.bttsPct)}</strong><span>jogos com ambos marcam</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.scorePct)}</strong><span>jogos em que marcou</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.concedePct)}</strong><span>jogos em que sofreu</span></div>
+        </div>
+      `;
+    }
+
+    function renderMarkets(analysis) {
+      marketList.innerHTML = analysis.markets.map(market => `
+        <div class="market">
+          <div class="market-top">
+            <div>
+              <div class="market-title">${market.name}</div>
+              <div class="tiny">Força da leitura: ${confidenceTone(market.confidence)}</div>
+            </div>
+            <div class="badge v">${formatPct(market.confidence)}</div>
+          </div>
+          <div class="bar"><span style="width:${market.confidence}%"></span></div>
+          <small>${market.detail}</small>
+        </div>
+      `).join('');
+    }
+
+    function resultText(result) {
+      if (result === 'V') return 'Vitória';
+      if (result === 'E') return 'Empate';
+      return 'Derrota';
+    }
+
+    function renderTables(blocks) {
+      tablesWrap.innerHTML = blocks.map(block => {
+        const rows = block.matches.map(match => `
+          <tr>
+            <td>${match.dateLabel}</td>
+            <td>${match.competition || '-'}</td>
+            <td>${match.home}</td>
+            <td>${match.away}</td>
+            <td>${match.homeGoals} x ${match.awayGoals}${match.hadPenaltyScore ? ' <span class="tiny">(pênaltis ignorados)</span>' : ''}</td>
+            <td>${match.totalGoals}</td>
+            <td>${match.btts ? 'Sim' : 'Não'}</td>
+            <td>${match.over25 ? 'Sim' : 'Não'}</td>
+            <td><span class="badge ${match.result.toLowerCase()}">${resultText(match.result).charAt(0)}</span></td>
+          </tr>
+        `).join('');
+
+        return `
+          <div style="margin-bottom: 18px;">
+            <h3 style="margin-bottom: 10px;">${block.teamName}</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Comp.</th>
+                    <th>Mandante</th>
+                    <th>Visitante</th>
+                    <th>Placar usado</th>
+                    <th>Total gols</th>
+                    <th>BTTS</th>
+                    <th>Over 2.5</th>
+                    <th>Resultado</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function saveHistory(entry) {
+      const history = getHistory();
+      history.unshift(entry);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(0, 100)));
+      renderHistory();
+    }
+
+    function deleteHistoryItem(id) {
+      const history = getHistory().filter(item => item.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+      renderHistory();
+    }
+
+    function clearHistory() {
+      localStorage.removeItem(STORAGE_KEY);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = getHistory();
+      if (!history.length) {
+        historyList.innerHTML = '<div class="muted">Nenhuma análise salva ainda.</div>';
+        return;
+      }
+
+      historyList.innerHTML = history.map(item => `
+        <div class="history-item">
+          <div class="history-top">
+            <div>
+              <div class="history-title">${item.matchup} — ${item.bestMarket}</div>
+              <div class="history-meta">${item.createdAt} · confiança ${item.bestConfidence}%</div>
+            </div>
+            <span class="badge v">${item.bestConfidence}%</span>
+          </div>
+          <div class="history-meta" style="margin-top: 10px;">Over 2.5: ${item.over25}% · Ambos marcam: ${item.btts}% · jogos com ajuste de pênaltis: ${item.penaltyAdjusted}</div>
+          <div class="history-actions">
+            <button class="small secondary" onclick="loadHistoryItem('${item.id}')">Recarregar</button>
+            <button class="small danger" onclick="removeHistoryItem('${item.id}')">Apagar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.removeHistoryItem = deleteHistoryItem;
+
+    window.loadHistoryItem = function(id) {
+      const item = getHistory().find(entry => entry.id === id);
+      if (!item) return;
+      analyzeRawText(item.rawText, false);
+      setStatus('Análise recarregada do histórico.', 'ok');
+    };
+
+    function buildHistoryEntry(rawText, blockA, blockB, teamA, teamB, analysis) {
+      const now = new Date();
+      return {
+        id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        createdAt: now.toLocaleString('pt-BR'),
+        matchup: `${blockA.teamName} x ${blockB.teamName}`,
+        bestMarket: analysis.bestMarket.name,
+        bestConfidence: Math.round(analysis.bestMarket.confidence),
+        over25: Math.round(analysis.markets.find(m => m.key === 'over25').confidence),
+        btts: Math.round(analysis.markets.find(m => m.key === 'btts').confidence),
+        penaltyAdjusted: teamA.penaltyAdjustedCount + teamB.penaltyAdjustedCount,
+        rawText
+      };
+    }
+
+    function renderFullAnalysis(blocks, teamA, teamB, analysis) {
+      const [blockA, blockB] = blocks;
+
+      document.getElementById('bestMarketName').textContent = analysis.bestMarket.name;
+      document.getElementById('bestMarketConfidence').textContent = formatPct(analysis.bestMarket.confidence);
+      document.getElementById('bestMarketReason').textContent = analysis.bestMarket.detail;
+      document.getElementById('matchupTitle').textContent = `${blockA.teamName} x ${blockB.teamName}`;
+      document.getElementById('analysisDate').textContent = `Analisado em ${new Date().toLocaleString('pt-BR')}`;
+
+      renderMarkets(analysis);
+      renderTeamBox(teamABox, teamA);
+      renderTeamBox(teamBBox, teamB);
+      renderTables(blocks);
+
+      resultsGrid.style.display = 'grid';
+      marketsCard.style.display = 'block';
+      teamsGrid.style.display = 'grid';
+      tablesCard.style.display = 'block';
+    }
+
+    function analyzeRawText(rawText, save = true) {
+      if (!rawText || !rawText.trim()) {
+        setStatus('A área de transferência está vazia.', 'error');
+        return;
+      }
+
+      const blocks = parseBlocks(rawText);
+      if (blocks.length < 2) {
+        setStatus('Não consegui encontrar dois blocos de “Últimos jogos”. Verifique se você copiou os dois times na mesma página.', 'error');
+        return;
+      }
+
+      const teamA = calcTeamMetrics(blocks[0]);
+      const teamB = calcTeamMetrics(blocks[1]);
+      const analysis = buildMarketAnalysis(teamA, teamB);
+
+      renderFullAnalysis(blocks, teamA, teamB, analysis);
+      setStatus(`Análise concluída para ${blocks[0].teamName} x ${blocks[1].teamName}.`, 'ok');
+
+      if (save) {
+        saveHistory(buildHistoryEntry(rawText, blocks[0], blocks[1], teamA, teamB, analysis));
+      }
+    }
+
+    async function importAndAnalyzeClipboard() {
+      if (!navigator.clipboard || !navigator.clipboard.readText) {
+        setStatus('Seu navegador bloqueou leitura direta da área de transferência neste modo. Abra em localhost/https ou use um navegador com permissão de clipboard.', 'error');
+        return;
+      }
+
+      try {
+        const text = await navigator.clipboard.readText();
+        analyzeRawText(text, true);
+      } catch (error) {
+        setStatus('Não foi possível ler a área de transferência. Em alguns navegadores locais isso depende de permissão de clipboard.', 'error');
+      }
+    }
+
+    document.getElementById('btnAnalyzeClipboard').addEventListener('click', importAndAnalyzeClipboard);
+    document.getElementById('btnClearHistory').addEventListener('click', () => {
+      if (!confirm('Deseja apagar todo o histórico salvo no navegador?')) return;
+      clearHistory();
+      setStatus('Histórico apagado.', 'ok');
+    });
+
+    renderHistory();
+  </script>
+</body>
+</html>
