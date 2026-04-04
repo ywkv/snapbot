@@ -7,16 +7,17 @@
   <style>
     :root {
       --bg: #09101d;
-      --bg-soft: #111a2d;
+      --bg-soft: #10192d;
       --card: #151f36;
-      --card-2: #1d2945;
+      --card-2: #1b2742;
       --line: rgba(255,255,255,.08);
       --text: #eef3ff;
       --muted: #a8b4d8;
       --accent: #4f8cff;
       --accent-2: #28c76f;
       --danger: #ff5d73;
-      --shadow: 0 18px 40px rgba(0,0,0,.28);
+      --warning: #4f8cff;
+      --shadow: 0 16px 34px rgba(0,0,0,.24);
       --radius: 18px;
     }
 
@@ -30,13 +31,14 @@
       -webkit-text-size-adjust: 100%;
     }
     body { min-height: 100vh; }
+
     .wrap {
       width: min(1240px, calc(100% - 28px));
       margin: 18px auto 32px;
     }
 
     .hero {
-      background: linear-gradient(135deg, rgba(79,140,255,.18), rgba(40,199,111,.14));
+      background: linear-gradient(135deg, rgba(79,140,255,.18), rgba(40,199,111,.12));
       border: 1px solid var(--line);
       border-radius: 24px;
       padding: 22px;
@@ -60,6 +62,8 @@
       color: var(--muted);
       font-size: 14px;
       margin-top: 8px;
+      max-width: 720px;
+      line-height: 1.5;
     }
 
     .toolbar {
@@ -90,6 +94,38 @@
       min-height: 50px;
     }
 
+    select {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.1);
+      background: #111a2d;
+      color: var(--text);
+      padding: 11px 42px 11px 14px;
+      font-weight: 700;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #d7e2ff 50%),
+        linear-gradient(135deg, #d7e2ff 50%, transparent 50%),
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.02));
+      background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px),
+        0 0;
+      background-size: 6px 6px, 6px 6px, 100% 100%;
+      background-repeat: no-repeat;
+    }
+    select:focus {
+      border-color: rgba(79,140,255,.5);
+      box-shadow: 0 0 0 3px rgba(79,140,255,.15);
+    }
+    select option {
+      background: #10192d;
+      color: #eef3ff;
+    }
+
     .status {
       margin-top: 14px;
       padding: 13px 14px;
@@ -98,6 +134,7 @@
       border: 1px solid var(--line);
       color: var(--muted);
       font-size: 14px;
+      line-height: 1.5;
     }
     .status.ok { border-color: rgba(40,199,111,.35); color: #c8f7d8; background: rgba(40,199,111,.08); }
     .status.error { border-color: rgba(255,93,115,.35); color: #ffd2d9; background: rgba(255,93,115,.08); }
@@ -256,129 +293,90 @@
     }
 
     .badge {
-      display: inline-block;
-      min-width: 28px;
-      text-align: center;
-      padding: 4px 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      padding: 6px 10px;
       border-radius: 999px;
       font-size: 12px;
       font-weight: 800;
+      border: 1px solid transparent;
     }
     .badge.v { background: rgba(40,199,111,.15); color: #9ef0bf; }
     .badge.e { background: rgba(255,176,32,.16); color: #ffd57f; }
     .badge.d { background: rgba(255,93,115,.16); color: #ffb8c2; }
-    .badge.good { background: rgba(40,199,111,.15); color: #9ef0bf; }
-    .badge.mid { background: rgba(79,140,255,.15); color: #bfd2ff; }
-    .badge.bad { background: rgba(255,93,115,.16); color: #ffb8c2; }
+    .badge.good { background: rgba(40,199,111,.15); color: #9ef0bf; border-color: rgba(40,199,111,.22); }
+    .badge.mid { background: rgba(79,140,255,.15); color: #bfd2ff; border-color: rgba(79,140,255,.22); }
+    .badge.bad { background: rgba(255,93,115,.16); color: #ffb8c2; border-color: rgba(255,93,115,.22); }
 
+    .history-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .history-filter-box {
+      min-width: 260px;
+      max-width: 360px;
+      width: 100%;
+    }
+    .history-filter-box label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
     .history-item {
-      padding: 14px;
-      border-radius: 16px;
       border: 1px solid var(--line);
-      background: var(--bg-soft);
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border-radius: 16px;
+      padding: 16px;
       margin-bottom: 12px;
     }
     .history-top {
       display: flex;
-      gap: 12px;
       justify-content: space-between;
       align-items: flex-start;
-    }
-    .history-title { font-weight: 800; font-size: 16px; line-height: 1.4; }
-    .history-meta { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
-    .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-    .history-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       gap: 12px;
       flex-wrap: wrap;
     }
-    .history-filter-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .history-filter-box label {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
-    }
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      color: var(--text);
-      color-scheme: dark;
-      border-radius: 12px;
-      padding: 12px 40px 12px 14px;
-      font-weight: 700;
-      font-size: 14px;
-      min-height: 46px;
-      outline: none;
-      box-shadow: var(--shadow);
-      background-image:
-        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
-        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
-      background-position:
-        calc(100% - 18px) calc(50% - 3px),
-        calc(100% - 12px) calc(50% - 3px);
-      background-size: 6px 6px, 6px 6px;
-      background-repeat: no-repeat;
-    }
-    select:focus {
-      border-color: rgba(79,140,255,.4);
-      box-shadow: 0 0 0 3px rgba(79,140,255,.16);
-    }
-    select option,
-    select optgroup {
-      background: #0f172a;
-      color: #eef3ff;
-    }
+    .history-title { font-weight: 800; font-size: 16px; line-height: 1.45; }
+    .history-meta { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+    .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 
-    @media (max-width: 1040px) {
+    @media (max-width: 980px) {
       .grid.two, .grid.three { grid-template-columns: 1fr; }
-      .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 720px) {
       .wrap {
-        width: min(100% - 16px, 1240px);
-        margin: 12px auto 24px;
+        width: min(100%, calc(100% - 18px));
+        margin: 10px auto 24px;
       }
-      .hero, .card { border-radius: 20px; }
-      .hero { padding: 16px; }
-      .card { padding: 15px; }
-      .toolbar {
+      .hero, .card { padding: 16px; border-radius: 18px; }
+      .toolbar { display: grid; grid-template-columns: 1fr; }
+      .toolbar button { width: 100%; }
+      .history-top, .team-head, .market-top, .hero-top, .history-toolbar {
         display: grid;
-        grid-template-columns: 1fr;
+        gap: 10px;
       }
-      button {
-        width: 100%;
-        min-height: 48px;
-      }
-      .history-top, .team-head, .market-top, .hero-top, .history-toolbar, .history-filter-box {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      select { width: 100%; }
-      .score-box { padding: 16px; }
-      .score-value { font-size: 28px; }
-      .team-name { font-size: 20px; }
       .kpis { grid-template-columns: 1fr 1fr; }
-      th, td { padding: 10px; font-size: 13px; }
+      .score-value { font-size: clamp(22px, 8vw, 32px); }
+      .team-name { font-size: 20px; }
+      .history-filter-box { max-width: 100%; }
+    }
+
+    @media (max-width: 520px) {
+      .kpis { grid-template-columns: 1fr; }
       .history-actions { display: grid; grid-template-columns: 1fr 1fr; }
       .history-actions button { width: 100%; }
+      table { min-width: 640px; }
     }
 
-    @media (max-width: 480px) {
-      .kpis { grid-template-columns: 1fr; }
-      .score-value { font-size: 24px; }
-      .status { font-size: 13px; }
-      .hero-sub { font-size: 13px; }
+    @media (max-width: 390px) {
       .history-actions { grid-template-columns: 1fr; }
     }
   </style>
@@ -389,7 +387,7 @@
       <div class="hero-top">
         <div>
           <h1>Analisador Profissional de Partidas</h1>
-          <div class="hero-sub">Leitura rápida de Over 2.5 gols e Ambos Marcam.</div>
+          <div class="hero-sub">Modelo reforçado com 10 jogos por equipe e peso maior nos 5 mais recentes para filtrar melhor Over 2.5 gols e Ambos Marcam.</div>
         </div>
       </div>
       <div class="toolbar">
@@ -400,21 +398,21 @@
     </section>
 
     <section class="grid three" id="resultsGrid" style="display:none;">
-      <div id="recommendationBox" class="card score-box">
+      <div id="recommendationBox" class="card score-box mid">
         <div class="score-label">Sugestão final</div>
         <div id="bestMarketName" class="score-value">-</div>
         <div id="recommendationSignal" class="signal-pill mid">-</div>
         <div id="bestMarketReason" class="muted" style="margin-top: 8px; line-height: 1.5;">-</div>
       </div>
-      <div id="confidenceBox" class="card score-box">
+      <div id="confidenceBox" class="card score-box mid">
         <div class="score-label">Confiança estimada</div>
         <div id="bestMarketConfidence" class="score-value">0%</div>
-        <div id="confidenceHelper" class="muted" style="margin-top: 8px;">Baseada nos últimos jogos encontrados.</div>
+        <div id="confidenceHelper" class="muted" style="margin-top: 8px;">Baseada na leitura ponderada dos 10 jogos.</div>
       </div>
-      <div class="card score-box mid">
+      <div class="card score-box mid" id="matchupBox">
         <div class="score-label">Confronto analisado</div>
         <div id="matchupTitle" class="score-value" style="font-size:28px; line-height:1.1;">-</div>
-        
+        <div id="matchupHelper" class="muted" style="margin-top: 8px;">Os 5 jogos mais recentes valem mais na nota final.</div>
       </div>
     </section>
 
@@ -444,6 +442,7 @@
           <select id="historySort">
             <option value="confidence_desc">Porcentagem: maior para menor</option>
             <option value="confidence_asc">Porcentagem: menor para maior</option>
+            <option value="next_time">Próximos</option>
           </select>
         </div>
       </div>
@@ -452,7 +451,7 @@
   </div>
 
   <script>
-    const STORAGE_KEY = 'analisador_futebol_historico_v2';
+    const STORAGE_KEY = 'analisador_futebol_historico_v3';
 
     const statusEl = document.getElementById('status');
     const resultsGrid = document.getElementById('resultsGrid');
@@ -508,6 +507,42 @@
       return `${m[1]}/${m[2]}/${year}`;
     }
 
+
+    function parseDateTimeTop(raw) {
+      const lines = getLines(raw);
+      const dtLine = lines.find(line => /^\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}$/.test(line));
+      if (!dtLine) {
+        return {
+          raw: '',
+          dateDisplay: '',
+          time: '',
+          display: '',
+          minutesOfDay: null
+        };
+      }
+
+      const match = dtLine.match(/^(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}:\d{2})$/);
+      if (!match) {
+        return {
+          raw: dtLine,
+          dateDisplay: dtLine,
+          time: '',
+          display: dtLine,
+          minutesOfDay: null
+        };
+      }
+
+      const [, day, month, year, time] = match;
+      const [hour, minute] = time.split(':').map(Number);
+      return {
+        raw: dtLine,
+        dateDisplay: `${day}/${month}/${year}`,
+        time,
+        display: `${day}/${month}/${year} ${time}`,
+        minutesOfDay: (hour * 60) + minute
+      };
+    }
+
     function isDateLine(line) {
       return /^\d{2}\.\d{2}\.\d{2}$/.test(line);
     }
@@ -533,7 +568,7 @@
     }
 
     function isSectionBoundaryLine(line) {
-      return /^(confrontos diretos|head to head|h2h|classifica[cç][aã]o|tabela|odds|estat[ií]sticas|resumo do jogo|forma|pr[oó]ximos jogos|escal[aã]o|lineups?)$/i.test((line || '').trim());
+      return /^(confrontos diretos|head to head|h2h|classifica[cç][aã]o|tabela|odds|estat[ií]sticas|resumo do jogo|forma|pr[oó]ximos jogos|escal[aã]o|lineups?|desfalques|not[ií]cias)$/i.test((line || '').trim());
     }
 
     function parseBlocks(rawText) {
@@ -553,13 +588,6 @@
         const matches = [];
 
         while (i < lines.length && !isHeaderLine(lines[i]) && !isSectionBoundaryLine(lines[i])) {
-          if (matches.length >= 10) {
-            while (i < lines.length && !isHeaderLine(lines[i]) && !isSectionBoundaryLine(lines[i])) {
-              i += 1;
-            }
-            break;
-          }
-
           if (/^Mostrar mais jogos$/i.test(lines[i])) {
             i += 1;
             continue;
@@ -622,6 +650,10 @@
             conceded,
             hadPenaltyScore: numericScores.length > 2
           });
+
+          if (matches.length >= 10) {
+            break;
+          }
         }
 
         if (matches.length) {
@@ -632,10 +664,33 @@
       return blocks.slice(0, 2);
     }
 
+    function getMatchWeight(index) {
+      return index < 5 ? 1.4 : 0.6;
+    }
+
+    function weightedAverage(matches, selector) {
+      const totalWeight = matches.reduce((acc, _, index) => acc + getMatchWeight(index), 0) || 1;
+      const total = matches.reduce((acc, match, index) => acc + selector(match) * getMatchWeight(index), 0);
+      return total / totalWeight;
+    }
+
+    function weightedPct(matches, predicate) {
+      return weightedAverage(matches, match => predicate(match) ? 100 : 0);
+    }
+
+    function avg(matches, selector) {
+      if (!matches.length) return 0;
+      return matches.reduce((acc, item) => acc + selector(item), 0) / matches.length;
+    }
+
+    function pct(matches, predicate) {
+      if (!matches.length) return 0;
+      return (matches.filter(predicate).length / matches.length) * 100;
+    }
+
     function calcTeamMetrics(block) {
       const matches = block.matches;
-      const total = matches.length || 1;
-      const sum = (fn) => matches.reduce((acc, item) => acc + fn(item), 0);
+      const recentMatches = matches.slice(0, 5);
       const count = (fn) => matches.filter(fn).length;
 
       return {
@@ -644,37 +699,86 @@
         wins: count(m => m.result === 'V'),
         draws: count(m => m.result === 'E'),
         losses: count(m => m.result === 'D'),
-        goalsForAvg: sum(m => m.goalsFor) / total,
-        goalsAgainstAvg: sum(m => m.goalsAgainst) / total,
-        totalGoalsAvg: sum(m => m.totalGoals) / total,
-        over25Pct: (count(m => m.over25) / total) * 100,
-        bttsPct: (count(m => m.btts) / total) * 100,
-        scorePct: (count(m => m.scored) / total) * 100,
-        concedePct: (count(m => m.conceded) / total) * 100,
-        penaltyAdjustedCount: count(m => m.hadPenaltyScore),
+        goalsForAvgWeighted: weightedAverage(matches, m => m.goalsFor),
+        goalsAgainstAvgWeighted: weightedAverage(matches, m => m.goalsAgainst),
+        totalGoalsAvgWeighted: weightedAverage(matches, m => m.totalGoals),
+        over25PctWeighted: weightedPct(matches, m => m.over25),
+        bttsPctWeighted: weightedPct(matches, m => m.btts),
+        scorePctWeighted: weightedPct(matches, m => m.scored),
+        concedePctWeighted: weightedPct(matches, m => m.conceded),
+        recentOver25Pct: pct(recentMatches, m => m.over25),
+        recentBttsPct: pct(recentMatches, m => m.btts),
+        recentScorePct: pct(recentMatches, m => m.scored),
+        recentConcedePct: pct(recentMatches, m => m.conceded),
+        recentGoalsForAvg: avg(recentMatches, m => m.goalsFor),
+        recentGoalsAgainstAvg: avg(recentMatches, m => m.goalsAgainst),
+        recentTotalGoalsAvg: avg(recentMatches, m => m.totalGoals),
         matches
       };
     }
 
     function buildMarketAnalysis(teamA, teamB) {
-      const avgOver25 = (teamA.over25Pct + teamB.over25Pct) / 2;
-      const avgBTTS = (teamA.bttsPct + teamB.bttsPct) / 2;
-      const avgTotalGoals = (teamA.totalGoalsAvg + teamB.totalGoalsAvg) / 2;
-      const avgScore = (teamA.scorePct + teamB.scorePct) / 2;
-      const avgConcede = (teamA.concedePct + teamB.concedePct) / 2;
+      const weightedOverAvg = (teamA.over25PctWeighted + teamB.over25PctWeighted) / 2;
+      const recentOverAvg = (teamA.recentOver25Pct + teamB.recentOver25Pct) / 2;
+      const weightedBttsAvg = (teamA.bttsPctWeighted + teamB.bttsPctWeighted) / 2;
+      const recentBttsAvg = (teamA.recentBttsPct + teamB.recentBttsPct) / 2;
+      const weightedScoreAvg = (teamA.scorePctWeighted + teamB.scorePctWeighted) / 2;
+      const weightedConcedeAvg = (teamA.concedePctWeighted + teamB.concedePctWeighted) / 2;
+      const combinedTotalGoalsWeighted = (teamA.totalGoalsAvgWeighted + teamB.totalGoalsAvgWeighted) / 2;
+      const combinedRecentTotalGoals = (teamA.recentTotalGoalsAvg + teamB.recentTotalGoalsAvg) / 2;
+      const combinedAttackWeighted = (teamA.goalsForAvgWeighted + teamB.goalsForAvgWeighted) / 2;
+      const combinedConcedeWeighted = (teamA.goalsAgainstAvgWeighted + teamB.goalsAgainstAvgWeighted) / 2;
 
       let over25Confidence = 0;
-      over25Confidence += avgOver25 * 0.42;
-      over25Confidence += scoreFromRange(avgTotalGoals, 1.8, 4.0) * 0.33;
-      over25Confidence += avgScore * 0.13;
-      over25Confidence += avgConcede * 0.12;
+      over25Confidence += weightedOverAvg * 0.34;
+      over25Confidence += recentOverAvg * 0.18;
+      over25Confidence += scoreFromRange(combinedTotalGoalsWeighted, 1.8, 4.1) * 0.18;
+      over25Confidence += scoreFromRange(combinedRecentTotalGoals, 1.8, 4.3) * 0.12;
+      over25Confidence += scoreFromRange(combinedAttackWeighted, 0.9, 2.0) * 0.10;
+      over25Confidence += scoreFromRange(combinedConcedeWeighted, 0.6, 1.8) * 0.08;
+      over25Confidence = clamp(over25Confidence, 0, 100);
+
+      const over25Blockers = [];
+      if (combinedTotalGoalsWeighted < 2.15) over25Blockers.push('média ponderada de gols baixa');
+      if (recentOverAvg < 40) over25Blockers.push('últimos 5 jogos recentes pouco over');
+      if (teamA.over25PctWeighted < 40 || teamB.over25PctWeighted < 40) over25Blockers.push('um dos times tem perfil recente mais under');
+      if ((teamA.scorePctWeighted < 60 && teamA.goalsForAvgWeighted < 1.0) || (teamB.scorePctWeighted < 60 && teamB.goalsForAvgWeighted < 1.0)) {
+        over25Blockers.push('um dos ataques marca pouco');
+      }
+      if ((teamA.goalsAgainstAvgWeighted < 0.75 && teamA.concedePctWeighted < 45) || (teamB.goalsAgainstAvgWeighted < 0.75 && teamB.concedePctWeighted < 45)) {
+        over25Blockers.push('um dos times sofre pouco gol');
+      }
+      const over25HardBlock = combinedTotalGoalsWeighted < 1.95 || over25Blockers.length >= 3;
+      if (over25HardBlock) {
+        over25Confidence = Math.min(over25Confidence - 10, 57);
+      } else {
+        over25Confidence -= over25Blockers.length * 4;
+      }
       over25Confidence = clamp(over25Confidence, 0, 100);
 
       let bttsConfidence = 0;
-      bttsConfidence += avgBTTS * 0.44;
-      bttsConfidence += avgScore * 0.30;
-      bttsConfidence += avgConcede * 0.26;
-      if (teamA.scorePct < 50 || teamB.scorePct < 50) bttsConfidence -= 8;
+      bttsConfidence += weightedBttsAvg * 0.34;
+      bttsConfidence += recentBttsAvg * 0.18;
+      bttsConfidence += Math.min(teamA.scorePctWeighted, teamB.scorePctWeighted) * 0.16;
+      bttsConfidence += weightedScoreAvg * 0.12;
+      bttsConfidence += weightedConcedeAvg * 0.12;
+      bttsConfidence += Math.min(teamA.concedePctWeighted, teamB.concedePctWeighted) * 0.08;
+      bttsConfidence = clamp(bttsConfidence, 0, 100);
+
+      const bttsBlockers = [];
+      if (teamA.scorePctWeighted < 60 || teamB.scorePctWeighted < 60) bttsBlockers.push('um dos times marca em poucos jogos');
+      if (teamA.recentScorePct < 40 || teamB.recentScorePct < 40) bttsBlockers.push('um dos ataques chega em má fase recente');
+      if ((teamA.concedePctWeighted < 45 && teamA.goalsAgainstAvgWeighted < 0.85) || (teamB.concedePctWeighted < 45 && teamB.goalsAgainstAvgWeighted < 0.85)) {
+        bttsBlockers.push('um dos times sofre pouco gol');
+      }
+      if (recentBttsAvg < 40) bttsBlockers.push('últimos 5 jogos recentes mostram pouco ambos marcam');
+      if (weightedBttsAvg < 45) bttsBlockers.push('frequência ponderada de ambos marcam está baixa');
+      const bttsHardBlock = teamA.scorePctWeighted < 50 || teamB.scorePctWeighted < 50 || bttsBlockers.length >= 3;
+      if (bttsHardBlock) {
+        bttsConfidence = Math.min(bttsConfidence - 10, 57);
+      } else {
+        bttsConfidence -= bttsBlockers.length * 4;
+      }
       bttsConfidence = clamp(bttsConfidence, 0, 100);
 
       const markets = [
@@ -682,54 +786,70 @@
           key: 'over25',
           name: 'Over 2.5 gols',
           confidence: over25Confidence,
-          detail: `Média combinada de ${avgTotalGoals.toFixed(2)} gols por jogo. Frequência média de Over 2.5: ${formatPct(avgOver25)}.`
+          hardBlocked: over25HardBlock,
+          blockers: over25Blockers,
+          detail: `Base ponderada: ${formatPct(weightedOverAvg)} de over 2.5 e média combinada de ${combinedTotalGoalsWeighted.toFixed(2)} gols. Nos 5 mais recentes, a média cai para ${formatPct(recentOverAvg)}.`
         },
         {
           key: 'btts',
           name: 'Ambos marcam',
           confidence: bttsConfidence,
-          detail: `BTTS médio em ${formatPct(avgBTTS)}. Os times marcam em ${formatPct(avgScore)} dos jogos e sofrem gols em ${formatPct(avgConcede)}.`
+          hardBlocked: bttsHardBlock,
+          blockers: bttsBlockers,
+          detail: `Base ponderada: ${formatPct(weightedBttsAvg)} de ambos marcam. Os times marcam em ${formatPct(weightedScoreAvg)} e sofrem em ${formatPct(weightedConcedeAvg)} dos jogos ponderados.`
         }
-      ];
+      ].map(market => {
+        const signal = getSignalMeta(market.confidence, market.hardBlocked);
+        return {
+          ...market,
+          signal,
+          summary: market.blockers.length
+            ? `${market.detail} Alertas: ${market.blockers.join(', ')}.`
+            : `${market.detail} Sem alertas fortes no filtro.`
+        };
+      });
 
       const best = [...markets].sort((a, b) => b.confidence - a.confidence)[0];
-      const signal = getSignalMeta(best.confidence);
-      const recommendation = best.confidence >= 58
+      const bestSignal = getSignalMeta(best.confidence, best.hardBlocked);
+      const recommendation = (best.hardBlocked || best.confidence < 68)
         ? {
-            displayName: best.name,
-            reason: `${best.detail} ${signal.helper}`,
-            signal
+            displayName: 'Nenhuma entrada sugerida',
+            reason: `${best.name} foi o melhor mercado, mas não passou no filtro final. ${best.blockers.length ? `Alertas principais: ${best.blockers.join(', ')}.` : bestSignal.helper}`,
+            signal: bestSignal
           }
         : {
-            displayName: 'Nenhuma entrada sugerida',
-            reason: `O melhor mercado encontrado foi ${best.name}, mas a confiança ficou em ${formatPct(best.confidence)}. ${signal.helper}`,
-            signal
+            displayName: best.name,
+            reason: best.blockers.length
+              ? `${best.detail} Atenção aos alertas: ${best.blockers.join(', ')}.`
+              : `${best.detail} ${bestSignal.helper}`,
+            signal: bestSignal
           };
+
       return { markets, bestMarket: best, recommendation };
     }
 
-    function getSignalMeta(value) {
-      if (value >= 72) {
+    function getSignalMeta(value, hardBlocked = false) {
+      if (hardBlocked || value < 68) {
+        return {
+          tone: 'Ruim',
+          className: 'bad',
+          label: 'Sem entrada sugerida',
+          helper: 'Leitura fraca ou com filtros de bloqueio. Melhor não forçar aposta neste confronto.'
+        };
+      }
+      if (value >= 78) {
         return {
           tone: 'Forte',
           className: 'good',
           label: 'Entrada sugerida',
-          helper: 'Percentual forte para considerar entrada.'
-        };
-      }
-      if (value >= 58) {
-        return {
-          tone: 'Média',
-          className: 'mid',
-          label: 'Entrada com cautela',
-          helper: 'Leitura média. Só vale entrada com gestão mais conservadora.'
+          helper: 'Percentual forte, com mais sinais alinhados para considerar entrada.'
         };
       }
       return {
-        tone: 'Ruim',
-        className: 'bad',
-        label: 'Sem entrada sugerida',
-        helper: 'Percentual fraco. Melhor não forçar aposta neste confronto.'
+        tone: 'Média',
+        className: 'mid',
+        label: 'Entrada com cautela',
+        helper: 'Leitura média. Só vale entrada com gestão mais conservadora.'
       };
     }
 
@@ -738,7 +858,7 @@
         <div class="team-head">
           <div>
             <div class="team-name">${metrics.teamName}</div>
-            <div class="muted">Base de ${metrics.sampleSize} jogos extraídos</div>
+            <div class="muted">10 jogos lidos · últimos 5 com peso maior</div>
           </div>
           <div>
             <span class="badge v">V ${metrics.wins}</span>
@@ -747,33 +867,30 @@
           </div>
         </div>
         <div class="kpis">
-          <div class="kpi"><strong>${metrics.goalsForAvg.toFixed(2)}</strong><span>média gols marcados</span></div>
-          <div class="kpi"><strong>${metrics.goalsAgainstAvg.toFixed(2)}</strong><span>média gols sofridos</span></div>
-          <div class="kpi"><strong>${formatPct(metrics.over25Pct)}</strong><span>jogos com over 2.5</span></div>
-          <div class="kpi"><strong>${formatPct(metrics.bttsPct)}</strong><span>jogos com ambos marcam</span></div>
-          <div class="kpi"><strong>${formatPct(metrics.scorePct)}</strong><span>jogos em que marcou</span></div>
-          <div class="kpi"><strong>${formatPct(metrics.concedePct)}</strong><span>jogos em que sofreu</span></div>
+          <div class="kpi"><strong>${metrics.goalsForAvgWeighted.toFixed(2)}</strong><span>média ponderada gols marcados</span></div>
+          <div class="kpi"><strong>${metrics.goalsAgainstAvgWeighted.toFixed(2)}</strong><span>média ponderada gols sofridos</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.over25PctWeighted)}</strong><span>over 2.5 ponderado</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.bttsPctWeighted)}</strong><span>ambos marcam ponderado</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.recentOver25Pct)}</strong><span>over 2.5 nos últimos 5</span></div>
+          <div class="kpi"><strong>${formatPct(metrics.recentBttsPct)}</strong><span>ambos marcam nos últimos 5</span></div>
         </div>
       `;
     }
 
     function renderMarkets(analysis) {
-      marketList.innerHTML = analysis.markets.map(market => {
-        const signal = getSignalMeta(market.confidence);
-        return `
-          <div class="market ${signal.className}">
-            <div class="market-top">
-              <div>
-                <div class="market-title">${market.name}</div>
-                <div class="tiny">Leitura: ${signal.tone}</div>
-              </div>
-              <div class="badge ${signal.className}">${formatPct(market.confidence)}</div>
+      marketList.innerHTML = analysis.markets.map(market => `
+        <div class="market ${market.signal.className}">
+          <div class="market-top">
+            <div>
+              <div class="market-title">${market.name}</div>
+              <div class="tiny">Força da leitura: ${market.signal.tone}</div>
             </div>
-            <div class="bar"><span style="width:${market.confidence}%"></span></div>
-            <small>${market.detail}</small>
+            <div class="badge ${market.signal.className}">${formatPct(market.confidence)}</div>
           </div>
-        `;
-      }).join('');
+          <div class="bar"><span style="width:${market.confidence}%"></span></div>
+          <small>${market.summary}</small>
+        </div>
+      `).join('');
     }
 
     function resultText(result) {
@@ -790,7 +907,7 @@
             <td>${match.competition || '-'}</td>
             <td>${match.home}</td>
             <td>${match.away}</td>
-            <td>${match.homeGoals} x ${match.awayGoals}${match.hadPenaltyScore ? ' <span class="tiny">(pênaltis ignorados)</span>' : ''}</td>
+            <td>${match.homeGoals} x ${match.awayGoals}${match.hadPenaltyScore ? ' <span class="tiny">(tempo normal)</span>' : ''}</td>
             <td>${match.totalGoals}</td>
             <td>${match.btts ? 'Sim' : 'Não'}</td>
             <td>${match.over25 ? 'Sim' : 'Não'}</td>
@@ -853,19 +970,18 @@
     function sortHistoryItems(items) {
       const sortMode = historySort ? historySort.value : 'confidence_desc';
       const sorted = [...items];
+      sorted.sort((a, b) => {
+        if (sortMode === 'next_time') {
+          const aVal = Number.isFinite(Number(a.matchMinutesOfDay)) ? Number(a.matchMinutesOfDay) : 9999;
+          const bVal = Number.isFinite(Number(b.matchMinutesOfDay)) ? Number(b.matchMinutesOfDay) : 9999;
+          if (aVal !== bVal) return aVal - bVal;
+          return (b.bestConfidence || 0) - (a.bestConfidence || 0);
+        }
 
-      const compareConfidence = (a, b) => {
         const aVal = Number(a.bestConfidence || 0);
         const bVal = Number(b.bestConfidence || 0);
-        return aVal - bVal;
-      };
-
-      if (sortMode === 'confidence_asc') {
-        sorted.sort((a, b) => compareConfidence(a, b));
-      } else {
-        sorted.sort((a, b) => compareConfidence(b, a));
-      }
-
+        return sortMode === 'confidence_asc' ? aVal - bVal : bVal - aVal;
+      });
       return sorted;
     }
 
@@ -877,7 +993,7 @@
       }
 
       historyList.innerHTML = history.map(item => {
-        const historySignal = getSignalMeta(item.bestConfidence || 0);
+        const historySignal = getSignalMeta(item.bestConfidence || 0, item.signalClass === 'bad');
         const signalClass = item.signalClass || historySignal.className;
         const signalLabel = item.signalLabel || historySignal.label;
         return `
@@ -885,11 +1001,11 @@
             <div class="history-top">
               <div>
                 <div class="history-title">${item.matchup} — ${item.bestMarket}</div>
-                <div class="history-meta">confiança ${item.bestConfidence}% · ${signalLabel}</div>
+                <div class="history-meta">Confiança ${item.bestConfidence}% · ${signalLabel}</div>
               </div>
               <span class="badge ${signalClass}">${item.bestConfidence}%</span>
             </div>
-            <div class="history-meta" style="margin-top: 10px;">Over 2.5: ${item.over25}% · Ambos marcam: ${item.btts}%</div>
+            <div class="history-meta" style="margin-top: 10px;">Partida: ${item.matchDateTimeDisplay || 'sem data e hora do jogo'} · Over 2.5: ${item.over25}% · Ambos marcam: ${item.btts}%</div>
             <div class="history-actions">
               <button class="small secondary" onclick="loadHistoryItem('${item.id}')">Recarregar</button>
               <button class="small danger" onclick="removeHistoryItem('${item.id}')">Apagar</button>
@@ -908,10 +1024,14 @@
       setStatus('Análise recarregada do histórico.', 'ok');
     };
 
-    function buildHistoryEntry(rawText, blockA, blockB, teamA, teamB, analysis) {
+    function buildHistoryEntry(rawText, blockA, blockB, analysis, matchInfo) {
       return {
         id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
         matchup: `${blockA.teamName} x ${blockB.teamName}`,
+        matchDateTimeDisplay: matchInfo.display || '',
+        matchDateDisplay: matchInfo.dateDisplay || '',
+        matchTime: matchInfo.time || '',
+        matchMinutesOfDay: Number.isFinite(matchInfo.minutesOfDay) ? matchInfo.minutesOfDay : null,
         bestMarket: analysis.recommendation.displayName,
         bestConfidence: Math.round(analysis.bestMarket.confidence),
         signalLabel: analysis.recommendation.signal.label,
@@ -921,7 +1041,6 @@
         rawText
       };
     }
-
 
     function resetResults() {
       resultsGrid.style.display = 'none';
@@ -946,15 +1065,16 @@
 
     function renderFullAnalysis(blocks, teamA, teamB, analysis) {
       const [blockA, blockB] = blocks;
-
       const recommendationBox = document.getElementById('recommendationBox');
       const confidenceBox = document.getElementById('confidenceBox');
+      const matchupBox = document.getElementById('matchupBox');
       const recommendationSignal = document.getElementById('recommendationSignal');
       const confidenceHelper = document.getElementById('confidenceHelper');
       const signal = analysis.recommendation.signal;
 
       recommendationBox.className = `card score-box ${signal.className}`;
       confidenceBox.className = `card score-box ${signal.className}`;
+      matchupBox.className = `card score-box ${signal.className}`;
       document.getElementById('bestMarketName').textContent = analysis.recommendation.displayName;
       recommendationSignal.className = `signal-pill ${signal.className}`;
       recommendationSignal.textContent = signal.label;
@@ -962,6 +1082,7 @@
       document.getElementById('bestMarketReason').textContent = analysis.recommendation.reason;
       confidenceHelper.textContent = signal.helper;
       document.getElementById('matchupTitle').textContent = `${blockA.teamName} x ${blockB.teamName}`;
+      document.getElementById('matchupHelper').textContent = 'Modelo: 10 jogos por equipe com peso maior nos 5 mais recentes.';
 
       renderMarkets(analysis);
       renderTeamBox(teamABox, teamA);
@@ -992,12 +1113,13 @@
       const teamA = calcTeamMetrics(blocks[0]);
       const teamB = calcTeamMetrics(blocks[1]);
       const analysis = buildMarketAnalysis(teamA, teamB);
+      const matchInfo = parseDateTimeTop(rawText);
 
       renderFullAnalysis(blocks, teamA, teamB, analysis);
-      setStatus(`Análise concluída para ${blocks[0].teamName} x ${blocks[1].teamName}.`, 'ok');
+      setStatus(`Análise concluída para ${blocks[0].teamName} x ${blocks[1].teamName} com filtro reforçado e peso maior nos 5 jogos mais recentes.`, 'ok');
 
       if (save) {
-        saveHistory(buildHistoryEntry(rawText, blocks[0], blocks[1], teamA, teamB, analysis));
+        saveHistory(buildHistoryEntry(rawText, blocks[0], blocks[1], analysis, matchInfo));
       }
     }
 
@@ -1022,9 +1144,7 @@
       setStatus('Histórico apagado.', 'ok');
     });
 
-    historySort.addEventListener('change', () => {
-      renderHistory();
-    });
+    historySort.addEventListener('change', renderHistory);
 
     renderHistory();
   </script>
