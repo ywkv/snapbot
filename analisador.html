@@ -287,6 +287,57 @@
     .history-title { font-weight: 800; font-size: 16px; line-height: 1.4; }
     .history-meta { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
     .history-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .history-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .history-filter-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .history-filter-box label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      color: var(--text);
+      color-scheme: dark;
+      border-radius: 12px;
+      padding: 12px 40px 12px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      min-height: 46px;
+      outline: none;
+      box-shadow: var(--shadow);
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+    select:focus {
+      border-color: rgba(79,140,255,.4);
+      box-shadow: 0 0 0 3px rgba(79,140,255,.16);
+    }
+    select option,
+    select optgroup {
+      background: #0f172a;
+      color: #eef3ff;
+    }
 
     @media (max-width: 1040px) {
       .grid.two, .grid.three { grid-template-columns: 1fr; }
@@ -309,10 +360,11 @@
         width: 100%;
         min-height: 48px;
       }
-      .history-top, .team-head, .market-top, .hero-top {
+      .history-top, .team-head, .market-top, .hero-top, .history-toolbar, .history-filter-box {
         flex-direction: column;
         align-items: stretch;
       }
+      select { width: 100%; }
       .score-box { padding: 16px; }
       .score-value { font-size: 28px; }
       .team-name { font-size: 20px; }
@@ -362,7 +414,7 @@
       <div class="card score-box mid">
         <div class="score-label">Confronto analisado</div>
         <div id="matchupTitle" class="score-value" style="font-size:28px; line-height:1.1;">-</div>
-        <div id="analysisDate" class="muted" style="margin-top: 8px;">-</div>
+        
       </div>
     </section>
 
@@ -382,9 +434,17 @@
     </section>
 
     <section class="card" style="margin-top: 20px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap: wrap;">
+      <div class="history-toolbar">
         <div>
-          <h2 style="margin-bottom:6px;">Histórico</h2>
+          <h2 style="margin-bottom:6px;">Histórico salvo no navegador</h2>
+          <div class="muted">As análises ficam salvas localmente neste navegador.</div>
+        </div>
+        <div class="history-filter-box">
+          <label for="historySort">Ordenar por</label>
+          <select id="historySort">
+            <option value="confidence_desc">Porcentagem: maior para menor</option>
+            <option value="confidence_asc">Porcentagem: menor para maior</option>
+          </select>
         </div>
       </div>
       <div id="historyList" style="margin-top: 16px;"></div>
@@ -404,6 +464,7 @@
     const tablesCard = document.getElementById('tablesCard');
     const tablesWrap = document.getElementById('tablesWrap');
     const historyList = document.getElementById('historyList');
+    const historySort = document.getElementById('historySort');
 
     function setStatus(message, type = '') {
       statusEl.className = `status ${type}`.trim();
@@ -471,6 +532,10 @@
       return /^[ÚU]LTIMOS JOGOS:\s*(.+)$/i.test(line);
     }
 
+    function isSectionBoundaryLine(line) {
+      return /^(confrontos diretos|head to head|h2h|classifica[cç][aã]o|tabela|odds|estat[ií]sticas|resumo do jogo|forma|pr[oó]ximos jogos|escal[aã]o|lineups?)$/i.test((line || '').trim());
+    }
+
     function parseBlocks(rawText) {
       const lines = getLines(rawText);
       const blocks = [];
@@ -487,7 +552,14 @@
         i += 1;
         const matches = [];
 
-        while (i < lines.length && !isHeaderLine(lines[i])) {
+        while (i < lines.length && !isHeaderLine(lines[i]) && !isSectionBoundaryLine(lines[i])) {
+          if (matches.length >= 10) {
+            while (i < lines.length && !isHeaderLine(lines[i]) && !isSectionBoundaryLine(lines[i])) {
+              i += 1;
+            }
+            break;
+          }
+
           if (/^Mostrar mais jogos$/i.test(lines[i])) {
             i += 1;
             continue;
@@ -778,8 +850,27 @@
       renderHistory();
     }
 
+    function sortHistoryItems(items) {
+      const sortMode = historySort ? historySort.value : 'confidence_desc';
+      const sorted = [...items];
+
+      const compareConfidence = (a, b) => {
+        const aVal = Number(a.bestConfidence || 0);
+        const bVal = Number(b.bestConfidence || 0);
+        return aVal - bVal;
+      };
+
+      if (sortMode === 'confidence_asc') {
+        sorted.sort((a, b) => compareConfidence(a, b));
+      } else {
+        sorted.sort((a, b) => compareConfidence(b, a));
+      }
+
+      return sorted;
+    }
+
     function renderHistory() {
-      const history = getHistory();
+      const history = sortHistoryItems(getHistory());
       if (!history.length) {
         historyList.innerHTML = '<div class="muted">Nenhuma análise salva ainda.</div>';
         return;
@@ -794,11 +885,11 @@
             <div class="history-top">
               <div>
                 <div class="history-title">${item.matchup} — ${item.bestMarket}</div>
-                <div class="history-meta">${item.createdAt} · confiança ${item.bestConfidence}% · ${signalLabel}</div>
+                <div class="history-meta">confiança ${item.bestConfidence}% · ${signalLabel}</div>
               </div>
               <span class="badge ${signalClass}">${item.bestConfidence}%</span>
             </div>
-            <div class="history-meta" style="margin-top: 10px;">Over 2.5: ${item.over25}% · Ambos marcam: ${item.btts}% · jogos com ajuste de pênaltis: ${item.penaltyAdjusted}</div>
+            <div class="history-meta" style="margin-top: 10px;">Over 2.5: ${item.over25}% · Ambos marcam: ${item.btts}%</div>
             <div class="history-actions">
               <button class="small secondary" onclick="loadHistoryItem('${item.id}')">Recarregar</button>
               <button class="small danger" onclick="removeHistoryItem('${item.id}')">Apagar</button>
@@ -818,10 +909,8 @@
     };
 
     function buildHistoryEntry(rawText, blockA, blockB, teamA, teamB, analysis) {
-      const now = new Date();
       return {
         id: `${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        createdAt: now.toLocaleString('pt-BR'),
         matchup: `${blockA.teamName} x ${blockB.teamName}`,
         bestMarket: analysis.recommendation.displayName,
         bestConfidence: Math.round(analysis.bestMarket.confidence),
@@ -829,9 +918,30 @@
         signalClass: analysis.recommendation.signal.className,
         over25: Math.round(analysis.markets.find(m => m.key === 'over25').confidence),
         btts: Math.round(analysis.markets.find(m => m.key === 'btts').confidence),
-        penaltyAdjusted: teamA.penaltyAdjustedCount + teamB.penaltyAdjustedCount,
         rawText
       };
+    }
+
+
+    function resetResults() {
+      resultsGrid.style.display = 'none';
+      marketsCard.style.display = 'none';
+      teamsGrid.style.display = 'none';
+      tablesCard.style.display = 'none';
+    }
+
+    function validateBlocks(blocks) {
+      if (blocks.length < 2) {
+        return 'Não consegui encontrar dois blocos de “Últimos jogos”. Verifique se você copiou os dois times na mesma página.';
+      }
+
+      const invalidBlocks = blocks.slice(0, 2).filter(block => block.matches.length !== 10);
+      if (!invalidBlocks.length) return '';
+
+      const details = invalidBlocks
+        .map(block => `${block.teamName}: ${block.matches.length} jogos encontrados`)
+        .join(' · ');
+      return `A análise só é permitida quando cada equipe tiver exatamente 10 jogos extraídos. ${details}.`;
     }
 
     function renderFullAnalysis(blocks, teamA, teamB, analysis) {
@@ -852,7 +962,6 @@
       document.getElementById('bestMarketReason').textContent = analysis.recommendation.reason;
       confidenceHelper.textContent = signal.helper;
       document.getElementById('matchupTitle').textContent = `${blockA.teamName} x ${blockB.teamName}`;
-      document.getElementById('analysisDate').textContent = `Analisado em ${new Date().toLocaleString('pt-BR')}`;
 
       renderMarkets(analysis);
       renderTeamBox(teamABox, teamA);
@@ -867,13 +976,16 @@
 
     function analyzeRawText(rawText, save = true) {
       if (!rawText || !rawText.trim()) {
+        resetResults();
         setStatus('A área de transferência está vazia.', 'error');
         return;
       }
 
       const blocks = parseBlocks(rawText);
-      if (blocks.length < 2) {
-        setStatus('Não consegui encontrar dois blocos de “Últimos jogos”. Verifique se você copiou os dois times na mesma página.', 'error');
+      const validationError = validateBlocks(blocks);
+      if (validationError) {
+        resetResults();
+        setStatus(validationError, 'error');
         return;
       }
 
@@ -908,6 +1020,10 @@
       if (!confirm('Deseja apagar todo o histórico salvo no navegador?')) return;
       clearHistory();
       setStatus('Histórico apagado.', 'ok');
+    });
+
+    historySort.addEventListener('change', () => {
+      renderHistory();
     });
 
     renderHistory();
